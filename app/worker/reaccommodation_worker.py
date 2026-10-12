@@ -10,6 +10,7 @@ from datetime import datetime
 from app.engine.gds_service import gds_service
 from app.engine.graph_engine import reaccommodation_engine
 from app.engine.crew_engine import crew_engine
+from app.engine.fleet_engine import fleet_engine
 from app.models.schemas import FlightStatus
 
 logger = logging.getLogger("Worker")
@@ -22,6 +23,7 @@ class ReaccommodationWorker:
         self.last_solve_time_ms = 0.0
         self.telemetry_logs: List[Dict[str, Any]] = []
         self.crew_alerts: List[Dict[str, Any]] = []
+        self.tail_swaps: List[Dict[str, Any]] = []
 
     async def handle_disruption_event(self, event_data: Dict[str, Any]):
         """Callback invoked when a flight disruption event is published on the bus."""
@@ -80,6 +82,17 @@ class ReaccommodationWorker:
             self.crew_alerts.insert(0, alert)
             if len(self.crew_alerts) > 20:
                 self.crew_alerts.pop()
+
+        # 3. Evaluate operational fleet tail-swap to salvage aircraft rotation
+        swap = fleet_engine.evaluate_tail_swap(flight_num, origin, flight.carrier)
+        if swap:
+            logger.info(
+                f"Fleet OCC executed tail swap: {swap['original_tail']} -> {swap['assigned_spare_tail']} "
+                f"at {origin} for flight {flight_num}."
+            )
+            self.tail_swaps.insert(0, swap)
+            if len(self.tail_swaps) > 20:
+                self.tail_swaps.pop()
 
         elapsed_ms = (time.perf_counter() - start_time) * 1000
         self.last_solve_time_ms = round(elapsed_ms, 2)

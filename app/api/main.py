@@ -226,6 +226,14 @@ async def get_crew_pairing_alerts():
     return reaccommodation_worker.crew_alerts
 
 
+@app.get("/api/v1/fleet/tail-swaps")
+async def get_fleet_tail_swaps():
+    """
+    Returns operational aircraft tail-swaps executed to protect turnaround rotations.
+    """
+    return reaccommodation_worker.tail_swaps
+
+
 @app.get("/api/v1/metrics", response_model=SystemMetrics)
 async def get_metrics():
     """Returns platform real-time operational metrics, ROI, and compensation liability."""

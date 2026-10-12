@@ -54,5 +54,13 @@
 - [x] Pareto-optimal multi-objective NetworkX heuristics balancing delay, duration, and carrier alliance affinity.
 - [x] End-to-end verification via automated test suite `test_system.py`.
 
+## Phase 11: Aircraft Fleet Tracking & Tail-Swap Recovery Engine [COMPLETED]
+- [x] Modeling of physical aircraft registration tails (N-numbers across 4 major carriers and 10 hub bases).
+- [x] Automated detection of aircraft shortage at arrival hubs due to upstream flight cancellations.
+- [x] Operational tail-swap engine finding matching spare aircraft at origin hubs to salvage turnaround schedules.
+- [x] Real-time tail-swap history logging exposed via `GET /api/v1/fleet/tail-swaps`.
+- [x] Complete verification in `test_system.py` step 9.
+
+
 
 

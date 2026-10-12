@@ -145,6 +145,14 @@ async def test_event_pipeline_and_ai():
     assert len(cascading_alerts) > 0, "Expected downstream crew timeouts on rotation CP-101!"
     print(f"  [OK] FAA Part 117 Crew Pairing engine caught {len(cascading_alerts)} cascading timeout violations for rotation!")
 
+    # 9. Aircraft Fleet Assignment & Tail-Swap Verification
+    from app.engine.fleet_engine import fleet_engine
+    swap = fleet_engine.evaluate_tail_swap("AA100", "JFK", "AA")
+    assert swap is not None, "Expected operational tail-swap to execute at JFK hub!"
+    assert swap["action"] == "TAIL_SWAP_EXECUTED"
+    print(f"  [OK] Aircraft Tail-Swap executed ({swap['original_tail']} -> {swap['assigned_spare_tail']}) at {swap['hub']}!")
+
+
 
 
 
