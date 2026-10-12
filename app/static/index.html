@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirOps Flight Disruption & Autonomous Re-Accommodation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+    <!-- Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/60 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <i class="fa-solid fa-plane-arrival text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                        AirOps Re-Accommodation
+                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">GSD Engine</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Event-Driven Telemetry • NetworkX Constrained Graph • AI Concierge</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 px-3 py-1.5 rounded-full">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="broker-status">Broker: Active</span>
+                </div>
+                <a href="/docs" target="_blank" class="text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg transition">
+                    <i class="fa-solid fa-book mr-1.5"></i>Swagger Docs
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Metrics Ribbon -->
+    <div class="max-w-7xl mx-auto px-6 py-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass p-4 rounded-xl">
+                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Active Flights</div>
+                <div id="metric-flights" class="text-2xl font-bold text-white">--</div>
+                <div class="text-[11px] text-slate-500 mt-1">Multi-hub schedule</div>
+            </div>
+            <div class="glass p-4 rounded-xl">
+                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Simulated PNRs</div>
+                <div id="metric-pnrs" class="text-2xl font-bold text-blue-400">--</div>
+                <div class="text-[11px] text-slate-500 mt-1">6-char authentic records</div>
+            </div>
+            <div class="glass p-4 rounded-xl">
+                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Disrupted & Solved</div>
+                <div id="metric-solved" class="text-2xl font-bold text-emerald-400">0</div>
+                <div class="text-[11px] text-slate-500 mt-1">NetworkX graph solved</div>
+            </div>
+            <div class="glass p-4 rounded-xl">
+                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Avg Graph Solve Latency</div>
+                <div id="metric-latency" class="text-2xl font-bold text-amber-400">0.0 ms</div>
+                <div class="text-[11px] text-slate-500 mt-1">4-hour window search</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <main class="max-w-7xl mx-auto px-6 pb-12 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Column: Operations Control & Flights (7 Cols) -->
+        <section class="lg:col-span-7 space-y-6">
+            <!-- Disruption Trigger Console -->
+            <div class="glass p-6 rounded-2xl">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                            Flight Disruption Trigger (GDS Telemetry)
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Emit flight cancellation webhooks into Kafka/RabbitMQ pipeline</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Flight Number</label>
+                        <select id="select-flight" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Disruption Event</label>
+                        <select id="select-event" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <option value="CANCELLATION">CANCELLATION (Ground Flight)</option>
+                            <option value="WEATHER_DELAY">WEATHER DELAY (+2 Hours)</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="triggerDisruption()" id="btn-trigger" class="w-full bg-red-600 hover:bg-red-500 text-white font-medium py-2 px-4 rounded-lg text-sm transition shadow-lg shadow-red-600/30 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bolt"></i> Trigger Disruption
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Status alert box -->
+                <div id="trigger-status" class="mt-4 hidden p-3 rounded-xl text-xs flex items-center justify-between bg-slate-900/80 border border-slate-700">
+                    <span id="trigger-msg"></span>
+                    <button onclick="dismissTriggerAlert()" class="text-slate-400 hover:text-white">&times;</button>
+                </div>
+            </div>
+
+            <!-- Live Flight Schedule Table -->
+            <div class="glass p-6 rounded-2xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-blue-400"></i>
+                        Active Schedule & Affected PNRs
+                    </h2>
+                    <button onclick="loadFlights()" class="text-xs text-blue-400 hover:text-blue-300">
+                        <i class="fa-solid fa-arrows-rotate mr-1"></i>Refresh
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto max-h-96 custom-scrollbar">
+                    <table class="w-full text-left text-xs">
+                        <thead class="text-slate-400 uppercase bg-slate-900/80 border-b border-slate-800 sticky top-0">
+                            <tr>
+                                <th class="p-2.5">Flight</th>
+                                <th class="p-2.5">Route</th>
+                                <th class="p-2.5">Departure</th>
+                                <th class="p-2.5">Status</th>
+                                <th class="p-2.5">Sample PNR</th>
+                                <th class="p-2.5">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="flights-table-body" class="divide-y divide-slate-800/60 text-slate-300">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Passenger AI Concierge (5 Cols) -->
+        <section class="lg:col-span-5 space-y-6">
+            <div class="glass p-6 rounded-2xl flex flex-col h-[650px]">
+                <div class="border-b border-slate-800 pb-4 mb-4 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-robot text-indigo-400"></i>
+                            Passenger AI Concierge
+                        </h2>
+                        <p class="text-xs text-slate-400">Autonomous Re-Ticketing & Inquiry Chatbot</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input id="input-pnr" type="text" placeholder="PNR (e.g. EK7P9X)" class="uppercase bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 w-28 text-center font-mono">
+                        <button onclick="lookupCurrentPNR()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition">
+                            Load
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat history box -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar text-xs">
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-slate-300">
+                        <p class="font-semibold text-indigo-400 mb-1 flex items-center gap-1.5">
+                            <i class="fa-solid fa-sparkles"></i> AirOps Virtual Assistant
+                        </p>
+                        Welcome! Enter any disrupted passenger PNR above, or select one from the flight table.
+                        Ask questions like:
+                        <ul class="list-disc list-inside mt-1.5 text-slate-400 space-y-1">
+                            <li><span class="text-slate-300 font-mono">"What happened to my flight?"</span></li>
+                            <li><span class="text-slate-300 font-mono">"Can you show alternative flights?"</span></li>
+                            <li><span class="text-slate-300 font-mono">"Book me on Option 1"</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Quick Action Buttons -->
+                <div class="pt-3 pb-2 flex gap-2 overflow-x-auto text-[11px]">
+                    <button onclick="sendQuickPrompt('What happened to my flight?')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 whitespace-nowrap">
+                        Check Status
+                    </button>
+                    <button onclick="sendQuickPrompt('Show me available alternative flights within 4 hours')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 whitespace-nowrap">
+                        Show Options
+                    </button>
+                    <button onclick="sendQuickPrompt('Please confirm and rebook me on Option 1')" class="bg-emerald-900/40 hover:bg-emerald-800/40 text-emerald-300 px-2.5 py-1 rounded-lg border border-emerald-800 whitespace-nowrap">
+                        Confirm Option 1
+                    </button>
+                </div>
+
+                <!-- Chat Input Form -->
+                <div class="pt-2 border-t border-slate-800">
+                    <form onsubmit="handleChatSubmit(event)" class="flex gap-2">
+                        <input id="chat-input" type="text" placeholder="Type a message or select an option..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-xs font-medium transition shadow-md shadow-indigo-600/30">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        let cachedFlights = [];
+        let currentPnr = "";
+
+        async function loadMetrics() {
+            try {
+                const res = await fetch('/api/v1/metrics');
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('metric-flights').innerText = data.total_active_flights;
+                    document.getElementById('metric-pnrs').innerText = data.total_pnrs.toLocaleString();
+                    document.getElementById('metric-solved').innerText = `${data.reaccommodated_pnrs} (${data.autonomous_resolution_rate_pct}%)`;
+                    document.getElementById('metric-latency').innerText = `${data.avg_graph_solve_time_ms} ms`;
+                }
+            } catch (err) {
+                console.error("Metrics load error", err);
+            }
+        }
+
+        async function loadFlights() {
+            try {
+                const res = await fetch('/api/v1/flights?limit=25');
+                if (res.ok) {
+                    cachedFlights = await res.json();
+                    const select = document.getElementById('select-flight');
+                    const tbody = document.getElementById('flights-table-body');
+                    select.innerHTML = '';
+                    tbody.innerHTML = '';
+
+                    cachedFlights.forEach(f => {
+                        // Populate select dropdown
+                        const opt = document.createElement('option');
+                        opt.value = f.flight_number;
+                        opt.innerText = `${f.flight_number} (${f.origin} -> ${f.destination}) [${f.status}]`;
+                        select.appendChild(opt);
+
+                        // Populate table
+                        const tr = document.createElement('tr');
+                        const statusBadge = f.status === 'CANCELLED' 
+                            ? '<span class="px-2 py-0.5 rounded text-[10px] bg-red-950/80 text-red-400 border border-red-800">CANCELLED</span>'
+                            : (f.status === 'DELAYED' 
+                                ? '<span class="px-2 py-0.5 rounded text-[10px] bg-amber-950/80 text-amber-400 border border-amber-800">DELAYED</span>'
+                                : '<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-950/80 text-emerald-400 border border-emerald-800">ON TIME</span>');
+
+                        const depTime = f.departure_time.substring(11, 16);
+                        const samplePnr = f.sample_pnr || 'N/A';
+
+                        tr.innerHTML = `
+                            <td class="p-2.5 font-bold font-mono text-white">${f.flight_number}</td>
+                            <td class="p-2.5 font-semibold">${f.origin} &rarr; ${f.destination}</td>
+                            <td class="p-2.5 text-slate-400">${depTime} UTC</td>
+                            <td class="p-2.5">${statusBadge}</td>
+                            <td class="p-2.5 font-mono text-indigo-400 cursor-pointer hover:underline" onclick="selectPnr('${samplePnr}')">${samplePnr}</td>
+                            <td class="p-2.5">
+                                <button onclick="quickCancel('${f.flight_number}')" class="text-[11px] text-red-400 hover:text-red-300">
+                                    Disrupt
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch (err) {
+                console.error("Flights load error", err);
+            }
+        }
+
+        async function triggerDisruption() {
+            const flight = document.getElementById('select-flight').value;
+            const eventType = document.getElementById('select-event').value;
+            const btn = document.getElementById('btn-trigger');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                const res = await fetch('/api/v1/gds/simulate-disruption', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        event_id: 'EVT-' + Math.random().toString(36).substring(2, 9).toUpperCase(),
+                        disruption_type: eventType,
+                        flight_number: flight,
+                        carrier: flight.substring(0, 2),
+                        origin: 'JFK',
+                        destination: 'LAX',
+                        scheduled_departure: new Date().toISOString(),
+                        reason: 'Simulated operational mechanical disruption'
+                    })
+                });
+
+                const data = await res.json();
+                const statusBox = document.getElementById('trigger-status');
+                const statusMsg = document.getElementById('trigger-msg');
+                statusBox.classList.remove('hidden');
+                statusBox.className = 'mt-4 p-3 rounded-xl text-xs flex items-center justify-between bg-emerald-950/60 border border-emerald-800 text-emerald-300';
+                statusMsg.innerHTML = `<strong>Disruption Event Published!</strong> ${data.message} (${data.affected_pnrs} PNRs re-routed in ${data.solve_time_ms} ms).`;
+
+                await loadFlights();
+                await loadMetrics();
+            } catch (err) {
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Trigger Disruption';
+            }
+        }
+
+        function quickCancel(flightNum) {
+            document.getElementById('select-flight').value = flightNum;
+            triggerDisruption();
+        }
+
+        function dismissTriggerAlert() {
+            document.getElementById('trigger-status').classList.add('hidden');
+        }
+
+        function selectPnr(pnr) {
+            if (pnr && pnr !== 'N/A') {
+                document.getElementById('input-pnr').value = pnr;
+                lookupCurrentPNR();
+            }
+        }
+
+        async function lookupCurrentPNR() {
+            const pnrInput = document.getElementById('input-pnr').value.trim().toUpperCase();
+            if (!pnrInput) return;
+            currentPnr = pnrInput;
+
+            try {
+                const res = await fetch(`/api/v1/pnr/${pnrInput}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    appendChatMessage('System', `Loaded PNR <strong>${data.pnr_id}</strong> (${data.passenger_name}) on flight <strong>${data.original_flight_number}</strong> (${data.origin} &rarr; ${data.destination}). Status: <strong>${data.status}</strong>`, 'system');
+                    // Automatically trigger assistant inquiry
+                    sendAssistantMessage(currentPnr, "Status check");
+                } else {
+                    appendChatMessage('System', `PNR <strong>${pnrInput}</strong> not found in GDS database.`, 'system');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function sendQuickPrompt(promptText) {
+            document.getElementById('chat-input').value = promptText;
+            handleChatSubmit(new Event('submit'));
+        }
+
+        async function handleChatSubmit(e) {
+            if (e) e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            let pnr = document.getElementById('input-pnr').value.trim().toUpperCase();
+            if (!pnr) {
+                // Pick sample from first row
+                const sampleCell = document.querySelector('#flights-table-body tr td:nth-child(5)');
+                if (sampleCell) {
+                    pnr = sampleCell.innerText.trim();
+                    document.getElementById('input-pnr').value = pnr;
+                } else {
+                    pnr = "EK7P9X";
+                }
+            }
+
+            appendChatMessage('Passenger', message, 'user');
+            input.value = '';
+            await sendAssistantMessage(pnr, message);
+        }
+
+        async function sendAssistantMessage(pnr, text) {
+            try {
+                const res = await fetch('/api/v1/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pnr_id: pnr, message: text })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    appendChatMessage('AirOps AI', data.reply, 'assistant');
+                    loadMetrics();
+                    loadFlights();
+                }
+            } catch (err) {
+                appendChatMessage('AirOps AI', 'Sorry, an error occurred communicating with the concierge service.', 'assistant');
+            }
+        }
+
+        function appendChatMessage(sender, text, type) {
+            const container = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            
+            if (type === 'user') {
+                div.className = 'bg-blue-600/30 border border-blue-500/40 p-3 rounded-xl ml-6 text-slate-200';
+                div.innerHTML = `<p class="font-semibold text-blue-300 mb-0.5 text-[11px]">${sender}</p><p class="whitespace-pre-line">${text}</p>`;
+            } else if (type === 'system') {
+                div.className = 'bg-slate-900 border border-slate-800 p-2.5 rounded-lg text-slate-400 text-[11px]';
+                div.innerHTML = text;
+            } else {
+                div.className = 'bg-slate-900/90 border border-indigo-500/30 p-3 rounded-xl mr-6 text-slate-200';
+                div.innerHTML = `<p class="font-semibold text-indigo-400 mb-0.5 text-[11px] flex items-center gap-1"><i class="fa-solid fa-sparkles"></i> ${sender}</p><div class="whitespace-pre-line">${text.replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')}</div>`;
+            }
+
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadFlights();
+            await loadMetrics();
+            setInterval(loadMetrics, 5000);
+        });
+    </script>
+</body>
+</html>

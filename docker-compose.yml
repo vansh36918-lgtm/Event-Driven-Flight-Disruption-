@@ -1,0 +1,84 @@
+version: "3.8"
+
+services:
+  # RabbitMQ Message Broker (Telemetry & Disruption Exchange)
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: airops_rabbitmq
+    ports:
+      - "5672:5672"   # AMQP protocol
+      - "15672:15672" # RabbitMQ Management Web UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - airops_net
+
+  # PostgreSQL Database (Flight Schedules & PNR Master State)
+  postgres:
+    image: postgres:16-alpine
+    container_name: airops_postgres
+    environment:
+      POSTGRES_USER: airops
+      POSTGRES_PASSWORD: airops_secure_password
+      POSTGRES_DB: airops_gds
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airops -d airops_gds"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - airops_net
+
+  # FastAPI Web Application & Interactive UI Dashboard
+  api:
+    build: .
+    container_name: airops_api
+    command: python run.py
+    ports:
+      - "8000:8000"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=airops_gds
+      - POSTGRES_USER=airops
+      - POSTGRES_PASSWORD=airops_secure_password
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - airops_net
+
+  # Asynchronous Re-Accommodation Worker
+  worker:
+    build: .
+    container_name: airops_worker
+    command: python -m app.worker.reaccommodation_worker
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - airops_net
+
+volumes:
+  pgdata:
+
+networks:
+  airops_net:
+    driver: bridge

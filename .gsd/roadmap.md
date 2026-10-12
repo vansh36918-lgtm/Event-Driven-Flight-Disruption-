@@ -1,0 +1,31 @@
+# ROADMAP.md — GSD Execution Milestones
+
+## Phase 1: Core Domain & GDS Inventory Foundation [COMPLETED]
+- [x] Pydantic models for Flights, PNRs, Disruption Events, and Itineraries.
+- [x] Simulated GDS (Amadeus/Sabre style) with 10+ airports and multi-carrier flight networks.
+- [x] Synthetic PNR generator (generating realistic 6-char PNRs across simulated passenger pools).
+
+## Phase 2: NetworkX Constrained Route Engine [COMPLETED]
+- [x] Directed graph model of scheduled flights (`nx.DiGraph`).
+- [x] Constrained search engine respecting 4-hour departure windows.
+- [x] Layover feasibility filters (minimum 45 min, maximum 4 hours).
+- [x] Seat availability deduction and candidate route ranking.
+
+## Phase 3: Dual-Mode Event Pipeline (RabbitMQ + Async Bus) [COMPLETED]
+- [x] Unified event broker interface.
+- [x] Native async in-memory priority queue for zero-config immediate execution.
+- [x] RabbitMQ AMQP connector via `pika` with automatic reconnection & graceful fallback.
+- [x] Asynchronous disruption consumer dispatching batch re-accommodation jobs.
+
+## Phase 4: Passenger AI Concierge & Chatbot [COMPLETED]
+- [x] Context-aware AI Assistant module with tool-calling capabilities.
+- [x] Re-accommodation scenario explainer and natural language option selector.
+- [x] Zero-config deterministic fallback reasoning (operates with or without LLM API keys).
+
+## Phase 5: FastAPI Service & Interactive Web Dashboard [COMPLETED]
+- [x] RESTful API endpoints for GDS telemetry, PNR lookup, re-booking, and AI chat.
+- [x] Integrated real-time web dashboard (dark mode, live flight monitor, one-click disruption trigger, live AI chat).
+- [x] Verification test suite (`test_system.py`) and zero-IDE runner (`run.py`).
+
+## Phase 6: Cloud Containerization [READY]
+- [x] Dockerfile & `docker-compose.yml` for multi-container deployments (PostgreSQL, RabbitMQ, Celery, FastAPI).

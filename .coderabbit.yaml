@@ -1,0 +1,47 @@
+# .coderabbit.yaml — Code Review Configuration
+# Event-Driven Flight Disruption & Autonomous Re-Accommodation Platform
+version: 2
+language: "en-US"
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "main"
+      - "master"
+      - "dev"
+
+  path_filters:
+    - "!node_modules/**"
+    - "!__pycache__/**"
+    - "!*.pyc"
+    - "!.git/**"
+    - "!*.egg-info/**"
+
+  instructions: |
+    You are reviewing the "Event-Driven Flight Disruption & Autonomous Re-Accommodation Platform".
+    Key architectural & domain validation criteria:
+    1. GDS & TravelTech Domain Logic:
+       - Validate 6-character alphanumeric PNR structure (e.g. 'EK7P9X', 'AA4K9L').
+       - Validate IATA airport code conventions (3 uppercase letters like JFK, ORD, LAX, DFW).
+       - Ensure fare class preservation (Y, W, J, F) during re-accommodation proposals.
+    2. Event-Driven Concurrency & Pipeline Resiliency:
+       - Verify event broker reliability: graceful fallback between RabbitMQ/Kafka and local async queue.
+       - Ensure idempotency in disruption event processing (avoid duplicate passenger re-ticketing).
+    3. NetworkX Constrained Route Engine:
+       - Verify strict enforcement of the 4-hour departure window rule (flights within [T_orig, T_orig + 4h]).
+       - Ensure valid transfer windows (layovers strictly between 45 min and 240 min).
+       - Prevent cyclic flight paths and check seat capacity constraints.
+    4. AI Concierge & Safety:
+       - Ensure LLM assistant operates safely with deterministic tool executions for PNR modifications.
+       - Guarantee zero-credential fallback capability if external LLM API keys are not supplied.
+
+chat:
+  auto_reply: true
