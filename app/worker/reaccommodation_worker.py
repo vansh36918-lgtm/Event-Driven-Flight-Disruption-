@@ -11,6 +11,7 @@ from app.engine.gds_service import gds_service
 from app.engine.graph_engine import reaccommodation_engine
 from app.engine.crew_engine import crew_engine
 from app.engine.fleet_engine import fleet_engine
+from app.engine.slot_engine import slot_engine
 from app.models.schemas import FlightStatus
 
 logger = logging.getLogger("Worker")
@@ -24,6 +25,7 @@ class ReaccommodationWorker:
         self.telemetry_logs: List[Dict[str, Any]] = []
         self.crew_alerts: List[Dict[str, Any]] = []
         self.tail_swaps: List[Dict[str, Any]] = []
+        self.slot_swaps: List[Dict[str, Any]] = []
 
     async def handle_disruption_event(self, event_data: Dict[str, Any]):
         """Callback invoked when a flight disruption event is published on the bus."""
@@ -93,6 +95,14 @@ class ReaccommodationWorker:
             self.tail_swaps.insert(0, swap)
             if len(self.tail_swaps) > 20:
                 self.tail_swaps.pop()
+
+        # 4. Evaluate FAA Collaborative Decision Making (CDM) slot compression at constrained hubs
+        slot_swap = slot_engine.optimize_slot_substitution(flight_num, f"{flight.carrier}Feeder99", airport=dest)
+        if slot_swap:
+            logger.info(f"ATC CDM slot compression executed for {flight_num} into {dest}: slot {slot_swap['protected_slot']}")
+            self.slot_swaps.insert(0, slot_swap)
+            if len(self.slot_swaps) > 20:
+                self.slot_swaps.pop()
 
         elapsed_ms = (time.perf_counter() - start_time) * 1000
         self.last_solve_time_ms = round(elapsed_ms, 2)

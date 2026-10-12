@@ -23,6 +23,7 @@ from app.engine.gds_service import gds_service
 from app.engine.graph_engine import reaccommodation_engine
 from app.engine.compensation_engine import compensation_engine, AIRPORT_COORDINATES
 from app.engine.ndc_service import ndc_service
+from app.engine.slot_engine import slot_engine
 from app.bus.event_broker import event_broker
 from app.worker.reaccommodation_worker import reaccommodation_worker
 from app.ai.assistant import ai_assistant
@@ -232,6 +233,22 @@ async def get_fleet_tail_swaps():
     Returns operational aircraft tail-swaps executed to protect turnaround rotations.
     """
     return reaccommodation_worker.tail_swaps
+
+
+@app.get("/api/v1/atc/ground-delay-programs")
+async def get_atc_ground_delay_programs():
+    """
+    Returns active FAA Ground Delay Programs (GDP) and Airport Acceptance Rate (AAR) restrictions.
+    """
+    return slot_engine.get_active_gdps()
+
+
+@app.get("/api/v1/atc/slot-swaps")
+async def get_atc_slot_swaps():
+    """
+    Returns FAA Collaborative Decision Making (CDM) slot compression/substitution transactions.
+    """
+    return reaccommodation_worker.slot_swaps
 
 
 @app.get("/api/v1/metrics", response_model=SystemMetrics)

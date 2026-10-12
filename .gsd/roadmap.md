@@ -61,6 +61,18 @@
 - [x] Real-time tail-swap history logging exposed via `GET /api/v1/fleet/tail-swaps`.
 - [x] Complete verification in `test_system.py` step 9.
 
+## Phase 12: FAA ATC Ground Delay Program (GDP) & CDM Slot Substitution [COMPLETED]
+- [x] Modeling of FAA Airport Acceptance Rate (AAR) and Expect Departure Clearance Times (EDCT).
+- [x] Collaborative Decision Making (CDM) slot swap engine prioritizing mainline/high-PVS flights over feeder flights.
+- [x] REST endpoints: `GET /api/v1/atc/ground-delay-programs` and `GET /api/v1/atc/slot-swaps`.
+- [x] Integrated into disruption consumer pipeline and verified via `test_system.py` step 10.
+
+## Phase 13: Multi-Hub Squall Line Storm Chaos Simulation & Alliance Interline Matrix [IN PROGRESS]
+- [ ] Multi-hub simultaneous squall line convective storm chaos generator (ORD, ATL, JFK, DFW).
+- [ ] Global Airline Alliance Interline Matrix (Star Alliance, SkyTeam, OneWorld interline e-ticketing agreements).
+- [ ] UI High-Density ATC Slot & CDM monitoring panel in operations radar.
+
+
 
 
 

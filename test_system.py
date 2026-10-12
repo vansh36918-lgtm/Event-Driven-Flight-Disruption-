@@ -152,6 +152,16 @@ async def test_event_pipeline_and_ai():
     assert swap["action"] == "TAIL_SWAP_EXECUTED"
     print(f"  [OK] Aircraft Tail-Swap executed ({swap['original_tail']} -> {swap['assigned_spare_tail']}) at {swap['hub']}!")
 
+    # 10. FAA Ground Delay Program & CDM Slot Substitution Verification
+    from app.engine.slot_engine import slot_engine
+    active_gdps = slot_engine.get_active_gdps()
+    assert len(active_gdps) > 0, "Expected active GDP at ORD!"
+    slot_swap = slot_engine.optimize_slot_substitution("AA100", "AAFeeder99", "ORD")
+    assert slot_swap is not None, "Expected CDM slot swap optimization!"
+    assert slot_swap["action"] == "CDM_SLOT_SWAP_CONFIRMED"
+    print(f"  [OK] FAA ATC Ground Delay Program & CDM Slot Swap verified ({slot_swap['protected_slot']} saved {slot_swap['pax_delay_minutes_saved']}m delay)!")
+
+
 
 
 
