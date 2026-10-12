@@ -19,6 +19,7 @@ class ReaccommodationWorker:
         self.total_processed_events = 0
         self.total_reaccommodated_pnrs = 0
         self.last_solve_time_ms = 0.0
+        self.telemetry_logs: List[Dict[str, Any]] = []
 
     async def handle_disruption_event(self, event_data: Dict[str, Any]):
         """Callback invoked when a flight disruption event is published on the bus."""
@@ -65,6 +66,23 @@ class ReaccommodationWorker:
         elapsed_ms = (time.perf_counter() - start_time) * 1000
         self.last_solve_time_ms = round(elapsed_ms, 2)
         self.total_processed_events += 1
+
+        # Keep last 50 telemetry events for real-time streaming
+        log_entry = {
+            "event_id": event_data.get("event_id", f"EVT-{int(time.time()*1000)}"),
+            "timestamp": datetime.utcnow().strftime("%H:%M:%S UTC"),
+            "flight_number": flight_num,
+            "disruption_type": disruption_type,
+            "origin": origin,
+            "destination": dest,
+            "affected_count": len(affected_pnrs),
+            "latency_ms": self.last_solve_time_ms,
+            "status": "AUTO_RESOLVED",
+        }
+        self.telemetry_logs.insert(0, log_entry)
+        if len(self.telemetry_logs) > 50:
+            self.telemetry_logs.pop()
+
         logger.info(
             f"Autonomous Re-Accommodation completed for {len(affected_pnrs)} PNRs in {self.last_solve_time_ms}ms. "
             f"Found {len(routes)} viable alternative routes."

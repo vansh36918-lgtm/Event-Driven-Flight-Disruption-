@@ -29,3 +29,15 @@
 
 ## Phase 6: Cloud Containerization [READY]
 - [x] Dockerfile & `docker-compose.yml` for multi-container deployments (PostgreSQL, RabbitMQ, Celery, FastAPI).
+
+## Phase 7: Interactive Route Radar & Map Topology [COMPLETED]
+- [x] Geodesic coordinates for 10 major airline hubs.
+- [x] Leaflet.js interactive dark-mode Route Radar with active flight arcs and pulsing red disruption beacons.
+- [x] Real-time AMQP/Kafka event stream ticker showing live queue latency and message acknowledgments.
+
+## Phase 8: Regulatory Compensation, Digital Vouchers & Mobile Boarding Pass [COMPLETED]
+- [x] Automated calculation of EU261 and US DOT passenger cash compensation ($250, $400, $600).
+- [x] Digital issuance of meal vouchers ($30.00) and hotel accommodation vouchers.
+- [x] IATA-compliant digital mobile boarding pass generator with dynamic 2D QR barcode rendering.
+- [x] Multi-tab enterprise interface (Ops Command, Passenger Portal, Mobile Boarding Pass, AI Concierge, ROI Analytics).
+

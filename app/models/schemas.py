@@ -105,3 +105,26 @@ class SystemMetrics(BaseModel):
     reaccommodated_pnrs: int
     autonomous_resolution_rate_pct: float
     avg_graph_solve_time_ms: float
+    total_compensation_liability_usd: float = 0.0
+    manual_hours_saved: float = 0.0
+
+
+class AirportInfo(BaseModel):
+    code: str
+    name: str
+    city: str
+    lat: float
+    lng: float
+
+
+class TelemetryEventLog(BaseModel):
+    event_id: str
+    timestamp: str
+    flight_number: str
+    disruption_type: str
+    origin: str
+    destination: str
+    affected_count: int
+    latency_ms: float
+    status: str
+

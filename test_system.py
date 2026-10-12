@@ -108,6 +108,20 @@ async def test_event_pipeline_and_ai():
     print(f"  AI Re-Ticketing Response:\n    {response_rebook.reply[:120]}...")
     print(f"  [OK] PNR {sample_pnr} successfully re-accommodated via AI concierge!")
 
+    # 5. Compensation & Boarding Pass Verification
+    from app.engine.compensation_engine import compensation_engine
+    pnr_final = gds_service.get_pnr(sample_pnr)
+    comp = compensation_engine.calculate_entitlements(pnr_final)
+    assert comp["cash_compensation_usd"] >= 250, "Expected minimum $250 compensation entitlement!"
+    assert comp["vouchers"]["meal_voucher_code"].startswith("VCH-MEAL"), "Invalid meal voucher code!"
+    
+    bp = compensation_engine.generate_boarding_pass(pnr_final)
+    assert bp["pnr_id"] == sample_pnr
+    assert len(bp["seat"]) in [2, 3]  # e.g. 12B or 4A
+    assert len(bp["qr_data"]) > 10
+    print(f"  [OK] EU261/DOT Compensation ({comp['haul_tier']} - ${comp['cash_compensation_usd']}) & Boarding Pass verified!")
+
+
 
 if __name__ == "__main__":
     print("=" * 60)
