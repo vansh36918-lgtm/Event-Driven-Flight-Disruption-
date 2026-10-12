@@ -174,6 +174,16 @@ async def test_event_pipeline_and_ai():
     assert endorsement["protocol"] == "RULE_240_INVOLUNTARY"
     print(f"  [OK] Airline Alliance Matrix & IATA Rule 240 Involuntary Endorsement verified ({endorsement['protocol']})!")
 
+    # 12. IATA IRROPS Incident Post-Mortem & Regulatory Audit Verification
+    from app.engine.audit_engine import audit_engine
+    report = audit_engine.generate_incident_post_mortem()
+    assert "incident_report_id" in report, "Missing incident_report_id in audit report!"
+    assert "financial_impact_usd" in report, "Missing financial_impact_usd in audit report!"
+    assert report["financial_impact_usd"]["labor_cost_savings_usd"] >= 0
+    assert "pax_segmentation" in report
+    print(f"  [OK] IATA IRROPS Incident Post-Mortem Audit Report generated ({report['incident_report_id']}) with financial ROI!")
+
+
 
 
 

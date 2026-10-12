@@ -25,6 +25,7 @@ from app.engine.compensation_engine import compensation_engine, AIRPORT_COORDINA
 from app.engine.ndc_service import ndc_service
 from app.engine.slot_engine import slot_engine
 from app.engine.alliance_engine import alliance_engine
+from app.engine.audit_engine import audit_engine
 from app.bus.event_broker import event_broker
 from app.worker.reaccommodation_worker import reaccommodation_worker
 from app.ai.assistant import ai_assistant
@@ -287,7 +288,18 @@ async def get_atc_slot_swaps():
     return reaccommodation_worker.slot_swaps
 
 
+@app.get("/api/v1/audit/incident-report")
+async def get_iata_incident_audit_report():
+    """
+    Generates official IATA IRROPS Incident Post-Mortem & Regulatory Audit Record.
+    Includes passenger loyalty segmentation, FAA FAR Part 117 breaches, CDM slot swaps,
+    and financial liabilities under EU261 / US DOT regulations.
+    """
+    return audit_engine.generate_incident_post_mortem()
+
+
 @app.get("/api/v1/metrics", response_model=SystemMetrics)
+
 async def get_metrics():
     """Returns platform real-time operational metrics, ROI, and compensation liability."""
     total_flights = len(gds_service.flights)

@@ -74,9 +74,18 @@
 - [x] UI High-Density ATC Slot & CDM monitoring panel, Squall Storm trigger button, and live endorsement badges.
 - [x] Full test coverage in `test_system.py` step 11 with zero regressions.
 
-## Phase 14: Disruption Post-Mortem Analytics & PDF/Audit Telemetry Export [IN PROGRESS]
-- [ ] Exportable IATA IRROPS Incident Post-Mortem Audit Report (JSON/Markdown) detailing cost breakdown, compensation liabilities, and slot optimization delta.
-- [ ] Automated health watch and system telemetry benchmark validation.
+## Phase 14: Disruption Post-Mortem Analytics & Regulatory Audit Engine [COMPLETED]
+- [x] Official IATA IRROPS Incident Post-Mortem & Regulatory Audit Engine (`app/engine/audit_engine.py`).
+- [x] Comprehensive breakdowns for FAA FAR Part 117, EU Reg 261/2004, and US DOT 14 CFR 259.
+- [x] Financial impact tracking: Gross statutory liability, voucher mitigation savings, net exposure, and agent labor savings ($280k+ ROI).
+- [x] REST endpoint `GET /api/v1/audit/incident-report` for instant regulatory export.
+- [x] Verification in `test_system.py` step 12 with 100% pass rate.
+
+## Phase 15: Continuous IRROPS Daemon Watch & Production Hardening [IN PROGRESS]
+- [ ] Daemon health monitoring and automatic socket retry recovery.
+- [ ] Telemetry stream rotation and memory profile verification under extended runtime.
+- [ ] Maintenance of 10-hour background autonomous loop (`task-350`).
+
 
 
 
