@@ -1,13 +1,10 @@
 """
-AI Passenger Re-Accommodation Concierge.
-Acts as an autonomous customer service agent capable of checking PNR status,
-explaining flight disruption causes, comparing Graph Engine routing options,
-and automatically re-ticketing passengers.
-Features full zero-configuration deterministic intelligence with optional LLM API fallback.
+Automated Airline Operations Dispatch & Re-Ticketing Console.
+Provides concise, high-density terminal-grade flight status, disruption mitigation,
+and autonomous re-accommodation execution following standard IATA/GDS communication formats.
 """
 import os
 import re
-import json
 from typing import Dict, Any, Optional
 from app.engine.gds_service import gds_service
 from app.models.schemas import ChatMessageResponse, PassengerRecord
@@ -23,32 +20,43 @@ class AIAssistant:
         segments = opt.get("segments", [])
         total_dur = opt.get("total_duration_minutes", 0)
         delay_min = opt.get("departure_delay_minutes", 0)
-        dur_str = f"{total_dur // 60}h {total_dur % 60}m"
+        dur_str = f"{total_dur // 60}h {total_dur % 60:02d}m"
 
         if route_type == "DIRECT" and segments:
             seg = segments[0]
-            dep = seg.get("departure_time", "")[:16].replace("T", " ")
-            return f"**Option {index} (Direct)**: Flight {seg.get('flight_number')} departing at {dep} (+{delay_min}m delay, total flight time: {dur_str})."
+            dep = seg.get("departure_time", "")[11:16]
+            arr = seg.get("arrival_time", "")[11:16]
+            return (
+                f"[{index}] DIRECT {seg.get('flight_number')} | "
+                f"DEP {dep} UTC -> ARR {arr} UTC | "
+                f"DELAY +{delay_min}m | FLIGHT TIME {dur_str}"
+            )
         else:
             legs = " -> ".join([s.get("flight_number", "") for s in segments])
-            via = ", ".join(opt.get("layover_airports", []))
-            return f"**Option {index} (Connecting via {via})**: {legs} (total travel time: {dur_str}, departs +{delay_min}m later)."
+            via = "/".join(opt.get("layover_airports", []))
+            dep = opt.get("departure_time", "")[11:16]
+            arr = opt.get("arrival_time", "")[11:16]
+            return (
+                f"[{index}] 1-STOP {legs} (VIA {via}) | "
+                f"DEP {dep} UTC -> ARR {arr} UTC | "
+                f"DELAY +{delay_min}m | TOTAL TRAVEL {dur_str}"
+            )
 
     async def chat(self, pnr_id: str, user_message: str) -> ChatMessageResponse:
-        """Processes passenger messages with PNR context and generates empathetic, actionable responses."""
+        """Processes dispatch and passenger requests with clean, concise airline operational status."""
         pnr: Optional[PassengerRecord] = gds_service.get_pnr(pnr_id)
         if not pnr:
             return ChatMessageResponse(
-                reply=f"I couldn't locate PNR `{pnr_id}` in our GDS records. Please double-check your 6-character booking reference.",
+                reply=f"ERR-404: PNR record '{pnr_id}' not found in active GDS partition.",
                 pnr_id=pnr_id,
                 detected_intent="UNKNOWN_PNR",
             )
 
         msg_lower = user_message.lower().strip()
 
-        # Intent 1: Check if passenger is confirming an option
-        option_match = re.search(r"(?:option|choice|pick|select|rebook|confirm)\s*(?:#|number)?\s*([1-3])", msg_lower)
-        if not option_match and ("yes" in msg_lower or "first" in msg_lower or "earliest" in msg_lower):
+        # Intent 1: Lock in / Confirm Re-ticketing
+        option_match = re.search(r"(?:option|choice|pick|select|rebook|confirm|opt)\s*(?:#|number)?\s*([1-3])", msg_lower)
+        if not option_match and ("yes" in msg_lower or "first" in msg_lower or "earliest" in msg_lower or "confirm" in msg_lower):
             if pnr.reaccommodation_options and pnr.status == "DISRUPTED":
                 option_match = re.search(r"(\d)", "1")
 
@@ -60,17 +68,19 @@ class AIAssistant:
                 updated_pnr = gds_service.confirm_pnr_rebook(pnr_id, opt_id)
 
                 segments = chosen_opt.get("segments", [])
-                flight_summary = " / ".join([s.get("flight_number") for s in segments])
+                flight_summary = " + ".join([s.get("flight_number") for s in segments])
+                dep_utc = chosen_opt.get("departure_time", "")[11:16]
+                arr_utc = chosen_opt.get("arrival_time", "")[11:16]
 
                 reply = (
                     f"**[RE-ACCOMMODATION CONFIRMED]**\n\n"
-                    f"Hello {pnr.passenger_name}, your booking `{pnr.pnr_id}` has been successfully re-ticketed onto "
-                    f"**{flight_summary}**.\n\n"
-                    f"- **Origin/Destination**: {pnr.origin} -> {pnr.destination}\n"
-                    f"- **Departure Time**: {chosen_opt.get('departure_time')[:16].replace('T', ' ')}\n"
-                    f"- **Status**: Confirmed in Fare Class {pnr.fare_class.value}\n\n"
-                    f"Your updated boarding pass and baggage tags have been dispatched to `{pnr.email}`. "
-                    f"Have a pleasant and safe journey!"
+                    f"RECORD LOCATOR: `{pnr.pnr_id}`\n"
+                    f"PASSENGER: {pnr.passenger_name}\n"
+                    f"NEW FLIGHT: **{flight_summary}** ({pnr.origin} -> {pnr.destination})\n"
+                    f"SCHEDULE: DEP {dep_utc} UTC | ARR {arr_utc} UTC\n"
+                    f"CLASS: {pnr.fare_class.value} (Confirmed) | STATUS: TICKETED\n"
+                    f"BAGGAGE: Auto-rerouted to destination carousel\n"
+                    f"E-TICKET: Dispatched to `{pnr.email}`"
                 )
                 return ChatMessageResponse(
                     reply=reply,
@@ -80,24 +90,22 @@ class AIAssistant:
                     suggested_options=None,
                 )
 
-        # Intent 2: Inquiring about status or asking for alternatives
+        # Intent 2: Inquiring about disruption / options
         if pnr.status == "DISRUPTED":
-            options_text = ""
             if pnr.reaccommodation_options:
-                options_text = "\n".join(
-                    [self._format_option_summary(opt, i + 1) for i, opt in enumerate(pnr.reaccommodation_options)]
-                )
-                cta = "\n\nReply with **'Option 1'**, **'Option 2'**, or **'Earliest'** to automatically lock in your new seat."
+                lines = [self._format_option_summary(opt, i + 1) for i, opt in enumerate(pnr.reaccommodation_options)]
+                options_block = "\n".join(lines)
+                cta = "\n\nReply with **'Option 1'**, **'Option 2'**, or **'Confirm'** to issue new boarding documents."
             else:
-                options_text = "Our autonomous engine is currently searching alternative flights within our partner network."
-                cta = " Please check back in a moment or speak with an agent at the gate."
+                options_block = "Constrained graph solver calculating alternative routing vectors."
+                cta = " Stand by for automatic queue dispatch."
 
             reply = (
-                f"Hello {pnr.passenger_name}. I apologize for the inconvenience: your scheduled flight "
-                f"**{pnr.original_flight_number}** from **{pnr.origin}** to **{pnr.destination}** has experienced an operational disruption.\n\n"
-                f"Our Autonomous Re-Accommodation Engine has identified the following alternative route(s) "
-                f"within your 4-hour travel window:\n\n"
-                f"{options_text}"
+                f"**DISRUPTION NOTICE — FLIGHT {pnr.original_flight_number}**\n"
+                f"ROUTING: {pnr.origin} -> {pnr.destination} | PASSENGER: {pnr.passenger_name} (`{pnr.pnr_id}`)\n"
+                f"STATUS: CANCELLED (IATA Code 89 - Operational Equipment)\n\n"
+                f"**Autonomous Alternatives (4-Hour Window):**\n"
+                f"{options_block}"
                 f"{cta}"
             )
             return ChatMessageResponse(
@@ -109,8 +117,10 @@ class AIAssistant:
 
         elif pnr.status == "RE_ACCOMMODATED":
             reply = (
-                f"Hello {pnr.passenger_name}, your booking `{pnr.pnr_id}` is confirmed and re-accommodated on route "
-                f"`{pnr.selected_option_id}`. You are all set for departure!"
+                f"**RE-TICKETED ITINERARY CONFIRMED**\n"
+                f"RECORD: `{pnr.pnr_id}` | PASSENGER: {pnr.passenger_name}\n"
+                f"ASSIGNED ROUTE: `{pnr.selected_option_id}`\n"
+                f"STATUS: CHECKED-IN / READY FOR BOARDING"
             )
             return ChatMessageResponse(
                 reply=reply,
@@ -118,11 +128,12 @@ class AIAssistant:
                 detected_intent="ALREADY_REACCOMMODATED",
             )
         else:
-            # Flight is on schedule
             reply = (
-                f"Hello {pnr.passenger_name}! Your flight **{pnr.original_flight_number}** "
-                f"from {pnr.origin} to {pnr.destination} is currently operating on schedule. "
-                f"Departure gate information will be available 2 hours prior to takeoff. Let me know if you need assistance!"
+                f"**FLIGHT STATUS NORMAL**\n"
+                f"FLIGHT: {pnr.original_flight_number} ({pnr.origin} -> {pnr.destination})\n"
+                f"RECORD: `{pnr.pnr_id}` | PASSENGER: {pnr.passenger_name}\n"
+                f"STATUS: ON TIME / SCHEDULED\n"
+                f"Baggage drop and gate check open 2h prior to departure."
             )
             return ChatMessageResponse(
                 reply=reply,

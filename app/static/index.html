@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AirOps: Event-Driven Flight Disruption & Autonomous Re-Accommodation</title>
+    <title>AirOps Dispatch & Autonomous Re-Accommodation</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -14,191 +14,160 @@
     <!-- QRCode.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        .glass { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.06); }
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        #network-map { height: 380px; width: 100%; border-radius: 1rem; z-index: 10; }
-        .leaflet-container { background: #090d16 !important; }
-        @keyframes pulse-red {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.15); }
+        :root {
+            --bg-main: #090a0f;
+            --bg-panel: #11141c;
+            --bg-panel-hover: #161a24;
+            --border-subtle: #1e2433;
+            --border-active: #2f384d;
         }
-        .pulse-marker { animation: pulse-red 1.8s infinite ease-in-out; }
+        body {
+            background-color: var(--bg-main);
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+        .panel {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem;
+        }
+        .panel-subtle {
+            background-color: #0d1017;
+            border: 1px solid var(--border-subtle);
+        }
+        .custom-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #272f42; border-radius: 2px; }
+        #network-map { height: 360px; width: 100%; border-radius: 0.5rem; }
+        .leaflet-container { background: #080a10 !important; }
     </style>
 </head>
-<body class="bg-[#070b14] text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen flex flex-col text-slate-200">
 
-    <!-- Top Navigation Header -->
-    <header class="border-b border-slate-800/80 bg-slate-950/80 sticky top-0 z-50 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <!-- Minimal Enterprise Header -->
+    <header class="border-b border-[#1e2433] bg-[#0c0e14] sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-5 h-14 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/25">
-                    <i class="fa-solid fa-plane-departure text-white text-base"></i>
+                <div class="w-7 h-7 rounded bg-blue-600 flex items-center justify-center font-bold text-white text-xs">
+                    AO
                 </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h1 class="text-base font-bold tracking-tight text-white">AirOps Autonomous Platform</h1>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">GSD Engine v2.0</span>
-                    </div>
-                    <p class="text-xs text-slate-400 hidden sm:block">FastAPI • RabbitMQ Telemetry • NetworkX Constrained Graph • AI Concierge</p>
+                <div class="flex items-baseline space-x-2">
+                    <span class="font-semibold text-sm tracking-tight text-white">AirOps Dispatch</span>
+                    <span class="text-xs text-slate-500 mono">v2.4.0</span>
+                    <span class="hidden md:inline-block text-slate-600 text-xs">•</span>
+                    <span class="hidden md:inline-block text-xs text-slate-400">Autonomous Disruption Engine</span>
                 </div>
             </div>
 
-            <!-- Global Status Pills -->
-            <div class="flex items-center space-x-3">
-                <div class="hidden md:flex items-center space-x-2 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 px-3 py-1.5 rounded-full">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span id="pipeline-status">RabbitMQ Bus: Healthy</span>
+            <!-- Header Status Ticker & UTC Clock -->
+            <div class="flex items-center space-x-4 text-xs">
+                <div class="hidden sm:flex items-center space-x-2 px-2.5 py-1 rounded bg-[#11141c] border border-[#1e2433]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span class="text-slate-400 mono">QUEUE: AMQP ACTIVE</span>
                 </div>
-                <a href="/docs" target="_blank" class="text-xs text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-800 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-code text-indigo-400"></i> Swagger OpenAPI
+                <div id="utc-clock" class="text-slate-400 mono px-2.5 py-1 rounded bg-[#11141c] border border-[#1e2433]">
+                    --:--:-- UTC
+                </div>
+                <a href="/docs" target="_blank" class="text-slate-400 hover:text-white px-2.5 py-1 rounded hover:bg-[#161a24] transition mono">
+                    API Docs
                 </a>
             </div>
         </div>
 
         <!-- Navigation Tabs -->
-        <div class="max-w-7xl mx-auto px-6 flex space-x-1 border-t border-slate-800/60 overflow-x-auto text-xs font-medium">
-            <button onclick="switchTab('ops')" id="tab-btn-ops" class="tab-btn px-4 py-2.5 text-indigo-400 border-b-2 border-indigo-500 flex items-center gap-2 transition">
-                <i class="fa-solid fa-tower-broadcast"></i> Operations Command Hub
+        <div class="max-w-7xl mx-auto px-5 flex space-x-1 border-t border-[#1e2433]/60 text-xs">
+            <button onclick="switchTab('ops')" id="tab-btn-ops" class="tab-btn px-3 py-2 text-white border-b-2 border-blue-500 font-medium transition">
+                Operations & Radar
             </button>
-            <button onclick="switchTab('portal')" id="tab-btn-portal" class="tab-btn px-4 py-2.5 text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 transition">
-                <i class="fa-solid fa-user-check"></i> Passenger Re-Booking Portal
+            <button onclick="switchTab('portal')" id="tab-btn-portal" class="tab-btn px-3 py-2 text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition">
+                Passenger Re-Booking
             </button>
-            <button onclick="switchTab('boarding')" id="tab-btn-boarding" class="tab-btn px-4 py-2.5 text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 transition">
-                <i class="fa-solid fa-qrcode"></i> Digital Boarding Pass & Vouchers
+            <button onclick="switchTab('boarding')" id="tab-btn-boarding" class="tab-btn px-3 py-2 text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition">
+                Boarding Documents & Vouchers
             </button>
-            <button onclick="switchTab('ai')" id="tab-btn-ai" class="tab-btn px-4 py-2.5 text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 transition">
-                <i class="fa-solid fa-robot"></i> AI Concierge Assistant
+            <button onclick="switchTab('dispatch')" id="tab-btn-dispatch" class="tab-btn px-3 py-2 text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition">
+                Dispatch Console
             </button>
-            <button onclick="switchTab('analytics')" id="tab-btn-analytics" class="tab-btn px-4 py-2.5 text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 transition">
-                <i class="fa-solid fa-chart-line"></i> Analytics & EU261/DOT ROI
+            <button onclick="switchTab('analytics')" id="tab-btn-analytics" class="tab-btn px-3 py-2 text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition">
+                Operational Metrics
             </button>
         </div>
     </header>
 
-    <!-- Top Real-Time KPI Ribbon -->
-    <div class="max-w-7xl mx-auto px-6 py-5 w-full">
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            <div class="glass p-3.5 rounded-xl">
-                <div class="text-[11px] text-slate-400 font-medium uppercase">Active Flights</div>
-                <div id="metric-flights" class="text-xl font-bold text-white mt-0.5">540</div>
-                <div class="text-[10px] text-slate-500">10 Hub Network</div>
+    <!-- KPI Strip -->
+    <div class="max-w-7xl mx-auto px-5 py-4 w-full">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
+            <div class="panel p-3">
+                <div class="text-slate-500 uppercase tracking-wider text-[10px]">Active Schedule</div>
+                <div id="metric-flights" class="text-lg font-semibold text-white mono mt-0.5">540</div>
+                <div class="text-[10px] text-slate-500">10 Hub Multi-Graph</div>
             </div>
-            <div class="glass p-3.5 rounded-xl">
-                <div class="text-[11px] text-slate-400 font-medium uppercase">Total PNRs</div>
-                <div id="metric-pnrs" class="text-xl font-bold text-blue-400 mt-0.5">1,096</div>
+            <div class="panel p-3">
+                <div class="text-slate-500 uppercase tracking-wider text-[10px]">Tracked PNRs</div>
+                <div id="metric-pnrs" class="text-lg font-semibold text-slate-200 mono mt-0.5">1,096</div>
                 <div class="text-[10px] text-slate-500">6-char authentic</div>
             </div>
-            <div class="glass p-3.5 rounded-xl">
-                <div class="text-[11px] text-slate-400 font-medium uppercase">Disruptions Handled</div>
-                <div id="metric-disruptions" class="text-xl font-bold text-amber-400 mt-0.5">0</div>
-                <div class="text-[10px] text-slate-500">Telemetry webhooks</div>
+            <div class="panel p-3">
+                <div class="text-slate-500 uppercase tracking-wider text-[10px]">Disruptions</div>
+                <div id="metric-disruptions" class="text-lg font-semibold text-amber-400 mono mt-0.5">0</div>
+                <div class="text-[10px] text-slate-500">Telemetry Ingested</div>
             </div>
-            <div class="glass p-3.5 rounded-xl">
-                <div class="text-[11px] text-slate-400 font-medium uppercase">Re-Accommodated</div>
-                <div id="metric-reaccommodated" class="text-xl font-bold text-emerald-400 mt-0.5">0 (100%)</div>
-                <div class="text-[10px] text-slate-500">Autonomous resolution</div>
+            <div class="panel p-3">
+                <div class="text-slate-500 uppercase tracking-wider text-[10px]">Auto-Resolved</div>
+                <div id="metric-reaccommodated" class="text-lg font-semibold text-emerald-400 mono mt-0.5">0 (100%)</div>
+                <div class="text-[10px] text-slate-500">NetworkX solver</div>
             </div>
-            <div class="glass p-3.5 rounded-xl">
-                <div class="text-[11px] text-slate-400 font-medium uppercase">Graph Search Latency</div>
-                <div id="metric-latency" class="text-xl font-bold text-cyan-400 mt-0.5">1.56 ms</div>
-                <div class="text-[10px] text-slate-500">NetworkX constrained</div>
+            <div class="panel p-3">
+                <div class="text-slate-500 uppercase tracking-wider text-[10px]">Solve Latency</div>
+                <div id="metric-latency" class="text-lg font-semibold text-cyan-400 mono mt-0.5">1.56 ms</div>
+                <div class="text-[10px] text-slate-500">4-Hour Constraint</div>
             </div>
-            <div class="glass p-3.5 rounded-xl">
-                <div class="text-[11px] text-slate-400 font-medium uppercase">Manual Hours Saved</div>
-                <div id="metric-hours-saved" class="text-xl font-bold text-purple-400 mt-0.5">0.0 hrs</div>
-                <div class="text-[10px] text-slate-500">80% agent overhead cut</div>
+            <div class="panel p-3">
+                <div class="text-slate-500 uppercase tracking-wider text-[10px]">Agent Hours Saved</div>
+                <div id="metric-hours-saved" class="text-lg font-semibold text-indigo-400 mono mt-0.5">0.0 hrs</div>
+                <div class="text-[10px] text-slate-500">80% Reduction</div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN TAB 1: OPERATIONS COMMAND HUB -->
-    <main id="tab-content-ops" class="tab-content max-w-7xl mx-auto px-6 pb-12 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Interactive Radar Route Map (7 Cols) -->
-        <section class="lg:col-span-7 space-y-6">
-            <!-- Map Container -->
-            <div class="glass p-5 rounded-2xl">
-                <div class="flex items-center justify-between mb-3">
-                    <div>
-                        <h2 class="text-sm font-semibold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-earth-americas text-cyan-400"></i>
-                            Live Route Topology & Disruption Radar
-                        </h2>
-                        <p class="text-xs text-slate-400">Interactive hub graph (Nodes = Airports, Arcs = Scheduled Routes, Red = Disrupted)</p>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs">
-                        <span class="flex items-center gap-1 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> Active</span>
-                        <span class="flex items-center gap-1 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span> Cancelled</span>
+    <!-- TAB 1: OPERATIONS & RADAR -->
+    <main id="tab-content-ops" class="tab-content max-w-7xl mx-auto px-5 pb-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Map & Schedule (8 Cols) -->
+        <section class="lg:col-span-8 space-y-4">
+            <!-- Map Panel -->
+            <div class="panel p-4 space-y-3">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-200">Hub Topology & Vector Radar</span>
+                    <div class="flex items-center space-x-3 text-[11px] text-slate-400">
+                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Scheduled</span>
+                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Disrupted</span>
                     </div>
                 </div>
                 <div id="network-map"></div>
             </div>
 
-            <!-- Disruption Trigger Console -->
-            <div class="glass p-5 rounded-2xl">
-                <div class="flex items-center justify-between mb-3">
-                    <div>
-                        <h2 class="text-sm font-semibold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-bolt text-amber-400"></i>
-                            Emit Disruption Webhook (GDS Telemetry Feed)
-                        </h2>
-                        <p class="text-xs text-slate-400">Publishes disruption payload into RabbitMQ/Async bus for autonomous re-routing</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-[11px] font-medium text-slate-400 mb-1">Target Flight</label>
-                        <select id="select-flight" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
-                            <!-- Populated dynamically -->
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-medium text-slate-400 mb-1">Event Type</label>
-                        <select id="select-event" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
-                            <option value="CANCELLATION">CANCELLATION (Ground Flight)</option>
-                            <option value="WEATHER_DELAY">WEATHER DELAY (+2 Hours)</option>
-                        </select>
-                    </div>
-                    <div class="flex items-end">
-                        <button onclick="triggerDisruption()" id="btn-trigger" class="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-medium py-2 px-3 rounded-lg text-xs transition shadow-lg shadow-red-600/30 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-bolt"></i> Ground & Re-Route
-                        </button>
-                    </div>
-                </div>
-
-                <div id="trigger-status" class="mt-3 hidden p-2.5 rounded-xl text-xs flex items-center justify-between bg-emerald-950/70 border border-emerald-800 text-emerald-300">
-                    <span id="trigger-msg"></span>
-                    <button onclick="this.parentElement.classList.add('hidden')" class="text-slate-400 hover:text-white">&times;</button>
-                </div>
-            </div>
-
-            <!-- Flight Roster Table -->
-            <div class="glass p-5 rounded-2xl">
-                <div class="flex items-center justify-between mb-3">
-                    <h2 class="text-sm font-semibold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-list text-blue-400"></i>
-                        Active Schedule & Sample Passenger PNRs
-                    </h2>
-                    <button onclick="loadFlights()" class="text-xs text-indigo-400 hover:text-indigo-300">
-                        <i class="fa-solid fa-arrows-rotate mr-1"></i>Refresh
+            <!-- Flight Roster / FIDS -->
+            <div class="panel p-4 space-y-3">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-200">Active Flight Operations</span>
+                    <button onclick="loadFlights()" class="text-slate-400 hover:text-white transition mono">
+                        <i class="fa-solid fa-rotate-right mr-1"></i>REFRESH
                     </button>
                 </div>
-                <div class="overflow-x-auto max-h-72 custom-scrollbar">
+                <div class="overflow-x-auto max-h-72 custom-scroll">
                     <table class="w-full text-left text-xs">
-                        <thead class="text-slate-400 uppercase bg-slate-900/90 border-b border-slate-800 sticky top-0">
+                        <thead class="text-slate-500 uppercase text-[10px] border-b border-[#1e2433] bg-[#0c0e14] sticky top-0">
                             <tr>
-                                <th class="p-2">Flight</th>
+                                <th class="p-2 mono">Flight</th>
                                 <th class="p-2">Route</th>
-                                <th class="p-2">Departure</th>
+                                <th class="p-2 mono">Departure</th>
                                 <th class="p-2">Status</th>
-                                <th class="p-2">Sample PNR</th>
+                                <th class="p-2 mono">Sample PNR</th>
                                 <th class="p-2 text-right">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="flights-table-body" class="divide-y divide-slate-800/60 text-slate-300">
+                        <tbody id="flights-table-body" class="divide-y divide-[#1e2433]/60 text-slate-300">
                             <!-- Populated dynamically -->
                         </tbody>
                     </table>
@@ -206,338 +175,286 @@
             </div>
         </section>
 
-        <!-- Right Column: Live Telemetry Ticker & Quick Concierge (5 Cols) -->
-        <section class="lg:col-span-5 space-y-6">
-            <!-- Real-Time Kafka/RabbitMQ Event Stream Ticker -->
-            <div class="glass p-5 rounded-2xl">
-                <div class="flex items-center justify-between mb-3">
-                    <h2 class="text-sm font-semibold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-stream text-emerald-400"></i>
-                        Live Event Bus Stream (AMQP Queue)
-                    </h2>
-                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-900/50 text-emerald-400 border border-emerald-800">
-                        Subscribed: flight_disruptions
-                    </span>
+        <!-- Right Side: Telemetry Controls & Live Stream (4 Cols) -->
+        <section class="lg:col-span-4 space-y-4">
+            <!-- Disruption Trigger Control -->
+            <div class="panel p-4 space-y-3">
+                <div class="text-xs font-medium text-slate-200">Inject Telemetry Event</div>
+                <div class="space-y-2.5 text-xs">
+                    <div>
+                        <label class="block text-slate-500 text-[10px] uppercase mb-1">Target Flight</label>
+                        <select id="select-flight" class="w-full bg-[#0c0e14] border border-[#1e2433] rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 mono">
+                            <!-- Dynamically loaded -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-500 text-[10px] uppercase mb-1">IATA Disruption Code</label>
+                        <select id="select-event" class="w-full bg-[#0c0e14] border border-[#1e2433] rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 mono">
+                            <option value="CANCELLATION">CODE 89: Mechanical Maintenance (Cancel)</option>
+                            <option value="WEATHER_DELAY">CODE 71: Weather Ground Stop (+2h)</option>
+                        </select>
+                    </div>
+                    <button onclick="triggerDisruption()" id="btn-trigger" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-medium py-1.5 px-3 rounded text-xs transition">
+                        Dispatch Disruption
+                    </button>
                 </div>
-                <div id="telemetry-stream-box" class="space-y-2 max-h-72 overflow-y-auto pr-1 custom-scrollbar text-xs">
-                    <div class="text-slate-500 text-xs italic text-center py-6">No disruption events received yet. Trigger one to watch the event stream.</div>
+                <div id="trigger-status" class="hidden p-2 rounded text-[11px] bg-[#1a0f14] border border-rose-900/60 text-rose-300">
+                    <span id="trigger-msg"></span>
                 </div>
             </div>
 
-            <!-- Mini AI Assistant Quick Box -->
-            <div class="glass p-5 rounded-2xl flex flex-col h-[380px]">
-                <div class="border-b border-slate-800 pb-3 mb-3 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-robot text-indigo-400"></i>
-                        <h2 class="text-sm font-semibold text-white">Passenger AI Concierge</h2>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <input id="quick-pnr-input" type="text" placeholder="PNR" class="uppercase bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white focus:outline-none w-20 text-center font-mono">
-                        <button onclick="loadPnrIntoQuickChat()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-2.5 py-1 rounded-lg text-xs font-medium">Load</button>
-                    </div>
+            <!-- Live Telemetry Stream Ticker -->
+            <div class="panel p-4 space-y-3">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-200">Telemetry Ingestion Log</span>
+                    <span class="text-[10px] text-slate-500 mono">AMQP: flight_disruptions</span>
                 </div>
-
-                <!-- Messages -->
-                <div id="quick-chat-messages" class="flex-1 overflow-y-auto space-y-2.5 pr-1 custom-scrollbar text-xs">
-                    <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 text-slate-300">
-                        Select a PNR from the flight table or enter it above to inquire about options or auto-rebook.
-                    </div>
+                <div id="telemetry-stream-box" class="space-y-2 max-h-80 overflow-y-auto custom-scroll text-xs">
+                    <div class="text-slate-600 text-xs py-4 text-center">Awaiting telemetry webhooks...</div>
                 </div>
-
-                <!-- Input form -->
-                <form onsubmit="handleQuickChatSubmit(event)" class="mt-3 flex gap-2">
-                    <input id="quick-chat-input" type="text" placeholder="Ask AI: 'Show options' or 'Book Option 1'..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </button>
-                </form>
             </div>
         </section>
     </main>
 
-    <!-- MAIN TAB 2: PASSENGER RE-BOOKING PORTAL -->
-    <main id="tab-content-portal" class="tab-content hidden max-w-7xl mx-auto px-6 pb-12 w-full space-y-6">
-        <div class="glass p-6 rounded-2xl">
-            <div class="max-w-2xl mx-auto text-center space-y-3 mb-6">
-                <h2 class="text-xl font-bold text-white flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-ticket text-indigo-400"></i> Passenger Self-Service Re-Accommodation
-                </h2>
-                <p class="text-xs text-slate-400">Enter your 6-character booking reference to inspect disrupted flights, explore NetworkX graph alternatives within your 4-hour departure window, and confirm your preferred seat.</p>
-
-                <div class="flex justify-center gap-2 max-w-md mx-auto pt-2">
-                    <input id="portal-pnr-input" type="text" placeholder="Enter PNR (e.g. EK7P9X)" class="uppercase bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white font-mono text-center focus:outline-none focus:border-indigo-500 flex-1">
-                    <button onclick="fetchPortalPnrDetails()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-lg shadow-indigo-600/30 transition">
-                        Retrieve Booking
+    <!-- TAB 2: PASSENGER RE-BOOKING PORTAL -->
+    <main id="tab-content-portal" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-4">
+        <div class="panel p-5 space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e2433] pb-4">
+                <div>
+                    <h2 class="text-sm font-semibold text-white">Passenger Record Management</h2>
+                    <p class="text-xs text-slate-400">Review disrupted flight reservations and execute deterministic graph re-accommodations.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input id="portal-pnr-input" type="text" placeholder="PNR (e.g. EK7P9X)" class="uppercase bg-[#0c0e14] border border-[#1e2433] rounded px-3 py-1.5 text-xs text-white mono text-center focus:outline-none focus:border-blue-500 w-32">
+                    <button onclick="fetchPortalPnrDetails()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded text-xs font-medium transition">
+                        Lookup Record
                     </button>
                 </div>
             </div>
 
-            <!-- Booking Details Header -->
-            <div id="portal-booking-summary" class="hidden glass-card p-5 rounded-2xl border border-slate-700/60 mb-6">
-                <div class="flex flex-wrap items-center justify-between gap-4">
+            <!-- Booking Summary -->
+            <div id="portal-booking-summary" class="hidden panel-subtle p-4 rounded-lg space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
                     <div>
-                        <div class="flex items-center gap-3">
-                            <h3 id="portal-passenger-name" class="text-base font-bold text-white">Passenger Name</h3>
-                            <span id="portal-pnr-badge" class="px-2.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 font-mono text-xs border border-indigo-500/30">PNR: ------</span>
-                            <span id="portal-status-badge" class="px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 font-semibold text-xs border border-amber-500/30">DISRUPTED</span>
+                        <div class="flex items-center space-x-2">
+                            <span id="portal-passenger-name" class="font-semibold text-white">--</span>
+                            <span id="portal-pnr-badge" class="px-1.5 py-0.5 rounded bg-blue-950/60 text-blue-400 border border-blue-900/60 mono text-[10px]">------</span>
+                            <span id="portal-status-badge" class="px-1.5 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-900/60 text-[10px]">DISRUPTED</span>
                         </div>
-                        <p id="portal-flight-route" class="text-xs text-slate-400 mt-1">Flight AA100 • JFK &rarr; LAX • Economy (Y)</p>
+                        <div id="portal-flight-route" class="text-slate-400 text-[11px] mt-1">--</div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="switchToBoardingPassView()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs border border-slate-700">
-                            <i class="fa-solid fa-qrcode mr-1"></i> View Boarding Pass
+                        <button onclick="switchToBoardingPassView()" class="px-2.5 py-1 rounded bg-[#161a24] hover:bg-[#1f2533] text-slate-300 text-xs border border-[#1e2433]">
+                            Boarding Pass
                         </button>
-                        <button onclick="switchToCompensationView()" class="bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 px-3 py-1.5 rounded-lg text-xs border border-emerald-800">
-                            <i class="fa-solid fa-gift mr-1"></i> Check EU261 Voucher
+                        <button onclick="switchToCompensationView()" class="px-2.5 py-1 rounded bg-[#161a24] hover:bg-[#1f2533] text-slate-300 text-xs border border-[#1e2433]">
+                            Care Vouchers
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Alternative Route Cards -->
-            <div id="portal-options-container" class="space-y-4">
-                <div class="text-center py-12 text-slate-500 text-xs">
-                    Please retrieve a PNR above to view your personalized graph re-accommodation options.
+            <!-- Alternative Routes Container -->
+            <div id="portal-options-container" class="space-y-3">
+                <div class="text-center py-8 text-slate-500 text-xs">
+                    Enter or select a PNR to display viable alternative routing vectors.
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- MAIN TAB 3: DIGITAL BOARDING PASS & VOUCHERS -->
-    <main id="tab-content-boarding" class="tab-content hidden max-w-7xl mx-auto px-6 pb-12 w-full space-y-6">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- Mobile Boarding Pass Mockup (7 Cols) -->
-            <div class="lg:col-span-7 flex justify-center">
-                <div class="w-full max-w-md bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-5">
-                    <!-- Airline header -->
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white text-xs">AI</div>
-                            <div>
-                                <h3 class="font-bold text-sm text-white">AirOps Express</h3>
-                                <p class="text-[10px] text-slate-400">Electronic Boarding Pass</p>
-                            </div>
+    <!-- TAB 3: BOARDING PASS & VOUCHERS -->
+    <main id="tab-content-boarding" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+            <!-- Mobile Boarding Pass Mockup (6 Cols) -->
+            <div class="md:col-span-6 flex justify-center">
+                <div class="w-full max-w-sm panel p-5 space-y-4 text-xs">
+                    <div class="flex items-center justify-between border-b border-[#1e2433] pb-3">
+                        <div>
+                            <span class="font-semibold text-white">AirOps Priority</span>
+                            <div class="text-[10px] text-slate-500">IATA E-BOARDING DOCUMENT</div>
                         </div>
-                        <span id="bp-class-badge" class="px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-400 font-mono text-[10px] font-bold">ECONOMY (Y)</span>
+                        <span id="bp-class-badge" class="px-2 py-0.5 rounded bg-blue-950 text-blue-400 font-mono text-[10px]">CLASS: Y</span>
                     </div>
 
-                    <!-- Passenger & Flight Details -->
-                    <div class="grid grid-cols-2 gap-4 text-xs">
+                    <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <div class="text-[10px] text-slate-500 uppercase font-semibold">Passenger</div>
-                            <div id="bp-passenger" class="text-sm font-bold text-white">Alex Smith</div>
+                            <div class="text-[10px] text-slate-500 uppercase">Passenger</div>
+                            <div id="bp-passenger" class="font-medium text-white">--</div>
                         </div>
                         <div class="text-right">
-                            <div class="text-[10px] text-slate-500 uppercase font-semibold">Booking Ref (PNR)</div>
-                            <div id="bp-pnr" class="text-sm font-mono font-bold text-indigo-400">EK7P9X</div>
+                            <div class="text-[10px] text-slate-500 uppercase">PNR Locator</div>
+                            <div id="bp-pnr" class="font-medium text-blue-400 mono">------</div>
                         </div>
                     </div>
 
-                    <!-- Route Display -->
-                    <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800/80 flex items-center justify-between">
+                    <!-- Origin / Dest -->
+                    <div class="panel-subtle p-3 rounded flex items-center justify-between">
                         <div>
-                            <div id="bp-origin" class="text-2xl font-black text-white">JFK</div>
-                            <div class="text-[10px] text-slate-400">Origin Airport</div>
+                            <div id="bp-origin" class="text-xl font-bold text-white mono">---</div>
+                            <div class="text-[10px] text-slate-500">ORIGIN</div>
                         </div>
-                        <div class="flex flex-col items-center px-4">
-                            <i class="fa-solid fa-plane text-indigo-400 text-xs mb-1"></i>
-                            <div class="w-16 h-0.5 bg-slate-700 relative"></div>
-                            <span id="bp-flight-num" class="text-[10px] font-mono text-slate-400 mt-1">AA101</span>
+                        <div class="flex flex-col items-center">
+                            <span id="bp-flight-num" class="text-[10px] mono text-slate-400">FLIGHT --</span>
+                            <div class="w-12 h-px bg-slate-700 my-1"></div>
                         </div>
                         <div class="text-right">
-                            <div id="bp-dest" class="text-2xl font-black text-white">LAX</div>
-                            <div class="text-[10px] text-slate-400">Destination</div>
+                            <div id="bp-dest" class="text-xl font-bold text-white mono">---</div>
+                            <div class="text-[10px] text-slate-500">DESTINATION</div>
                         </div>
                     </div>
 
-                    <!-- Gate & Seat Info -->
-                    <div class="grid grid-cols-4 gap-2 text-center text-xs bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                    <!-- Gate / Seat -->
+                    <div class="grid grid-cols-4 gap-2 text-center panel-subtle p-2.5 rounded text-[11px]">
                         <div>
-                            <div class="text-[10px] text-slate-500 uppercase">Gate</div>
-                            <div id="bp-gate" class="font-bold text-white text-sm">B22</div>
+                            <div class="text-[9px] text-slate-500 uppercase">Gate</div>
+                            <div id="bp-gate" class="font-semibold text-white mono">--</div>
                         </div>
                         <div>
-                            <div class="text-[10px] text-slate-500 uppercase">Terminal</div>
-                            <div id="bp-terminal" class="font-bold text-white text-sm">T4</div>
+                            <div class="text-[9px] text-slate-500 uppercase">Terminal</div>
+                            <div id="bp-terminal" class="font-semibold text-white mono">--</div>
                         </div>
                         <div>
-                            <div class="text-[10px] text-slate-500 uppercase">Boarding</div>
-                            <div id="bp-time" class="font-bold text-emerald-400 text-sm">14:20</div>
+                            <div class="text-[9px] text-slate-500 uppercase">Boarding</div>
+                            <div id="bp-time" class="font-semibold text-emerald-400 mono">--:--</div>
                         </div>
                         <div>
-                            <div class="text-[10px] text-slate-500 uppercase">Seat</div>
-                            <div id="bp-seat" class="font-bold text-indigo-400 text-sm">12B</div>
+                            <div class="text-[9px] text-slate-500 uppercase">Seat</div>
+                            <div id="bp-seat" class="font-semibold text-blue-400 mono">--</div>
                         </div>
                     </div>
 
-                    <!-- 2D Barcode / QR Code container -->
-                    <div class="border-t border-dashed border-slate-800 pt-4 flex flex-col items-center justify-center">
-                        <div id="qrcode-box" class="bg-white p-3 rounded-xl shadow-inner"></div>
-                        <p class="text-[10px] text-slate-500 mt-2 font-mono" id="bp-baggage-tag">TAG: 001-849201 • IATA BCBP</p>
+                    <!-- QR Barcode -->
+                    <div class="border-t border-[#1e2433] pt-4 flex flex-col items-center justify-center">
+                        <div id="qrcode-box" class="bg-white p-2 rounded"></div>
+                        <div id="bp-baggage-tag" class="text-[9px] text-slate-500 mt-2 mono">TAG: 001-000000</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Vouchers & Rights Package (5 Cols) -->
-            <div class="lg:col-span-5 space-y-4">
-                <div class="glass p-5 rounded-2xl space-y-4">
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-shield-halved text-emerald-400"></i> Passenger Rights & Care Package
-                    </h3>
-                    <p class="text-xs text-slate-400">Automated compensation entitlements under EU261 and US DOT Consumer Regulations for disrupted passengers.</p>
-
-                    <div class="space-y-3">
-                        <div class="glass-card p-3.5 rounded-xl border border-emerald-900/40 flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm">
-                                    <i class="fa-solid fa-utensils"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xs font-semibold text-white">Airport Meal & Refreshment e-Voucher</h4>
-                                    <p class="text-[10px] text-slate-400">Redeemable at any terminal dining outlet</p>
-                                </div>
-                            </div>
-                            <span id="vch-meal-code" class="font-mono text-xs text-emerald-400 font-bold bg-emerald-950/80 px-2 py-1 rounded border border-emerald-800">$30.00 (VCH-MEAL)</span>
-                        </div>
-
-                        <div class="glass-card p-3.5 rounded-xl border border-indigo-900/40 flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
-                                    <i class="fa-solid fa-hotel"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xs font-semibold text-white">Overnight Hotel Accommodation</h4>
-                                    <p class="text-[10px] text-slate-400">Applicable for cancellations &gt;6h</p>
-                                </div>
-                            </div>
-                            <span id="vch-hotel-status" class="text-xs text-slate-400 font-medium">Included if overnight</span>
-                        </div>
-
-                        <div class="glass-card p-3.5 rounded-xl border border-blue-900/40 flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-sm">
-                                    <i class="fa-solid fa-money-bill-wave"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xs font-semibold text-white">Regulatory Cash Compensation</h4>
-                                    <p class="text-[10px] text-slate-400">EU261 / US DOT Passenger Guarantee</p>
-                                </div>
-                            </div>
-                            <span id="vch-comp-amount" class="font-bold text-xs text-blue-400">$400.00 USD</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- MAIN TAB 4: FULLSCREEN AI CONCIERGE -->
-    <main id="tab-content-ai" class="tab-content hidden max-w-7xl mx-auto px-6 pb-12 w-full">
-        <div class="glass p-6 rounded-2xl max-w-4xl mx-auto flex flex-col h-[650px]">
-            <div class="border-b border-slate-800 pb-4 mb-4 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md shadow-indigo-600/30">
-                        <i class="fa-solid fa-sparkles text-white text-sm"></i>
-                    </div>
+            <!-- Vouchers & Rights (6 Cols) -->
+            <div class="md:col-span-6 space-y-4">
+                <div class="panel p-5 space-y-4 text-xs">
                     <div>
-                        <h2 class="text-base font-bold text-white">Autonomous Passenger Concierge</h2>
-                        <p class="text-xs text-slate-400">Context-Aware AI Disruption Explainer & Re-Booking Agent</p>
+                        <h3 class="font-semibold text-white">Regulatory Passenger Rights (EU261 / 14 CFR 259)</h3>
+                        <p class="text-slate-400 text-[11px] mt-0.5">Automated entitlement package for passengers affected by carrier disruptions.</p>
                     </div>
+
+                    <div class="space-y-2.5">
+                        <div class="panel-subtle p-3 rounded flex items-center justify-between">
+                            <div>
+                                <div class="font-medium text-slate-200">Terminal Meal & Refreshment Voucher</div>
+                                <div class="text-[10px] text-slate-500">Valid at all airside dining vendors</div>
+                            </div>
+                            <span id="vch-meal-code" class="mono text-emerald-400 font-semibold">$30.00 (VCH-MEAL)</span>
+                        </div>
+
+                        <div class="panel-subtle p-3 rounded flex items-center justify-between">
+                            <div>
+                                <div class="font-medium text-slate-200">Overnight Accommodation Entitlement</div>
+                                <div class="text-[10px] text-slate-500">Applicable on delays &gt;6 hours</div>
+                            </div>
+                            <span id="vch-hotel-status" class="text-slate-400 font-medium">Standard Policy</span>
+                        </div>
+
+                        <div class="panel-subtle p-3 rounded flex items-center justify-between">
+                            <div>
+                                <div class="font-medium text-slate-200">Statutory Cash Compensation</div>
+                                <div class="text-[10px] text-slate-500">Fixed rate distance compensation</div>
+                            </div>
+                            <span id="vch-comp-amount" class="mono text-blue-400 font-semibold">$250.00 USD</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- TAB 4: DISPATCH CONSOLE -->
+    <main id="tab-content-dispatch" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full">
+        <div class="panel p-5 max-w-4xl mx-auto flex flex-col h-[580px] space-y-4 text-xs">
+            <div class="flex items-center justify-between border-b border-[#1e2433] pb-3">
+                <div>
+                    <h2 class="font-semibold text-white">Operations Dispatch & Autonomous Re-Ticketing Console</h2>
+                    <p class="text-slate-500 text-[11px]">Command line interface for fast PNR re-routing, schedule queries, and automated ticketing.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input id="main-ai-pnr" type="text" placeholder="PNR" class="uppercase bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none w-28 text-center font-mono">
-                    <button onclick="loadMainAiPnr()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium">Sync PNR</button>
+                    <input id="main-ai-pnr" type="text" placeholder="PNR" class="uppercase bg-[#0c0e14] border border-[#1e2433] rounded px-2.5 py-1 text-xs text-white mono text-center focus:outline-none w-24">
+                    <button onclick="loadMainAiPnr()" class="bg-[#161a24] hover:bg-[#1f2533] text-slate-300 px-2.5 py-1 rounded text-xs border border-[#1e2433]">Set Target</button>
                 </div>
             </div>
 
-            <div id="main-chat-messages" class="flex-1 overflow-y-auto space-y-3.5 pr-2 custom-scrollbar text-xs">
-                <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 text-slate-300">
-                    <p class="font-bold text-indigo-400 mb-1 flex items-center gap-1.5 text-xs">
-                        <i class="fa-solid fa-robot"></i> AirOps Intelligent Agent
-                    </p>
-                    Hello! I am your AI travel companion. If your flight has been delayed or cancelled, I will automatically query our NetworkX graph engine to present alternative routes within a 4-hour window, transfer your baggage, and lock in your new seat reservation.
+            <!-- Terminal Message Stream -->
+            <div id="main-chat-messages" class="flex-1 overflow-y-auto space-y-2.5 pr-2 custom-scroll mono text-[11px]">
+                <div class="panel-subtle p-3 rounded text-slate-400">
+                    DISPATCH INTERFACE READY.<br>
+                    Commands supported: 'Check status', 'Show options', 'Confirm Option 1'.<br>
+                    Target passenger PNR can be selected from the Operations table or entered above.
                 </div>
             </div>
 
-            <!-- Quick Action Prompts -->
-            <div class="py-2 flex gap-2 overflow-x-auto text-xs">
-                <button onclick="sendMainAiPrompt('What happened to my flight?')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 whitespace-nowrap">
-                    Why was my flight disrupted?
-                </button>
-                <button onclick="sendMainAiPrompt('Show me alternative flights within 4 hours')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 whitespace-nowrap">
-                    Show options
-                </button>
-                <button onclick="sendMainAiPrompt('Book Option 1 for me')" class="bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-800 whitespace-nowrap">
-                    Confirm Option 1
-                </button>
-            </div>
-
-            <form onsubmit="handleMainChatSubmit(event)" class="pt-2 border-t border-slate-800 flex gap-2">
-                <input id="main-chat-input" type="text" placeholder="Type your query or instruction..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/30">
-                    Send
+            <!-- Input bar -->
+            <form onsubmit="handleMainChatSubmit(event)" class="flex gap-2 pt-2 border-t border-[#1e2433]">
+                <input id="main-chat-input" type="text" placeholder="Enter command or query (e.g. 'Show alternatives within 4h')..." class="flex-1 bg-[#0c0e14] border border-[#1e2433] rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500 mono">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-xs font-medium transition mono">
+                    EXECUTE
                 </button>
             </form>
         </div>
     </main>
 
-    <!-- MAIN TAB 5: ANALYTICS & REGULATORY COMPENSATION ROI -->
-    <main id="tab-content-analytics" class="tab-content hidden max-w-7xl mx-auto px-6 pb-12 w-full space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass p-6 rounded-2xl">
-                <div class="text-xs text-slate-400 font-semibold uppercase">Agent Overhead Reduction</div>
-                <div class="text-3xl font-extrabold text-emerald-400 mt-2">80.0%</div>
-                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
-                    By resolving disruptions automatically via NetworkX constrained graphs, call center wait times drop from 90+ minutes to instant self-service.
+    <!-- TAB 5: OPERATIONAL METRICS -->
+    <main id="tab-content-analytics" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-4 text-xs">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="panel p-4 space-y-2">
+                <div class="text-[10px] text-slate-500 uppercase tracking-wider">Manual Labor Reduction</div>
+                <div class="text-2xl font-bold text-emerald-400 mono">80.0%</div>
+                <p class="text-slate-400 leading-relaxed text-[11px]">
+                    Autonomous graph re-routing resolves passenger connections in under 2ms, removing travel agent re-ticketing queues.
                 </p>
             </div>
-            <div class="glass p-6 rounded-2xl">
-                <div class="text-xs text-slate-400 font-semibold uppercase">Est. Compensation Liability</div>
-                <div id="analytics-liability" class="text-3xl font-extrabold text-amber-400 mt-2">$0.00</div>
-                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
-                    Total consumer liability tracked under EU261 / US DOT regulations for passengers delayed beyond 3 hours.
+            <div class="panel p-4 space-y-2">
+                <div class="text-[10px] text-slate-500 uppercase tracking-wider">Estimated Compensation Liability</div>
+                <div id="analytics-liability" class="text-2xl font-bold text-amber-400 mono">$0.00</div>
+                <p class="text-slate-400 leading-relaxed text-[11px]">
+                    Consumer delay liabilities tracked in real-time under EU261 and US DOT passenger protection standards.
                 </p>
             </div>
-            <div class="glass p-6 rounded-2xl">
-                <div class="text-xs text-slate-400 font-semibold uppercase">Average Route Solve Time</div>
-                <div id="analytics-solve-time" class="text-3xl font-extrabold text-cyan-400 mt-2">1.56 ms</div>
-                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
-                    NetworkX multi-hop route graph solver discovers connecting paths and capacity across 10 hubs in sub-2ms.
+            <div class="panel p-4 space-y-2">
+                <div class="text-[10px] text-slate-500 uppercase tracking-wider">Graph Search Mean Latency</div>
+                <div id="analytics-solve-time" class="text-2xl font-bold text-cyan-400 mono">1.56 ms</div>
+                <p class="text-slate-400 leading-relaxed text-[11px]">
+                    Constrained multi-hop NetworkX search across all North American and transatlantic hubs.
                 </p>
             </div>
         </div>
 
-        <div class="glass p-6 rounded-2xl">
-            <h3 class="text-sm font-bold text-white mb-3">Enterprise Architectural Comparison</h3>
+        <div class="panel p-4 space-y-3">
+            <div class="font-semibold text-white">Architectural Specifications</div>
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-300">
-                    <thead class="bg-slate-900 border-b border-slate-800 text-slate-400 uppercase">
+                <table class="w-full text-left text-[11px] text-slate-300">
+                    <thead class="bg-[#0c0e14] border-b border-[#1e2433] text-slate-500 uppercase text-[10px]">
                         <tr>
-                            <th class="p-3">Feature</th>
-                            <th class="p-3">Traditional GDS (Legacy Sabre/Amadeus)</th>
-                            <th class="p-3 text-indigo-400 font-bold">AirOps Autonomous Platform</th>
+                            <th class="p-2.5">Pipeline Layer</th>
+                            <th class="p-2.5">Technology</th>
+                            <th class="p-2.5">Operational Invariant</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-800/60">
+                    <tbody class="divide-y divide-[#1e2433]">
                         <tr>
-                            <td class="p-3 font-semibold text-white">Disruption Ingestion</td>
-                            <td class="p-3 text-slate-400">Batch EDIFACT queue, 15-45 min delay</td>
-                            <td class="p-3 text-emerald-400 font-semibold">Sub-second RabbitMQ / Kafka Webhook Event Stream</td>
+                            <td class="p-2.5 font-medium text-white">Event Telemetry Broker</td>
+                            <td class="p-2.5 mono text-slate-400">RabbitMQ (AMQP) / Async Bus</td>
+                            <td class="p-2.5 text-slate-400">Sub-second ingestion with durable queue delivery</td>
                         </tr>
                         <tr>
-                            <td class="p-3 font-semibold text-white">Re-Accommodation</td>
-                            <td class="p-3 text-slate-400">Manual travel agent lookup & typing</td>
-                            <td class="p-3 text-emerald-400 font-semibold">NetworkX Constrained Multi-Hub Graph Search (<2ms)</td>
+                            <td class="p-2.5 font-medium text-white">Re-Accommodation Engine</td>
+                            <td class="p-2.5 mono text-slate-400">NetworkX MultiDiGraph</td>
+                            <td class="p-2.5 text-slate-400">Hard constraint: [T0, T0+4h], transfer layovers 45m-240m</td>
                         </tr>
                         <tr>
-                            <td class="p-3 font-semibold text-white">Passenger Experience</td>
-                            <td class="p-3 text-slate-400">Airport gate queues & 2-hour call waits</td>
-                            <td class="p-3 text-emerald-400 font-semibold">AI Passenger Concierge + Self-Service Web Portal</td>
-                        </tr>
-                        <tr>
-                            <td class="p-3 font-semibold text-white">Care Entitlements</td>
-                            <td class="p-3 text-slate-400">Paper vouchers printed at customer desk</td>
-                            <td class="p-3 text-emerald-400 font-semibold">Instant digital e-vouchers & mobile barcode boarding passes</td>
+                            <td class="p-2.5 font-medium text-white">GDS Master Inventory</td>
+                            <td class="p-2.5 mono text-slate-400">PostgreSQL / In-Memory Cache</td>
+                            <td class="p-2.5 text-slate-400">Authentic 6-character PNRs and IATA fare classes</td>
                         </tr>
                     </tbody>
                 </table>
@@ -545,25 +462,33 @@
         </div>
     </main>
 
-    <!-- Global Footer -->
-    <footer class="mt-auto border-t border-slate-800/80 bg-slate-950 py-4 text-center text-xs text-slate-500">
-        AirOps Event-Driven Flight Disruption & Autonomous Re-Accommodation Platform • Built with FastAPI, RabbitMQ, NetworkX & AI
+    <!-- Minimal Footer -->
+    <footer class="mt-auto border-t border-[#1e2433] bg-[#0c0e14] py-3 text-center text-[11px] text-slate-500 mono">
+        AirOps Dispatch Platform • Real-Time Airline Operations & Re-Accommodation
     </footer>
 
-    <!-- App JavaScript Logic -->
+    <!-- App JavaScript -->
     <script>
         let map = null;
         let airportMarkers = {};
         let routePolylines = [];
-        let activePnr = "EK7P9X";
+        let activePnr = "";
         let cachedFlights = [];
         let airportsData = [];
 
-        // Tab Switching
+        function updateClock() {
+            const now = new Date();
+            const utc = now.toISOString().substring(11, 19) + " UTC";
+            const el = document.getElementById('utc-clock');
+            if (el) el.innerText = utc;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('text-indigo-400', 'border-indigo-500');
+                btn.classList.remove('text-white', 'border-blue-500');
                 btn.classList.add('text-slate-400', 'border-transparent');
             });
 
@@ -571,16 +496,15 @@
             const btn = document.getElementById(`tab-btn-${tabId}`);
             if (content) content.classList.remove('hidden');
             if (btn) {
-                btn.classList.add('text-indigo-400', 'border-indigo-500');
+                btn.classList.add('text-white', 'border-blue-500');
                 btn.classList.remove('text-slate-400', 'border-transparent');
             }
 
             if (tabId === 'ops' && map) {
-                setTimeout(() => map.invalidateSize(), 200);
+                setTimeout(() => map.invalidateSize(), 150);
             }
         }
 
-        // Initialize Leaflet Map
         async function initMap() {
             try {
                 const res = await fetch('/api/v1/airports');
@@ -597,32 +521,29 @@
                     maxZoom: 19
                 }).addTo(map);
 
-                // Add airport markers
                 airportsData.forEach(apt => {
                     const icon = L.divIcon({
                         className: 'custom-pin',
-                        html: `<div class="bg-indigo-600 text-white font-mono font-bold text-[9px] px-1.5 py-0.5 rounded shadow-lg border border-indigo-400 flex items-center gap-1">${apt.code}</div>`,
-                        iconSize: [36, 20],
-                        iconAnchor: [18, 10]
+                        html: `<div style="background:#1d4ed8; color:#fff; font-family:monospace; font-size:9px; padding:2px 4px; border-radius:3px; border:1px solid #3b82f6;">${apt.code}</div>`,
+                        iconSize: [32, 18],
+                        iconAnchor: [16, 9]
                     });
 
                     const marker = L.marker([apt.lat, apt.lng], { icon: icon }).addTo(map);
-                    marker.bindPopup(`<strong class="text-xs">${apt.code} - ${apt.name}</strong><br><span class="text-[10px] text-slate-500">${apt.city}</span>`);
+                    marker.bindPopup(`<span class="mono text-xs"><strong>${apt.code}</strong> - ${apt.name}</span>`);
                     airportMarkers[apt.code] = { marker, lat: apt.lat, lng: apt.lng };
                 });
 
-                drawSampleRouteArcs();
+                drawRouteArcs();
             } catch (e) {
                 console.error("Map init error:", e);
             }
         }
 
-        function drawSampleRouteArcs(disruptedOrigin, disruptedDest) {
-            // Clear existing lines
+        function drawRouteArcs(disruptedOrigin, disruptedDest) {
             routePolylines.forEach(l => map.removeLayer(l));
             routePolylines = [];
 
-            // Draw connecting hub route lines
             const hubs = Object.keys(airportMarkers);
             for (let i = 0; i < hubs.length - 1; i++) {
                 const a1 = airportMarkers[hubs[i]];
@@ -630,41 +551,38 @@
                 if (a1 && a2) {
                     const isDisrupted = (hubs[i] === disruptedOrigin && hubs[i+1] === disruptedDest) || (hubs[i] === 'JFK' && hubs[i+1] === 'ORD' && disruptedOrigin);
                     const poly = L.polyline([[a1.lat, a1.lng], [a2.lat, a2.lng]], {
-                        color: isDisrupted ? '#ef4444' : '#38bdf8',
-                        weight: isDisrupted ? 3 : 1.5,
-                        opacity: isDisrupted ? 0.9 : 0.4,
-                        dashArray: isDisrupted ? '4, 4' : null
+                        color: isDisrupted ? '#f43f5e' : '#38bdf8',
+                        weight: isDisrupted ? 2.5 : 1,
+                        opacity: isDisrupted ? 0.9 : 0.25,
+                        dashArray: isDisrupted ? '3, 3' : null
                     }).addTo(map);
                     routePolylines.push(poly);
                 }
             }
         }
 
-        // Load Real-Time Metrics
         async function loadMetrics() {
             try {
                 const res = await fetch('/api/v1/metrics');
                 if (res.ok) {
-                    const data = await res.json();
-                    document.getElementById('metric-flights').innerText = data.total_active_flights;
-                    document.getElementById('metric-pnrs').innerText = data.total_pnrs.toLocaleString();
-                    document.getElementById('metric-disruptions').innerText = data.disrupted_flights;
-                    document.getElementById('metric-reaccommodated').innerText = `${data.reaccommodated_pnrs} (${data.autonomous_resolution_rate_pct}%)`;
-                    document.getElementById('metric-latency').innerText = `${data.avg_graph_solve_time_ms} ms`;
-                    document.getElementById('metric-hours-saved').innerText = `${data.manual_hours_saved} hrs`;
+                    const d = await res.json();
+                    document.getElementById('metric-flights').innerText = d.total_active_flights;
+                    document.getElementById('metric-pnrs').innerText = d.total_pnrs.toLocaleString();
+                    document.getElementById('metric-disruptions').innerText = d.disrupted_flights;
+                    document.getElementById('metric-reaccommodated').innerText = `${d.reaccommodated_pnrs} (${d.autonomous_resolution_rate_pct}%)`;
+                    document.getElementById('metric-latency').innerText = `${d.avg_graph_solve_time_ms} ms`;
+                    document.getElementById('metric-hours-saved').innerText = `${d.manual_hours_saved} hrs`;
 
-                    // Tab 5
                     const liab = document.getElementById('analytics-liability');
-                    if (liab) liab.innerText = `$${data.total_compensation_liability_usd.toLocaleString()}`;
+                    if (liab) liab.innerText = `$${d.total_compensation_liability_usd.toLocaleString()}`;
                     const st = document.getElementById('analytics-solve-time');
-                    if (st) st.innerText = `${data.avg_graph_solve_time_ms} ms`;
+                    if (st) st.innerText = `${d.avg_graph_solve_time_ms} ms`;
                 }
             } catch (err) {
-                console.error("Metrics load err", err);
+                console.error(err);
             }
         }
 
-        // Load Flights Table
         async function loadFlights() {
             try {
                 const res = await fetch('/api/v1/flights?limit=25');
@@ -678,27 +596,27 @@
                     cachedFlights.forEach(f => {
                         const opt = document.createElement('option');
                         opt.value = f.flight_number;
-                        opt.innerText = `${f.flight_number} (${f.origin} -> ${f.destination}) [${f.status}]`;
+                        opt.innerText = `${f.flight_number} (${f.origin}->${f.destination}) [${f.status}]`;
                         select.appendChild(opt);
 
                         const tr = document.createElement('tr');
                         const statusBadge = f.status === 'CANCELLED'
-                            ? '<span class="px-2 py-0.5 rounded text-[10px] bg-red-950/80 text-red-400 border border-red-800">CANCELLED</span>'
+                            ? '<span class="px-1.5 py-0.5 rounded text-[10px] bg-rose-950/80 text-rose-400 border border-rose-900/60 mono">CANCELLED</span>'
                             : (f.status === 'DELAYED'
-                                ? '<span class="px-2 py-0.5 rounded text-[10px] bg-amber-950/80 text-amber-400 border border-amber-800">DELAYED</span>'
-                                : '<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-950/80 text-emerald-400 border border-emerald-800">ON TIME</span>');
+                                ? '<span class="px-1.5 py-0.5 rounded text-[10px] bg-amber-950/80 text-amber-400 border border-amber-900/60 mono">DELAYED</span>'
+                                : '<span class="px-1.5 py-0.5 rounded text-[10px] bg-emerald-950/80 text-emerald-400 border border-emerald-900/60 mono">ON TIME</span>');
 
                         const depTime = f.departure_time.substring(11, 16);
                         const samplePnr = f.sample_pnr || 'N/A';
 
                         tr.innerHTML = `
-                            <td class="p-2 font-bold font-mono text-white">${f.flight_number}</td>
+                            <td class="p-2 mono font-bold text-white">${f.flight_number}</td>
                             <td class="p-2">${f.origin} &rarr; ${f.destination}</td>
-                            <td class="p-2 text-slate-400">${depTime} UTC</td>
+                            <td class="p-2 mono text-slate-400">${depTime} UTC</td>
                             <td class="p-2">${statusBadge}</td>
-                            <td class="p-2 font-mono text-indigo-400 cursor-pointer hover:underline" onclick="selectActivePnr('${samplePnr}')">${samplePnr}</td>
+                            <td class="p-2 mono text-blue-400 cursor-pointer hover:underline" onclick="selectActivePnr('${samplePnr}')">${samplePnr}</td>
                             <td class="p-2 text-right">
-                                <button onclick="quickCancel('${f.flight_number}')" class="text-[11px] text-red-400 hover:text-red-300 font-semibold">
+                                <button onclick="quickCancel('${f.flight_number}')" class="text-[11px] text-rose-400 hover:text-rose-300 font-medium">
                                     Disrupt
                                 </button>
                             </td>
@@ -707,11 +625,10 @@
                     });
                 }
             } catch (err) {
-                console.error("Flights err", err);
+                console.error(err);
             }
         }
 
-        // Live Telemetry Event Stream
         async function loadTelemetryStream() {
             try {
                 const res = await fetch('/api/v1/telemetry/stream');
@@ -722,37 +639,36 @@
                         box.innerHTML = '';
                         logs.forEach(log => {
                             const item = document.createElement('div');
-                            item.className = 'glass-card p-2.5 rounded-xl border border-slate-800/80 text-xs space-y-1';
+                            item.className = 'panel-subtle p-2.5 rounded border border-[#1e2433] space-y-1';
                             item.innerHTML = `
-                                <div class="flex items-center justify-between">
-                                    <span class="font-mono text-indigo-400 font-bold">${log.event_id}</span>
+                                <div class="flex items-center justify-between mono">
+                                    <span class="text-blue-400 font-medium text-[11px]">${log.event_id}</span>
                                     <span class="text-[10px] text-slate-500">${log.timestamp}</span>
                                 </div>
-                                <div class="flex items-center justify-between text-slate-300">
-                                    <span>Flight <strong class="text-white">${log.flight_number}</strong> (${log.origin} &rarr; ${log.destination})</span>
-                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-950 text-red-400 font-bold">${log.disruption_type}</span>
+                                <div class="flex items-center justify-between text-slate-300 text-xs">
+                                    <span>${log.flight_number} (${log.origin} &rarr; ${log.destination})</span>
+                                    <span class="text-[10px] text-rose-400 mono">${log.disruption_type}</span>
                                 </div>
-                                <div class="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
-                                    <span>Affected: <strong class="text-emerald-400">${log.affected_count} PNRs</strong></span>
-                                    <span class="text-cyan-400 font-mono">${log.latency_ms} ms</span>
+                                <div class="flex items-center justify-between text-[10px] text-slate-500 pt-0.5 mono">
+                                    <span>Affected: ${log.affected_count} PNRs</span>
+                                    <span class="text-cyan-400">${log.latency_ms} ms</span>
                                 </div>
                             `;
                             box.appendChild(item);
                         });
                     }
                 }
-            } catch (err) {
-                console.error("Telemetry stream err", err);
+            } catch (e) {
+                console.error(e);
             }
         }
 
-        // Trigger Disruption
         async function triggerDisruption() {
             const flight = document.getElementById('select-flight').value;
             const eventType = document.getElementById('select-event').value;
             const btn = document.getElementById('btn-trigger');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Re-Routing...';
+            btn.innerText = 'Routing...';
 
             try {
                 const fObj = cachedFlights.find(f => f.flight_number === flight);
@@ -767,7 +683,7 @@
                         origin: fObj ? fObj.origin : 'JFK',
                         destination: fObj ? fObj.destination : 'ORD',
                         scheduled_departure: fObj ? fObj.departure_time : new Date().toISOString(),
-                        reason: 'Simulated operational mechanical disruption'
+                        reason: 'IATA Code 89 Equipment Failure'
                     })
                 });
 
@@ -775,10 +691,10 @@
                 const statusBox = document.getElementById('trigger-status');
                 const statusMsg = document.getElementById('trigger-msg');
                 statusBox.classList.remove('hidden');
-                statusMsg.innerHTML = `<strong>Autonomous Pipeline Executed!</strong> Re-accommodated ${data.affected_pnrs} PNRs in <strong>${data.solve_time_ms} ms</strong>.`;
+                statusMsg.innerHTML = `Disruption executed for ${flight}. ${data.affected_pnrs} PNRs re-accommodated in ${data.solve_time_ms} ms.`;
 
                 if (fObj) {
-                    drawSampleRouteArcs(fObj.origin, fObj.destination);
+                    drawRouteArcs(fObj.origin, fObj.destination);
                 }
 
                 await loadFlights();
@@ -788,7 +704,7 @@
                 console.error(err);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Ground & Re-Route';
+                btn.innerText = 'Dispatch Disruption';
             }
         }
 
@@ -801,14 +717,12 @@
             if (pnr && pnr !== 'N/A') {
                 activePnr = pnr;
                 document.getElementById('portal-pnr-input').value = pnr;
-                document.getElementById('quick-pnr-input').value = pnr;
                 document.getElementById('main-ai-pnr').value = pnr;
                 switchTab('portal');
                 fetchPortalPnrDetails();
             }
         }
 
-        // Passenger Portal Logic
         async function fetchPortalPnrDetails() {
             const pnr = document.getElementById('portal-pnr-input').value.trim().toUpperCase() || activePnr;
             if (!pnr) return;
@@ -817,7 +731,7 @@
             try {
                 const res = await fetch(`/api/v1/pnr/${pnr}`);
                 if (!res.ok) {
-                    alert(`PNR ${pnr} not found in GDS.`);
+                    alert(`PNR ${pnr} not found in GDS inventory.`);
                     return;
                 }
 
@@ -825,20 +739,19 @@
                 document.getElementById('portal-booking-summary').classList.remove('hidden');
                 document.getElementById('portal-passenger-name').innerText = data.passenger_name;
                 document.getElementById('portal-pnr-badge').innerText = `PNR: ${data.pnr_id}`;
-                document.getElementById('portal-flight-route').innerText = `Original Flight: ${data.original_flight_number} • ${data.origin} -> ${data.destination} • Fare Class: ${data.fare_class}`;
+                document.getElementById('portal-flight-route').innerText = `Flight: ${data.original_flight_number} • ${data.origin} -> ${data.destination} • Class: ${data.fare_class}`;
 
                 const badge = document.getElementById('portal-status-badge');
                 badge.innerText = data.status;
                 badge.className = data.status === 'RE_ACCOMMODATED'
-                    ? 'px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-semibold text-xs border border-emerald-500/30'
-                    : 'px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-300 font-semibold text-xs border border-amber-500/30';
+                    ? 'px-1.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-900/60 text-[10px]'
+                    : 'px-1.5 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-900/60 text-[10px]';
 
-                // Render options
                 const container = document.getElementById('portal-options-container');
                 container.innerHTML = '';
 
                 if (!data.reaccommodation_options || data.reaccommodation_options.length === 0) {
-                    container.innerHTML = `<div class="glass-card p-6 rounded-2xl text-center text-xs text-slate-400">Flight is currently on schedule or graph engine is evaluating alternatives.</div>`;
+                    container.innerHTML = `<div class="panel-subtle p-4 rounded text-center text-xs text-slate-400">Flight is currently on schedule or graph engine is evaluating alternatives.</div>`;
                     return;
                 }
 
@@ -848,44 +761,43 @@
                     const isSelected = data.selected_option_id === opt.option_id;
 
                     const card = document.createElement('div');
-                    card.className = `glass-card p-5 rounded-2xl border ${isSelected ? 'border-emerald-500 bg-emerald-950/20' : 'border-slate-800'} space-y-3 transition hover:border-indigo-500`;
+                    card.className = `panel p-4 border ${isSelected ? 'border-emerald-500 bg-emerald-950/10' : 'border-[#1e2433]'} space-y-2.5 text-xs`;
 
                     const legs = opt.segments.map(s => `${s.flight_number} (${s.origin} -> ${s.destination})`).join(' &rarr; ');
 
                     card.innerHTML = `
-                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
-                            <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded bg-indigo-600/30 text-indigo-300 font-bold text-xs border border-indigo-500/30">Option ${idx + 1}</span>
-                                <span class="font-semibold text-white text-xs">${opt.route_type} ROUTE</span>
-                                ${idx === 0 ? '<span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 text-[10px] font-bold border border-emerald-800">RECOMMENDED (EARLIEST)</span>' : ''}
+                        <div class="flex items-center justify-between border-b border-[#1e2433] pb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="px-1.5 py-0.5 rounded bg-blue-950 text-blue-400 mono font-medium text-[10px]">OPTION ${idx + 1}</span>
+                                <span class="font-medium text-white">${opt.route_type}</span>
+                                ${idx === 0 ? '<span class="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 text-[9px] mono border border-emerald-900">RECOMMENDED</span>' : ''}
                             </div>
-                            <span class="text-xs text-slate-400">Departs +${opt.departure_delay_minutes}m relative to original</span>
+                            <span class="text-slate-400 mono text-[11px]">+${opt.departure_delay_minutes}m departure delta</span>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px]">
                             <div>
-                                <div class="text-[10px] text-slate-500">Segments</div>
-                                <div class="font-bold text-slate-200 mt-0.5">${legs}</div>
+                                <div class="text-[10px] text-slate-500 uppercase">Routing</div>
+                                <div class="font-medium text-slate-200 mono mt-0.5">${legs}</div>
                             </div>
                             <div>
-                                <div class="text-[10px] text-slate-500">Departure & Arrival</div>
-                                <div class="font-bold text-slate-200 mt-0.5">${opt.departure_time.substring(11, 16)} &rarr; ${opt.arrival_time.substring(11, 16)} UTC</div>
+                                <div class="text-[10px] text-slate-500 uppercase">Schedule</div>
+                                <div class="font-medium text-slate-200 mono mt-0.5">${opt.departure_time.substring(11, 16)} &rarr; ${opt.arrival_time.substring(11, 16)} UTC</div>
                             </div>
                             <div>
-                                <div class="text-[10px] text-slate-500">Duration & Baggage</div>
-                                <div class="font-bold text-slate-200 mt-0.5">${durHours}h ${durMins}m • Auto-transferred</div>
+                                <div class="text-[10px] text-slate-500 uppercase">Duration & Luggage</div>
+                                <div class="font-medium text-slate-200 mt-0.5">${durHours}h ${durMins}m • Auto-transferred</div>
                             </div>
                         </div>
                         <div class="flex justify-end pt-1">
                             ${isSelected 
-                                ? '<button class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg text-xs font-semibold" disabled><i class="fa-solid fa-check mr-1"></i> Current Confirmed Route</button>'
-                                : `<button onclick="confirmPortalRebook('${data.pnr_id}', '${opt.option_id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded-lg text-xs font-semibold transition shadow-md shadow-indigo-600/30">1-Click Lock In & Re-Ticket</button>`
+                                ? '<span class="text-emerald-400 text-xs font-medium mono"><i class="fa-solid fa-check mr-1"></i> TICKETED AND CONFIRMED</span>'
+                                : `<button onclick="confirmPortalRebook('${data.pnr_id}', '${opt.option_id}')" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded text-xs font-medium transition mono">CONFIRM REBOOK</button>`
                             }
                         </div>
                     `;
                     container.appendChild(card);
                 });
 
-                // Update boarding pass view
                 loadBoardingPass(pnr);
             } catch (err) {
                 console.error(err);
@@ -896,16 +808,14 @@
             try {
                 const res = await fetch(`/api/v1/pnr/${pnr}/rebook?option_id=${optionId}`, { method: 'POST' });
                 if (res.ok) {
-                    alert('Re-Accommodation Confirmed! Boarding pass updated.');
                     await fetchPortalPnrDetails();
                     await loadMetrics();
                 }
-            } catch (err) {
-                console.error(err);
+            } catch (e) {
+                console.error(e);
             }
         }
 
-        // Load Digital Boarding Pass & QR
         async function loadBoardingPass(pnr) {
             try {
                 const res = await fetch(`/api/v1/pnr/${pnr}/boarding-pass`);
@@ -915,30 +825,28 @@
                     document.getElementById('bp-pnr').innerText = data.pnr_id;
                     document.getElementById('bp-origin').innerText = data.origin;
                     document.getElementById('bp-dest').innerText = data.destination;
-                    document.getElementById('bp-flight-num').innerText = data.flight_number;
+                    document.getElementById('bp-flight-num').innerText = `FLIGHT ${data.flight_number}`;
                     document.getElementById('bp-gate').innerText = data.gate;
                     document.getElementById('bp-terminal').innerText = data.terminal;
                     document.getElementById('bp-seat').innerText = data.seat;
                     document.getElementById('bp-time').innerText = data.boarding_time.substring(11, 16);
-                    document.getElementById('bp-baggage-tag').innerText = `TAG: ${data.baggage_tags[0]} • IATA BCBP`;
+                    document.getElementById('bp-baggage-tag').innerText = `TAG: ${data.baggage_tags[0]}`;
 
-                    // Generate QR Code
                     const qrBox = document.getElementById('qrcode-box');
                     qrBox.innerHTML = '';
                     new QRCode(qrBox, {
                         text: data.qr_data,
-                        width: 110,
-                        height: 110,
+                        width: 95,
+                        height: 95,
                         colorDark: "#000000",
                         colorLight: "#ffffff",
                         correctLevel: QRCode.CorrectLevel.M
                     });
 
-                    // Load compensation vouchers
                     loadCompensationVouchers(pnr);
                 }
             } catch (e) {
-                console.error("Boarding pass err", e);
+                console.error(e);
             }
         }
 
@@ -949,7 +857,7 @@
                     const c = await res.json();
                     document.getElementById('vch-meal-code').innerText = `$${c.vouchers.meal_amount_usd} (${c.vouchers.meal_voucher_code})`;
                     document.getElementById('vch-comp-amount').innerText = `$${c.cash_compensation_usd}.00 USD`;
-                    document.getElementById('vch-hotel-status').innerText = c.vouchers.hotel_provided ? `Voucher: ${c.vouchers.hotel_voucher_code}` : 'Available on delay >6h';
+                    document.getElementById('vch-hotel-status').innerText = c.vouchers.hotel_provided ? `Voucher: ${c.vouchers.hotel_voucher_code}` : 'Included on >6h delay';
                 }
             } catch (e) {
                 console.error(e);
@@ -965,69 +873,12 @@
             switchTab('boarding');
         }
 
-        // Quick Concierge Chat
-        function loadPnrIntoQuickChat() {
-            const p = document.getElementById('quick-pnr-input').value.trim().toUpperCase();
-            if (p) {
-                activePnr = p;
-                appendQuickMessage('System', `Active PNR synchronized to <strong>${p}</strong>.`, 'system');
-            }
-        }
-
-        async function handleQuickChatSubmit(e) {
-            if (e) e.preventDefault();
-            const input = document.getElementById('quick-chat-input');
-            const msg = input.value.trim();
-            if (!msg) return;
-
-            appendQuickMessage('Passenger', msg, 'user');
-            input.value = '';
-
-            try {
-                const res = await fetch('/api/v1/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ pnr_id: activePnr, message: msg })
-                });
-                if (res.ok) {
-                    const d = await res.json();
-                    appendQuickMessage('AirOps AI', d.reply, 'assistant');
-                    loadMetrics();
-                }
-            } catch (e) {
-                appendQuickMessage('AirOps AI', 'Error communicating with assistant.', 'assistant');
-            }
-        }
-
-        function appendQuickMessage(sender, text, type) {
-            const box = document.getElementById('quick-chat-messages');
-            const div = document.createElement('div');
-            if (type === 'user') {
-                div.className = 'bg-blue-600/30 border border-blue-500/40 p-2 rounded-xl ml-4 text-slate-200';
-                div.innerHTML = `<p class="font-semibold text-blue-300 text-[10px]">${sender}</p><p class="whitespace-pre-line">${text}</p>`;
-            } else if (type === 'system') {
-                div.className = 'bg-slate-900 border border-slate-800 p-2 rounded-lg text-slate-400 text-[10px]';
-                div.innerHTML = text;
-            } else {
-                div.className = 'bg-slate-900/90 border border-indigo-500/30 p-2.5 rounded-xl mr-4 text-slate-200';
-                div.innerHTML = `<p class="font-semibold text-indigo-400 text-[10px] flex items-center gap-1"><i class="fa-solid fa-sparkles"></i> ${sender}</p><div class="whitespace-pre-line">${text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
-            }
-            box.appendChild(div);
-            box.scrollTop = box.scrollHeight;
-        }
-
-        // Fullscreen AI Concierge
         function loadMainAiPnr() {
             const p = document.getElementById('main-ai-pnr').value.trim().toUpperCase();
             if (p) {
                 activePnr = p;
-                appendMainAiMessage('System', `Switched active booking to <strong>${p}</strong>.`, 'system');
+                appendMainAiMessage('System', `TARGET RECORD SET TO ${p}`, 'system');
             }
-        }
-
-        function sendMainAiPrompt(txt) {
-            document.getElementById('main-chat-input').value = txt;
-            handleMainChatSubmit(new Event('submit'));
         }
 
         async function handleMainChatSubmit(e) {
@@ -1036,22 +887,22 @@
             const msg = input.value.trim();
             if (!msg) return;
 
-            appendMainAiMessage('Passenger', msg, 'user');
+            appendMainAiMessage('Operator', msg, 'user');
             input.value = '';
 
             try {
                 const res = await fetch('/api/v1/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ pnr_id: activePnr, message: msg })
+                    body: JSON.stringify({ pnr_id: activePnr || 'EK7P9X', message: msg })
                 });
                 if (res.ok) {
                     const d = await res.json();
-                    appendMainAiMessage('AirOps AI', d.reply, 'assistant');
+                    appendMainAiMessage('Dispatch', d.reply, 'assistant');
                     loadMetrics();
                 }
             } catch (e) {
-                appendMainAiMessage('AirOps AI', 'Error communicating with assistant.', 'assistant');
+                appendMainAiMessage('Dispatch', 'ERR: Communication failure with dispatch server.', 'assistant');
             }
         }
 
@@ -1059,20 +910,19 @@
             const box = document.getElementById('main-chat-messages');
             const div = document.createElement('div');
             if (type === 'user') {
-                div.className = 'bg-blue-600/30 border border-blue-500/40 p-3 rounded-2xl ml-8 text-slate-200';
-                div.innerHTML = `<p class="font-semibold text-blue-300 text-xs">${sender}</p><p class="whitespace-pre-line mt-1">${text}</p>`;
+                div.className = 'panel-subtle p-2.5 rounded border border-[#1e2433] text-slate-200 ml-6';
+                div.innerHTML = `<span class="text-slate-500 font-semibold">[${sender}]</span> ${text}`;
             } else if (type === 'system') {
-                div.className = 'bg-slate-900 border border-slate-800 p-2.5 rounded-xl text-slate-400 text-xs';
+                div.className = 'text-slate-500 text-[10px] py-1';
                 div.innerHTML = text;
             } else {
-                div.className = 'bg-slate-900/90 border border-indigo-500/30 p-3.5 rounded-2xl mr-8 text-slate-200';
-                div.innerHTML = `<p class="font-semibold text-indigo-400 text-xs flex items-center gap-1.5"><i class="fa-solid fa-sparkles"></i> ${sender}</p><div class="whitespace-pre-line mt-1">${text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
+                div.className = 'panel-subtle p-2.5 rounded border border-[#2f384d] text-slate-100 mr-6';
+                div.innerHTML = `<div class="text-blue-400 font-medium mb-1">[${sender}]</div><div class="whitespace-pre-line">${text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
             }
             box.appendChild(div);
             box.scrollTop = box.scrollHeight;
         }
 
-        // Window Onload
         window.addEventListener('DOMContentLoaded', async () => {
             await initMap();
             await loadFlights();
