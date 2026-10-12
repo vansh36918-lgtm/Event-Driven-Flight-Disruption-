@@ -161,6 +161,20 @@ async def test_event_pipeline_and_ai():
     assert slot_swap["action"] == "CDM_SLOT_SWAP_CONFIRMED"
     print(f"  [OK] FAA ATC Ground Delay Program & CDM Slot Swap verified ({slot_swap['protected_slot']} saved {slot_swap['pax_delay_minutes_saved']}m delay)!")
 
+    # 11. Airline Alliance & IATA Rule 240 Involuntary Endorsement Verification
+    from app.engine.alliance_engine import alliance_engine
+    assert alliance_engine.get_alliance("UA") == "STAR_ALLIANCE"
+    assert alliance_engine.get_alliance("AA") == "ONEWORLD"
+    assert alliance_engine.get_alliance("DL") == "SKYTEAM"
+    assert alliance_engine.compute_affinity_score("AA", "AA") == 1.0
+    assert alliance_engine.compute_affinity_score("AA", "BA") == 0.90
+    assert alliance_engine.check_interline_baggage_through_check("AA", "BA") is True
+    endorsement = alliance_engine.generate_rule_240_endorsement("AA", "UA", "TEST01")
+    assert "RULE 240" in endorsement["endorsement_string"]
+    assert endorsement["protocol"] == "RULE_240_INVOLUNTARY"
+    print(f"  [OK] Airline Alliance Matrix & IATA Rule 240 Involuntary Endorsement verified ({endorsement['protocol']})!")
+
+
 
 
 

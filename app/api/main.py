@@ -24,6 +24,7 @@ from app.engine.graph_engine import reaccommodation_engine
 from app.engine.compensation_engine import compensation_engine, AIRPORT_COORDINATES
 from app.engine.ndc_service import ndc_service
 from app.engine.slot_engine import slot_engine
+from app.engine.alliance_engine import alliance_engine
 from app.bus.event_broker import event_broker
 from app.worker.reaccommodation_worker import reaccommodation_worker
 from app.ai.assistant import ai_assistant
@@ -219,7 +220,42 @@ async def get_iata_ndc_reshop_offers(pnr_id: str):
     return ndc_service.generate_order_reshop_response(pnr, pnr.reaccommodation_options)
 
 
+@app.get("/api/v1/pnr/{pnr_id}/endorsement")
+async def get_pnr_rule240_endorsement(pnr_id: str):
+    """
+    Generates IATA Rule 240 / Rule 80 Involuntary Reroute Endorsement,
+    interline baggage through-check clearance, and IATA Clearing House settlement protocol.
+    """
+    pnr = gds_service.get_pnr(pnr_id)
+    if not pnr:
+        raise HTTPException(status_code=404, detail=f"PNR '{pnr_id}' not found.")
+    
+    original_carrier = pnr.original_flight_number[:2]
+    rerouted_carrier = original_carrier
+    if pnr.reaccommodation_options:
+        chosen = next((opt for opt in pnr.reaccommodation_options if opt.get("option_id") == pnr.selected_option_id), pnr.reaccommodation_options[0])
+        segments = chosen.get("segments", [])
+        if segments:
+            first_seg = segments[0]
+            rerouted_carrier = first_seg.get("carrier") or first_seg.get("flight_number", original_carrier)[:2]
+
+    return alliance_engine.generate_rule_240_endorsement(original_carrier, rerouted_carrier, pnr.pnr_id)
+
+
+
+@app.get("/api/v1/alliances")
+async def get_airline_alliances():
+    """
+    Returns global airline alliance mappings (Star Alliance, SkyTeam, OneWorld) and bilateral agreements.
+    """
+    return {
+        "alliances": alliance_engine.alliances,
+        "bilateral_interline_agreements": [f"{a[0]} <-> {a[1]}" for a in alliance_engine.bilateral_agreements],
+    }
+
+
 @app.get("/api/v1/crew/alerts")
+
 async def get_crew_pairing_alerts():
     """
     Returns live FAA FAR Part 117 / Part 121 crew duty timeouts and cascading rotation breaches.

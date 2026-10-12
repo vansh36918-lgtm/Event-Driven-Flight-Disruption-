@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional
 import networkx as nx
 from app.models.schemas import FlightSegment, FlightStatus, ReaccommodationRoute
+from app.engine.alliance_engine import alliance_engine
 
 
 class ConstrainedReaccommodationEngine:
@@ -70,8 +71,9 @@ class ConstrainedReaccommodationEngine:
                 if original_departure <= f.departure_time <= window_end:
                     delay_min = int((f.departure_time - original_departure).total_seconds() / 60)
                     
-                    # Carrier affinity bonus (-40 if same carrier, avoiding interline baggage friction)
-                    carrier_bonus = -40 if (preferred_carrier and f.carrier == preferred_carrier) else 0
+                    # Carrier & alliance affinity bonus (-40 same carrier, -36 same alliance, -28 bilateral)
+                    affinity = alliance_engine.compute_affinity_score(preferred_carrier, f.carrier) if preferred_carrier else 0.5
+                    carrier_bonus = int(-40 * affinity)
                     
                     # VIP passengers (PVS > 700) prioritize minimizing delay; economy balances duration
                     delay_weight = 1.3 if pvs_score >= 700 else 1.0
@@ -116,12 +118,12 @@ class ConstrainedReaccommodationEngine:
                         total_duration = int((f2.arrival_time - f1.departure_time).total_seconds() / 60)
                         delay_min = int((f1.departure_time - original_departure).total_seconds() / 60)
 
-                        carrier_bonus = 0
                         if preferred_carrier:
-                            if f1.carrier == preferred_carrier and f2.carrier == preferred_carrier:
-                                carrier_bonus = -50
-                            elif f1.carrier == preferred_carrier or f2.carrier == preferred_carrier:
-                                carrier_bonus = -20
+                            aff1 = alliance_engine.compute_affinity_score(preferred_carrier, f1.carrier)
+                            aff2 = alliance_engine.compute_affinity_score(preferred_carrier, f2.carrier)
+                            carrier_bonus = int(-30 * (aff1 + aff2))
+                        else:
+                            carrier_bonus = 0
 
                         # Connecting penalty: +100 for transfer friction
                         composite_score = float(delay_min + total_duration + 100 + carrier_bonus)

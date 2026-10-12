@@ -194,12 +194,28 @@
                             <option value="WEATHER_DELAY">CODE 71: Weather Ground Stop (+2h)</option>
                         </select>
                     </div>
-                    <button onclick="triggerDisruption()" id="btn-trigger" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-medium py-1.5 px-3 rounded text-xs transition">
-                        Dispatch Disruption
-                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="triggerDisruption()" id="btn-trigger" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-medium py-1.5 px-3 rounded text-xs transition">
+                            Dispatch Disruption
+                        </button>
+                        <button onclick="triggerSquallLineStorm()" id="btn-squall" class="bg-amber-600/80 hover:bg-amber-500 text-white font-medium py-1.5 px-2.5 rounded text-xs transition mono" title="Simulate multi-hub derecho across ORD/DFW/ATL/JFK">
+                            <i class="fa-solid fa-bolt mr-1"></i>Squall Storm
+                        </button>
+                    </div>
                 </div>
                 <div id="trigger-status" class="hidden p-2 rounded text-[11px] bg-[#1a0f14] border border-rose-900/60 text-rose-300">
                     <span id="trigger-msg"></span>
+                </div>
+            </div>
+
+            <!-- FAA ATC GDP & Fleet Ops Panel -->
+            <div class="panel p-4 space-y-3">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-200">ATC Ground Stops & Fleet Recovery</span>
+                    <span class="text-[10px] text-amber-400 mono">FAA CDM Active</span>
+                </div>
+                <div id="atc-fleet-box" class="space-y-2 max-h-48 overflow-y-auto custom-scroll text-xs">
+                    <div class="text-slate-600 text-xs py-2 text-center">Monitoring ATC programs...</div>
                 </div>
             </div>
 
@@ -209,7 +225,7 @@
                     <span class="font-medium text-slate-200">Telemetry Ingestion Log</span>
                     <span class="text-[10px] text-slate-500 mono">AMQP: flight_disruptions</span>
                 </div>
-                <div id="telemetry-stream-box" class="space-y-2 max-h-80 overflow-y-auto custom-scroll text-xs">
+                <div id="telemetry-stream-box" class="space-y-2 max-h-60 overflow-y-auto custom-scroll text-xs">
                     <div class="text-slate-600 text-xs py-4 text-center">Awaiting telemetry webhooks...</div>
                 </div>
             </div>
@@ -250,6 +266,17 @@
                         <button onclick="switchToCompensationView()" class="px-2.5 py-1 rounded bg-[#161a24] hover:bg-[#1f2533] text-slate-300 text-xs border border-[#1e2433]">
                             Care Vouchers
                         </button>
+                    </div>
+                </div>
+                <!-- IATA Rule 240 & Baggage Protocol Banner -->
+                <div id="portal-endorsement-banner" class="hidden panel-subtle p-2.5 rounded border border-[#1e2433] flex flex-wrap items-center justify-between text-[10px] mono text-slate-300 gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-blue-400 font-semibold">IATA RULE 240:</span>
+                        <span id="portal-endorsement-text" class="text-slate-300">--</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="portal-baggage-transfer" class="text-emerald-400 font-medium">BAG: THROUGH-CHECK APPROVED</span>
+                        <span id="portal-pvs-badge" class="px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-900">PVS: ---</span>
                     </div>
                 </div>
             </div>
@@ -747,6 +774,22 @@
                     ? 'px-1.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-900/60 text-[10px]'
                     : 'px-1.5 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-900/60 text-[10px]';
 
+                try {
+                    const endRes = await fetch(`/api/v1/pnr/${pnr}/endorsement`);
+                    if (endRes.ok) {
+                        const endData = await endRes.json();
+                        const banner = document.getElementById('portal-endorsement-banner');
+                        if (banner) {
+                            banner.classList.remove('hidden');
+                            document.getElementById('portal-endorsement-text').innerText = endData.endorsement_string;
+                            document.getElementById('portal-baggage-transfer').innerText = `BAG: ${endData.baggage_through_check}`;
+                            document.getElementById('portal-pvs-badge').innerText = `PVS: ${data.pvs_score || 400}`;
+                        }
+                    }
+                } catch (e) {
+                    console.error("Endorsement fetch err:", e);
+                }
+
                 const container = document.getElementById('portal-options-container');
                 container.innerHTML = '';
 
@@ -923,15 +966,140 @@
             box.scrollTop = box.scrollHeight;
         }
 
+        async function triggerSquallLineStorm() {
+            const btn = document.getElementById('btn-squall');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Storm Injected...';
+            }
+            try {
+                const hubs = ['ORD', 'DFW', 'ATL', 'JFK'];
+                const targets = cachedFlights.filter(f => hubs.includes(f.origin) || hubs.includes(f.destination)).slice(0, 8);
+                const promises = targets.map(f => {
+                    return fetch('/api/v1/gds/simulate-disruption', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            event_id: 'SQUALL-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
+                            disruption_type: 'WEATHER_DELAY',
+                            flight_number: f.flight_number,
+                            carrier: f.carrier || f.flight_number.substring(0, 2),
+                            origin: f.origin,
+                            destination: f.destination,
+                            scheduled_departure: f.departure_time,
+                            reason: 'Severe Convective Squall Line / Ground Stop'
+                        })
+                    });
+                });
+                await Promise.all(promises);
+                const statusBox = document.getElementById('trigger-status');
+                const statusMsg = document.getElementById('trigger-msg');
+                statusBox.classList.remove('hidden');
+                statusMsg.innerHTML = `<strong>Squall Line Storm Injected:</strong> Grounded ${targets.length} hub flights concurrently. CDM slots, tail-swaps, and Part 117 crew timeouts calculated.`;
+                await loadFlights();
+                await loadMetrics();
+                await loadTelemetryStream();
+                await loadAtcAndFleet();
+            } catch (err) {
+                console.error(err);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-bolt mr-1"></i>Squall Storm';
+                }
+            }
+        }
+
+        async function loadAtcAndFleet() {
+            try {
+                const [gdpRes, slotRes, tailRes, crewRes] = await Promise.all([
+                    fetch('/api/v1/atc/ground-delay-programs'),
+                    fetch('/api/v1/atc/slot-swaps'),
+                    fetch('/api/v1/fleet/tail-swaps'),
+                    fetch('/api/v1/crew/alerts')
+                ]);
+                if (gdpRes.ok && slotRes.ok && tailRes.ok && crewRes.ok) {
+                    const gdps = await gdpRes.json();
+                    const slots = await slotRes.json();
+                    const tails = await tailRes.json();
+                    const crews = await crewRes.json();
+
+                    const atcBox = document.getElementById('atc-fleet-box');
+                    if (!atcBox) return;
+
+                    let html = '';
+                    if (gdps && gdps.length > 0) {
+                        const g = gdps[0];
+                        html += `
+                            <div class="panel-subtle p-2.5 rounded border border-amber-900/40 text-[11px] space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-amber-400 mono">${g.program_id} (${g.airport})</span>
+                                    <span class="text-[10px] text-amber-500 font-mono">-${g.capacity_cut_pct}% AAR</span>
+                                </div>
+                                <div class="text-slate-300 text-[10px]">${g.reason}</div>
+                                <div class="text-slate-500 text-[10px] mono">Normal AAR: ${g.normal_aar}/hr &rarr; Reduced: ${g.reduced_aar}/hr</div>
+                            </div>
+                        `;
+                    }
+
+                    if (slots && slots.length > 0) {
+                        const s = slots[0];
+                        html += `
+                            <div class="panel-subtle p-2.5 rounded border border-blue-900/40 text-[11px] space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-blue-400 mono">CDM SLOT COMPRESSION</span>
+                                    <span class="text-[10px] text-emerald-400 font-mono">+${s.pax_delay_minutes_saved}m saved</span>
+                                </div>
+                                <div class="text-slate-300 text-[10px]">${s.high_priority_flight} prioritized into slot ${s.protected_slot}</div>
+                            </div>
+                        `;
+                    }
+
+                    if (tails && tails.length > 0) {
+                        const t = tails[0];
+                        html += `
+                            <div class="panel-subtle p-2.5 rounded border border-cyan-900/40 text-[11px] space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-cyan-400 mono">AIRCRAFT TAIL SWAP</span>
+                                    <span class="text-[10px] text-slate-400 mono">${t.hub}</span>
+                                </div>
+                                <div class="text-slate-300 text-[10px]">${t.flight_number}: Swap ${t.original_tail} &rarr; ${t.assigned_spare_tail}</div>
+                            </div>
+                        `;
+                    }
+
+                    if (crews && crews.length > 0) {
+                        const c = crews[0];
+                        html += `
+                            <div class="panel-subtle p-2.5 rounded border border-rose-900/40 text-[11px] space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-rose-400 mono">PART 117 TIMEOUT</span>
+                                    <span class="text-[10px] text-rose-500 mono">${c.cascading_flight_number}</span>
+                                </div>
+                                <div class="text-slate-300 text-[10px]">${c.reason}</div>
+                            </div>
+                        `;
+                    }
+
+                    atcBox.innerHTML = html || '<div class="text-slate-600 text-xs py-2 text-center">No active ATC ground stops.</div>';
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', async () => {
             await initMap();
             await loadFlights();
             await loadMetrics();
             await loadTelemetryStream();
+            await loadAtcAndFleet();
 
             setInterval(loadMetrics, 4000);
             setInterval(loadTelemetryStream, 3000);
+            setInterval(loadAtcAndFleet, 4000);
         });
+
     </script>
 </body>
 </html>
