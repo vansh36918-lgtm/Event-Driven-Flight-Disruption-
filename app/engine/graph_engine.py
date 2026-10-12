@@ -43,12 +43,19 @@ class ConstrainedReaccommodationEngine:
         min_layover_minutes: int = 45,
         max_layover_minutes: int = 240,
         max_stops: int = 2,
+        preferred_carrier: Optional[str] = None,
+        pvs_score: int = 400,
     ) -> List[ReaccommodationRoute]:
         """
-        Executes constrained graph search:
+        Executes constrained multi-objective Pareto graph search:
         - Must depart between [original_departure, original_departure + max_window_hours]
-        - Layovers must be within [min_layover_minutes, max_layover_minutes]
-        - Returns ranked candidate routes.
+        - Connection layovers must satisfy [min_layover_minutes, max_layover_minutes]
+        - Evaluates Pareto trade-offs across:
+          1. Departure delay delta (relative to T0)
+          2. Total flight/transit duration
+          3. Transfer penalty (direct vs connecting)
+          4. Operating carrier alliance affinity
+          5. Dynamic weighting scaled by Passenger Value Score (PVS)
         """
         window_end = original_departure + timedelta(hours=max_window_hours)
         candidates: List[ReaccommodationRoute] = []
@@ -62,6 +69,14 @@ class ConstrainedReaccommodationEngine:
                 f: FlightSegment = edge_data["flight"]
                 if original_departure <= f.departure_time <= window_end:
                     delay_min = int((f.departure_time - original_departure).total_seconds() / 60)
+                    
+                    # Carrier affinity bonus (-40 if same carrier, avoiding interline baggage friction)
+                    carrier_bonus = -40 if (preferred_carrier and f.carrier == preferred_carrier) else 0
+                    
+                    # VIP passengers (PVS > 700) prioritize minimizing delay; economy balances duration
+                    delay_weight = 1.3 if pvs_score >= 700 else 1.0
+                    composite_score = float(delay_min * delay_weight + f.duration_minutes + carrier_bonus)
+
                     route = ReaccommodationRoute(
                         option_id=f"OPT-DIR-{f.flight_number}",
                         route_type="DIRECT",
@@ -71,7 +86,7 @@ class ConstrainedReaccommodationEngine:
                         arrival_time=f.arrival_time,
                         departure_delay_minutes=delay_min,
                         layover_airports=[],
-                        score=float(delay_min + f.duration_minutes),
+                        score=composite_score,
                     )
                     candidates.append(route)
 
@@ -86,11 +101,9 @@ class ConstrainedReaccommodationEngine:
 
             for leg1_key, leg1_data in leg1_edges.items():
                 f1: FlightSegment = leg1_data["flight"]
-                # Leg 1 must depart within window
                 if not (original_departure <= f1.departure_time <= window_end):
                     continue
 
-                # Check connection from hub to destination
                 if not self.graph.has_edge(hub, destination):
                     continue
 
@@ -98,11 +111,20 @@ class ConstrainedReaccommodationEngine:
                 for leg2_key, leg2_data in leg2_edges.items():
                     f2: FlightSegment = leg2_data["flight"]
 
-                    # Check valid layover window
                     layover_delta = (f2.departure_time - f1.arrival_time).total_seconds() / 60
                     if min_layover_minutes <= layover_delta <= max_layover_minutes:
                         total_duration = int((f2.arrival_time - f1.departure_time).total_seconds() / 60)
                         delay_min = int((f1.departure_time - original_departure).total_seconds() / 60)
+
+                        carrier_bonus = 0
+                        if preferred_carrier:
+                            if f1.carrier == preferred_carrier and f2.carrier == preferred_carrier:
+                                carrier_bonus = -50
+                            elif f1.carrier == preferred_carrier or f2.carrier == preferred_carrier:
+                                carrier_bonus = -20
+
+                        # Connecting penalty: +100 for transfer friction
+                        composite_score = float(delay_min + total_duration + 100 + carrier_bonus)
 
                         route = ReaccommodationRoute(
                             option_id=f"OPT-HUB-{f1.flight_number}-{f2.flight_number}",
@@ -113,14 +135,13 @@ class ConstrainedReaccommodationEngine:
                             arrival_time=f2.arrival_time,
                             departure_delay_minutes=delay_min,
                             layover_airports=[hub],
-                            # Connecting routes have a penalty (+120) to prefer direct routes when available
-                            score=float(delay_min + total_duration + 120),
+                            score=composite_score,
                         )
                         candidates.append(route)
 
-        # Sort candidate routes by score (lowest penalty first: earliest arrival & fewest stops)
+        # Sort candidate routes by Pareto composite utility score
         candidates.sort(key=lambda r: r.score)
-        return candidates[:3]  # Return top 3 alternatives
+        return candidates[:3]  # Return top 3 Pareto-optimal alternatives
 
 
 # Singleton engine

@@ -132,6 +132,20 @@ async def test_event_pipeline_and_ai():
     assert order["StatusCode"] == "CONFIRMED"
     print(f"  [OK] IATA NDC 21.3 OrderChangeNotifRQ generated ({order['OrderID']}) with PVS score {pnr_final.pvs_score}!")
 
+    # 7. IATA NDC 21.3 OrderReshopRS Verification
+    reshop_payload = ndc_service.generate_order_reshop_response(pnr_final, pnr_final.reaccommodation_options)
+    assert "IATA_OrderReshopRS" in reshop_payload, "Missing IATA_OrderReshopRS tag!"
+    offers = reshop_payload["IATA_OrderReshopRS"]["ReshopOffers"]
+    assert len(offers) >= 2, "Expected at least 2 reshop offer bundles!"
+    print(f"  [OK] IATA NDC 21.3 OrderReshopRS generated with {len(offers)} dynamic offer bundles!")
+
+    # 8. FAA Part 117 Crew Pairing Cascading Timeout Verification
+    from app.engine.crew_engine import crew_engine
+    cascading_alerts = crew_engine.evaluate_cascading_timeout("AA100", delay_minutes=240)
+    assert len(cascading_alerts) > 0, "Expected downstream crew timeouts on rotation CP-101!"
+    print(f"  [OK] FAA Part 117 Crew Pairing engine caught {len(cascading_alerts)} cascading timeout violations for rotation!")
+
+
 
 
 

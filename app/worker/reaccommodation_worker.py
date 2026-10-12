@@ -9,6 +9,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 from app.engine.gds_service import gds_service
 from app.engine.graph_engine import reaccommodation_engine
+from app.engine.crew_engine import crew_engine
 from app.models.schemas import FlightStatus
 
 logger = logging.getLogger("Worker")
@@ -20,6 +21,7 @@ class ReaccommodationWorker:
         self.total_reaccommodated_pnrs = 0
         self.last_solve_time_ms = 0.0
         self.telemetry_logs: List[Dict[str, Any]] = []
+        self.crew_alerts: List[Dict[str, Any]] = []
 
     async def handle_disruption_event(self, event_data: Dict[str, Any]):
         """Callback invoked when a flight disruption event is published on the bus."""
@@ -51,11 +53,14 @@ class ReaccommodationWorker:
         origin = flight.origin
         dest = flight.destination
 
+        # 1. Compute Pareto-optimal alternative routes with carrier affinity and PVS weighting
         routes = reaccommodation_engine.find_alternatives(
             origin=origin,
             destination=dest,
             original_departure=scheduled_dep,
             max_window_hours=4,
+            preferred_carrier=flight.carrier,
+            pvs_score=affected_pnrs[0].pvs_score if affected_pnrs else 400,
         )
 
         routes_payload = [r.model_dump(mode="json") for r in routes]
@@ -63,6 +68,18 @@ class ReaccommodationWorker:
         for pnr in affected_pnrs:
             gds_service.update_pnr_reaccommodation(pnr.pnr_id, routes_payload)
             self.total_reaccommodated_pnrs += 1
+
+        # 2. Check for cascading crew timeout violations under FAA Part 117
+        delay_est = 180 if disruption_type == "CANCELLATION" else 120
+        cascading = crew_engine.evaluate_cascading_timeout(flight_num, delay_minutes=delay_est)
+        for alert in cascading:
+            logger.warning(
+                f"ALERT: Cascading FAA Part 117 duty timeout on downstream flight {alert['cascading_flight_number']} "
+                f"from antecedent {flight_num}."
+            )
+            self.crew_alerts.insert(0, alert)
+            if len(self.crew_alerts) > 20:
+                self.crew_alerts.pop()
 
         elapsed_ms = (time.perf_counter() - start_time) * 1000
         self.last_solve_time_ms = round(elapsed_ms, 2)

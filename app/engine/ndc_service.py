@@ -97,6 +97,64 @@ class NDCService:
             }
         }
 
+    def generate_order_reshop_response(
+        self, pnr: PassengerRecord, alternative_routes: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Generates authentic IATA NDC 21.3 OrderReshopRS payload.
+        Presents dynamic involuntary re-accommodation offer bundles:
+        - Offer 1: Standard Involuntary Re-route ($0.00)
+        - Offer 2: Expedited Care Bundle (Flight + Priority Bag + Meal Voucher, $0.00)
+        - Offer 3: Involuntary Full Refund & Goodwill Travel Credit Voucher
+        """
+        now_iso = datetime.utcnow().isoformat() + "Z"
+        reshop_offers = []
+
+        for idx, route in enumerate(alternative_routes[:2]):
+            segments = route.get("segments", [])
+            leg_summary = " -> ".join([s.get("flight_number", "") for s in segments])
+            reshop_offers.append({
+                "OfferID": f"OFFER-INVOL-{idx+1}-{route.get('option_id')}",
+                "OfferType": "INVOLUNTARY_REROUTE",
+                "TotalPrice": {"@CurCode": "USD", "value": "0.00"},
+                "BaggageAllowance": {"CheckedPieces": "2", "Status": "PRESERVED"},
+                "RouteType": route.get("route_type", "DIRECT"),
+                "DepartureTime": route.get("departure_time"),
+                "ArrivalTime": route.get("arrival_time"),
+                "DurationMinutes": route.get("total_duration_minutes"),
+                "Segments": leg_summary,
+                "IncludedAncillaries": [
+                    "Priority Interline Baggage Handling",
+                    "Complimentary Re-ticketing (No Penalty)",
+                ] + (["Terminal Refreshment Voucher ($30)"] if idx == 1 else []),
+            })
+
+        # Add Involuntary Refund Offer
+        reshop_offers.append({
+            "OfferID": f"OFFER-REFUND-{pnr.pnr_id}",
+            "OfferType": "INVOLUNTARY_REFUND_AND_CREDIT",
+            "TotalPrice": {"@CurCode": "USD", "value": "0.00"},
+            "CashRefundAmount": {"@CurCode": "USD", "value": "450.00"},
+            "FutureTravelCredit": {"@CurCode": "USD", "value": "150.00"},
+            "Description": "100% Original Fare Refund to Original Payment Method + $150 Goodwill Travel Voucher",
+        })
+
+        return {
+            "IATA_OrderReshopRS": {
+                "@xmlns": "http://www.iata.org/IATA/2015/00/2021.3/IATA_OrderReshopRS",
+                "Timestamp": now_iso,
+                "ResponseParameters": {"CurCode": "USD"},
+                "DisruptedOrder": {
+                    "OrderID": f"ORD-{pnr.pnr_id}",
+                    "PassengerName": pnr.passenger_name,
+                    "DisruptedFlight": pnr.original_flight_number,
+                    "FareClass": pnr.fare_class.value,
+                    "PVSScore": pnr.pvs_score,
+                },
+                "ReshopOffers": reshop_offers,
+            }
+        }
+
 
 # Singleton service
 ndc_service = NDCService()

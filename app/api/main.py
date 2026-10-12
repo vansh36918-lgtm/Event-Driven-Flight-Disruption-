@@ -205,6 +205,27 @@ async def get_iata_ndc_order(pnr_id: str):
     return ndc_service.generate_order_change_notification(pnr, old_flight, new_segments)
 
 
+@app.get("/api/v1/pnr/{pnr_id}/reshop")
+async def get_iata_ndc_reshop_offers(pnr_id: str):
+    """
+    Generates standard IATA NDC 21.3 OrderReshopRS response.
+    Returns dynamic offer bundles: Re-route, Expedited Care, and Involuntary Refund.
+    """
+    pnr = gds_service.get_pnr(pnr_id)
+    if not pnr:
+        raise HTTPException(status_code=404, detail=f"PNR '{pnr_id}' not found.")
+
+    return ndc_service.generate_order_reshop_response(pnr, pnr.reaccommodation_options)
+
+
+@app.get("/api/v1/crew/alerts")
+async def get_crew_pairing_alerts():
+    """
+    Returns live FAA FAR Part 117 / Part 121 crew duty timeouts and cascading rotation breaches.
+    """
+    return reaccommodation_worker.crew_alerts
+
+
 @app.get("/api/v1/metrics", response_model=SystemMetrics)
 async def get_metrics():
     """Returns platform real-time operational metrics, ROI, and compensation liability."""

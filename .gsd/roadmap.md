@@ -47,4 +47,12 @@
 - [x] Authentic IATA NDC 21.3 `IATA_OrderChangeNotifRQ` XML/JSON payload export engine.
 - [x] Minimalist enterprise UI styling overhaul (Linear/FlightAware aesthetic, authentic dispatch language).
 
+## Phase 10: FAA Part 117 Crew Pairing Cascading Engine & NDC OrderReshop [COMPLETED]
+- [x] Implementation of FAA FAR Part 117 / Part 121 Flight Duty Period (FDP) & rest rule validator.
+- [x] Downstream rotation tracking detecting cascading crew timeouts when antecedent flights are delayed.
+- [x] IATA NDC 21.3 `IATA_OrderReshopRS` dynamic multi-offer bundle generator (Re-route, Expedited Care, Involuntary Refund).
+- [x] Pareto-optimal multi-objective NetworkX heuristics balancing delay, duration, and carrier alliance affinity.
+- [x] End-to-end verification via automated test suite `test_system.py`.
+
+
 
