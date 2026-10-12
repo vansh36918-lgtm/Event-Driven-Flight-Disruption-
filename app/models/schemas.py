@@ -54,6 +54,8 @@ class PassengerRecord(BaseModel):
     origin: str
     destination: str
     status: str = "CONFIRMED"  # CONFIRMED, DISRUPTED, RE_ACCOMMODATED, REJECTED
+    loyalty_tier: str = "GENERAL"  # DIAMOND, PLATINUM, GOLD, SILVER, GENERAL
+    pvs_score: int = 450  # Passenger Value Score (100 - 1000)
     reaccommodation_options: List[Dict[str, Any]] = []
     selected_option_id: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)

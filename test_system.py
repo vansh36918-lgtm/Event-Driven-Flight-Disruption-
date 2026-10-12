@@ -121,6 +121,18 @@ async def test_event_pipeline_and_ai():
     assert len(bp["qr_data"]) > 10
     print(f"  [OK] EU261/DOT Compensation ({comp['haul_tier']} - ${comp['cash_compensation_usd']}) & Boarding Pass verified!")
 
+    # 6. IATA NDC 21.3 Order Payload & PVS Verification
+    from app.engine.ndc_service import ndc_service
+    assert 100 <= pnr_final.pvs_score <= 1000, f"Invalid PVS score: {pnr_final.pvs_score}"
+    ndc_payload = ndc_service.generate_order_change_notification(
+        pnr_final, target_flight, pnr_final.reaccommodation_options[0]["segments"]
+    )
+    assert "IATA_OrderChangeNotifRQ" in ndc_payload, "Missing IATA_OrderChangeNotifRQ root tag!"
+    order = ndc_payload["IATA_OrderChangeNotifRQ"]["Order"]
+    assert order["StatusCode"] == "CONFIRMED"
+    print(f"  [OK] IATA NDC 21.3 OrderChangeNotifRQ generated ({order['OrderID']}) with PVS score {pnr_final.pvs_score}!")
+
+
 
 
 if __name__ == "__main__":

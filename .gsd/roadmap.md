@@ -41,3 +41,10 @@
 - [x] IATA-compliant digital mobile boarding pass generator with dynamic 2D QR barcode rendering.
 - [x] Multi-tab enterprise interface (Ops Command, Passenger Portal, Mobile Boarding Pass, AI Concierge, ROI Analytics).
 
+## Phase 9: IATA NDC 21.3 Order Management & Passenger Value Scoring (PVS) [COMPLETED]
+- [x] Multi-tier Passenger Value Scoring (PVS 100-1000) factoring loyalty tiers and fare classes.
+- [x] Autonomous priority re-accommodation sorting (Diamond/Platinum/Business protected first).
+- [x] Authentic IATA NDC 21.3 `IATA_OrderChangeNotifRQ` XML/JSON payload export engine.
+- [x] Minimalist enterprise UI styling overhaul (Linear/FlightAware aesthetic, authentic dispatch language).
+
+

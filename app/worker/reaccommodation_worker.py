@@ -41,9 +41,10 @@ class ReaccommodationWorker:
         all_flights = list(gds_service.flights.values())
         reaccommodation_engine.build_schedule_graph(all_flights)
 
-        # Query all PNRs booked on this disrupted flight
+        # Query all PNRs booked on this disrupted flight and prioritize by Passenger Value Score (PVS)
         affected_pnrs = gds_service.get_pnrs_for_flight(flight_num)
-        logger.info(f"Identified {len(affected_pnrs)} affected PNRs on flight {flight_num}.")
+        affected_pnrs.sort(key=lambda p: getattr(p, "pvs_score", 400), reverse=True)
+        logger.info(f"Identified {len(affected_pnrs)} affected PNRs on flight {flight_num}. Ranked by PVS priority.")
 
         # For each affected passenger, compute alternative routes within 4-hour window
         scheduled_dep = flight.departure_time

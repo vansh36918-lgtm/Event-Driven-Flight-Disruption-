@@ -102,12 +102,22 @@ class GDSService:
 
                 first = random.choice(first_names)
                 last = random.choice(last_names)
+                fare = random.choice([FareClass.ECONOMY, FareClass.ECONOMY, FareClass.BUSINESS, FareClass.PREMIUM_ECONOMY])
+                tier = random.choices(["DIAMOND", "PLATINUM", "GOLD", "SILVER", "GENERAL"], weights=[5, 10, 20, 25, 40])[0]
+                
+                # Compute Passenger Value Score (PVS)
+                tier_weights = {"DIAMOND": 500, "PLATINUM": 380, "GOLD": 260, "SILVER": 150, "GENERAL": 50}
+                class_weights = {FareClass.FIRST: 450, FareClass.BUSINESS: 380, FareClass.PREMIUM_ECONOMY: 220, FareClass.ECONOMY: 100}
+                pvs = tier_weights[tier] + class_weights[fare] + random.randint(10, 50)
+
                 pnr = PassengerRecord(
                     pnr_id=pnr_id,
                     passenger_name=f"{first} {last}",
                     email=f"{first.lower()}.{last.lower()}@example.com",
                     phone=f"+1-555-{random.randint(100, 999)}-{random.randint(1000, 9999)}",
-                    fare_class=random.choice([FareClass.ECONOMY, FareClass.ECONOMY, FareClass.BUSINESS, FareClass.PREMIUM_ECONOMY]),
+                    fare_class=fare,
+                    loyalty_tier=tier,
+                    pvs_score=pvs,
                     original_flight_number=flight_num,
                     origin=flight.origin,
                     destination=flight.destination,

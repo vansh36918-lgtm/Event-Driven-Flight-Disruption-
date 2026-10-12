@@ -22,6 +22,7 @@ from app.models.schemas import (
 from app.engine.gds_service import gds_service
 from app.engine.graph_engine import reaccommodation_engine
 from app.engine.compensation_engine import compensation_engine, AIRPORT_COORDINATES
+from app.engine.ndc_service import ndc_service
 from app.bus.event_broker import event_broker
 from app.worker.reaccommodation_worker import reaccommodation_worker
 from app.ai.assistant import ai_assistant
@@ -181,6 +182,27 @@ async def get_passenger_boarding_pass(pnr_id: str):
                 break
 
     return compensation_engine.generate_boarding_pass(pnr, flight)
+
+
+@app.get("/api/v1/pnr/{pnr_id}/ndc-order")
+async def get_iata_ndc_order(pnr_id: str):
+    """
+    Generates standard IATA NDC 21.3 OrderChangeNotifRQ payload for global airline distribution systems.
+    """
+    pnr = gds_service.get_pnr(pnr_id)
+    if not pnr:
+        raise HTTPException(status_code=404, detail=f"PNR '{pnr_id}' not found.")
+    
+    old_flight = gds_service.get_flight(pnr.original_flight_number)
+    if not old_flight:
+        raise HTTPException(status_code=404, detail="Original flight segment not found.")
+
+    new_segments = []
+    if pnr.reaccommodation_options:
+        chosen = next((opt for opt in pnr.reaccommodation_options if opt.get("option_id") == pnr.selected_option_id), pnr.reaccommodation_options[0])
+        new_segments = chosen.get("segments", [])
+
+    return ndc_service.generate_order_change_notification(pnr, old_flight, new_segments)
 
 
 @app.get("/api/v1/metrics", response_model=SystemMetrics)
