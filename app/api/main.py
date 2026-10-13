@@ -8,6 +8,7 @@ import time
 import asyncio
 from contextlib import asynccontextmanager
 from typing import List, Optional
+from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -34,6 +35,7 @@ from app.engine.crew_engine import crew_engine
 from app.engine.hotel_engine import hotel_engine
 from app.engine.divert_engine import divert_engine
 from app.engine.tarmac_engine import tarmac_engine
+from app.engine.cms_engine import cms_engine
 from app.bus.event_broker import event_broker
 from app.worker.reaccommodation_worker import reaccommodation_worker
 from app.ai.assistant import ai_assistant
@@ -558,3 +560,80 @@ async def get_metrics():
         total_compensation_liability_usd=comp_liability,
         manual_hours_saved=manual_hours_saved,
     )
+
+
+# ---------------------------------------------------------
+# FRAMER-STYLE HEADLESS CMS ENDPOINTS
+# ---------------------------------------------------------
+
+class CreateCMSItemRequest(BaseModel):
+    item_id: str
+    title: str
+    slug: str
+    fields: dict
+
+
+class UpdateCMSItemRequest(BaseModel):
+    title: Optional[str] = None
+    fields: dict
+
+
+@app.get("/api/v1/cms/collections")
+async def get_cms_collections():
+    """Lists all Framer-style CMS collections and their schema field definitions."""
+    return cms_engine.list_collections()
+
+
+@app.get("/api/v1/cms/collections/{slug}")
+async def get_cms_collection_schema(slug: str):
+    """Retrieves schema definitions for a specific CMS collection."""
+    schema = cms_engine.get_collection(slug)
+    if not schema:
+        raise HTTPException(status_code=404, detail=f"Collection '{slug}' not found.")
+    return schema
+
+
+@app.get("/api/v1/cms/collections/{slug}/items")
+async def get_cms_collection_items(slug: str):
+    """Lists all dynamic items stored inside a CMS collection."""
+    schema = cms_engine.get_collection(slug)
+    if not schema:
+        raise HTTPException(status_code=404, detail=f"Collection '{slug}' not found.")
+    return cms_engine.get_items(slug)
+
+
+@app.get("/api/v1/cms/collections/{slug}/items/{item_id}")
+async def get_cms_item(slug: str, item_id: str):
+    """Retrieves a single CMS item by its item_id or URL slug."""
+    item = cms_engine.get_item(slug, item_id)
+    if not item:
+        raise HTTPException(status_code=404, detail=f"CMS item '{item_id}' not found in '{slug}'.")
+    return item
+
+
+@app.post("/api/v1/cms/collections/{slug}/items")
+async def create_cms_item(slug: str, req: CreateCMSItemRequest):
+    """Creates a new dynamic item in a Framer-style CMS collection."""
+    schema = cms_engine.get_collection(slug)
+    if not schema:
+        raise HTTPException(status_code=404, detail=f"Collection '{slug}' not found.")
+    return cms_engine.create_item(slug, req.item_id, req.title, req.slug, req.fields)
+
+
+@app.put("/api/v1/cms/collections/{slug}/items/{item_id}")
+async def update_cms_item(slug: str, item_id: str, req: UpdateCMSItemRequest):
+    """Updates an existing CMS item."""
+    updated = cms_engine.update_item(slug, item_id, req.fields, req.title)
+    if not updated:
+        raise HTTPException(status_code=404, detail=f"CMS item '{item_id}' not found in '{slug}'.")
+    return updated
+
+
+@app.delete("/api/v1/cms/collections/{slug}/items/{item_id}")
+async def delete_cms_item(slug: str, item_id: str):
+    """Deletes an item from a CMS collection."""
+    success = cms_engine.delete_item(slug, item_id)
+    if not success:
+        raise HTTPException(status_code=404, detail=f"CMS item '{item_id}' not found in '{slug}'.")
+    return {"status": "DELETED", "collection": slug, "item_id": item_id}
+

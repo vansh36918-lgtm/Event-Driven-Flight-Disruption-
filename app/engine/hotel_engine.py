@@ -243,7 +243,8 @@ class HotelEngine:
         voucher_num = f"VCH-HTL-{hub_airport}-{random.randint(10000, 99999)}"
 
         # Room Tier selection based on cabin class and PVS score
-        if cabin_class in ["BUSINESS", "FIRST"] or pvs_score >= 650:
+        c_upper = str(cabin_class).upper()
+        if "BUSINESS" in c_upper or "FIRST" in c_upper or pvs_score >= 650:
             room_tier = "EXECUTIVE_SUITE"
             meal_stipend = 95.00  # Elevated meal allowance for premium travelers
         else:

@@ -295,6 +295,32 @@ async def test_event_pipeline_and_ai():
     assert "DGCA CAR Sec 3" in india_comp["regulation"]
     print(f"  [OK] DOT 14 CFR 259.4 Tarmac Delay (${tmc_inc.potential_dot_liability_usd:,.0f} fines averted) & DGCA CAR India (₹{india_comp['dgca_compensation_inr']} statutory compensation) verified!")
 
+    # 18. Framer-Style Headless CMS Engine Verification
+    from app.engine.cms_engine import cms_engine
+    collections = cms_engine.list_collections()
+    assert len(collections) >= 4, f"Expected at least 4 CMS collections, got {len(collections)}"
+
+    # Test destinations collection
+    dest_items = cms_engine.get_items("destinations")
+    assert len(dest_items) >= 5, f"Expected destinations in CMS, got {len(dest_items)}"
+    del_item = cms_engine.get_item("destinations", "DEST-DEL")
+    assert del_item is not None
+    assert del_item.fields["airport_code"] == "DEL"
+
+    # Test fleet collection
+    fleet_items = cms_engine.get_items("fleet")
+    assert len(fleet_items) >= 4, f"Expected aircraft fleet in CMS, got {len(fleet_items)}"
+
+    # Test dynamic CRUD on CMS
+    test_item = cms_engine.create_item("destinations", "DEST-HYD", "Rajiv Gandhi International (HYD)", "hyderabad-hyd", {"airport_code": "HYD", "city_name": "Hyderabad", "country": "India"})
+    assert test_item.title == "Rajiv Gandhi International (HYD)"
+    updated = cms_engine.update_item("destinations", "DEST-HYD", {"ils_category": "CAT I"})
+    assert updated.fields["ils_category"] == "CAT I"
+    deleted = cms_engine.delete_item("destinations", "DEST-HYD")
+    assert deleted is True
+    print(f"  [OK] Framer-Style Headless CMS Engine ({len(collections)} collections, dynamic CRUD, schema validator) verified!")
+
+
 
 if __name__ == "__main__":
     print("=" * 60)

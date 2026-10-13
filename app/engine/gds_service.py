@@ -171,7 +171,13 @@ class GDSService:
         return list(self.flights.values())[:limit]
 
     def get_pnr(self, pnr_id: str) -> Optional[PassengerRecord]:
-        return self.pnrs.get(pnr_id.upper())
+        clean_id = pnr_id.strip().upper()
+        if clean_id in self.pnrs:
+            return self.pnrs[clean_id]
+        flight_pnrs = self.get_pnrs_for_flight(clean_id)
+        if flight_pnrs:
+            return flight_pnrs[0]
+        return None
 
     def get_pnrs_for_flight(self, flight_number: str) -> List[PassengerRecord]:
         pnr_ids = self.flight_to_pnrs.get(flight_number, [])

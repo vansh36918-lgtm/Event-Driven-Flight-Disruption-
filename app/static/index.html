@@ -75,6 +75,7 @@
                 <button onclick="switchTab('boarding')" class="text-neutral-400 hover:text-white font-medium transition">HOTELS & BAGGAGE</button>
                 <button onclick="switchTab('dispatch')" class="text-neutral-400 hover:text-white font-medium transition">OCC DISPATCH</button>
                 <button onclick="switchTab('analytics')" class="text-neutral-400 hover:text-white font-medium transition">DGCA AUDIT</button>
+                <button onclick="switchTab('cms')" class="text-neutral-400 hover:text-white font-medium transition">FRAMER CMS</button>
             </nav>
 
             <!-- Language Switcher & OCC Log In -->
@@ -644,6 +645,48 @@
         </div>
     </main>
 
+    <!-- TAB 6: FRAMER-STYLE HEADLESS CMS STUDIO -->
+    <main id="tab-content-cms" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-4">
+        <div class="panel p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between border-b border-neutral-900 pb-4 gap-3">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-white animate-pulse"></span>
+                        <h2 class="text-sm font-bold text-white uppercase tracking-wider mono">Framer-Style Headless CMS Studio</h2>
+                        <span class="px-1.5 py-0.5 rounded text-[9px] bg-neutral-900 border border-neutral-700 text-white mono">LIVE REST API</span>
+                    </div>
+                    <p class="text-xs text-neutral-400 mt-1">Schema-driven collections for Airport Destinations, Aircraft Fleet, Aviation Regulations, and Interline Alliances.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="promptCreateCMSItem()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-1.5 rounded text-xs font-semibold mono transition">
+                        <i class="fa-solid fa-plus mr-1"></i>ADD CMS RECORD
+                    </button>
+                    <button onclick="loadCMSStudio()" class="bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 px-3 py-1.5 rounded text-xs font-semibold mono transition">
+                        <i class="fa-solid fa-rotate mr-1"></i>SYNC
+                    </button>
+                </div>
+            </div>
+
+            <!-- Collection Switcher Pills -->
+            <div id="cms-collection-pills" class="flex flex-wrap gap-2 text-xs mono">
+                <!-- Dynamically populated -->
+            </div>
+
+            <!-- Active Collection Schema Info -->
+            <div id="cms-schema-banner" class="panel-subtle p-3 rounded text-[11px] mono text-neutral-400 flex flex-wrap items-center justify-between gap-2 border border-neutral-800">
+                <span id="cms-schema-desc">Select a collection above to inspect schema.</span>
+                <span id="cms-schema-endpoint" class="text-white font-mono text-[10px]"></span>
+            </div>
+
+            <!-- CMS Items Grid -->
+            <div id="cms-items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div class="panel-subtle p-6 rounded text-center text-xs text-neutral-500 mono col-span-full">
+                    Loading CMS collections from /api/v1/cms/collections...
+                </div>
+            </div>
+        </div>
+    </main>
+
     <!-- Minimalist Footer -->
     <footer class="mt-auto border-t border-neutral-900 bg-black py-3 text-center text-[10px] text-neutral-600 mono uppercase tracking-widest">
         AirOps India • DGCA CAR Section 3 • 3D WebGL Flight Radar • IATA Resolution 753 / 766
@@ -709,6 +752,9 @@
             }
             if (tabId === 'analytics') {
                 loadIncidentAuditDossier();
+            }
+            if (tabId === 'cms') {
+                loadCMSStudio();
             }
         }
 
@@ -1300,6 +1346,9 @@
                     return;
                 }
                 const data = await res.json();
+                activePnr = data.pnr_id;
+                document.getElementById('portal-pnr-input').value = data.pnr_id;
+                document.getElementById('main-ai-pnr').value = data.pnr_id;
 
                 const summary = document.getElementById('portal-booking-summary');
                 summary.classList.remove('hidden');
@@ -1544,6 +1593,147 @@
                 }
             } catch (e) {
                 console.error(e);
+            }
+        }
+
+        // Framer-Style Headless CMS Studio Logic
+        let activeCMSCollection = "destinations";
+        let cmsCollections = [];
+
+        async function loadCMSStudio() {
+            try {
+                const res = await fetch('/api/v1/cms/collections');
+                if (!res.ok) return;
+                cmsCollections = await res.json();
+
+                const pillsBox = document.getElementById('cms-collection-pills');
+                if (pillsBox) {
+                    pillsBox.innerHTML = '';
+                    cmsCollections.forEach(c => {
+                        const btn = document.createElement('button');
+                        btn.className = (c.slug === activeCMSCollection)
+                            ? 'px-3 py-1.5 rounded bg-white text-black font-bold border border-white transition flex items-center space-x-1.5'
+                            : 'px-3 py-1.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 transition flex items-center space-x-1.5';
+                        btn.innerHTML = `<i class="${c.icon || 'fa-solid fa-folder'} mr-1"></i><span>${c.name}</span>`;
+                        btn.onclick = () => selectCMSCollection(c.slug);
+                        pillsBox.appendChild(btn);
+                    });
+                }
+
+                await selectCMSCollection(activeCMSCollection);
+            } catch (err) {
+                console.error("CMS load err:", err);
+            }
+        }
+
+        async function selectCMSCollection(slug) {
+            activeCMSCollection = slug;
+            const targetCol = cmsCollections.find(c => c.slug === slug);
+
+            const pillsBox = document.getElementById('cms-collection-pills');
+            if (pillsBox) {
+                Array.from(pillsBox.children).forEach((btn, idx) => {
+                    const c = cmsCollections[idx];
+                    if (c) {
+                        btn.className = (c.slug === slug)
+                            ? 'px-3 py-1.5 rounded bg-white text-black font-bold border border-white transition flex items-center space-x-1.5'
+                            : 'px-3 py-1.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 transition flex items-center space-x-1.5';
+                    }
+                });
+            }
+
+            if (targetCol) {
+                document.getElementById('cms-schema-desc').innerText = `${targetCol.name}: ${targetCol.description}`;
+                document.getElementById('cms-schema-endpoint').innerText = `GET /api/v1/cms/collections/${slug}/items`;
+            }
+
+            const container = document.getElementById('cms-items-container');
+            if (!container) return;
+            container.innerHTML = `<div class="panel-subtle p-6 rounded text-center text-xs text-neutral-500 mono col-span-full">Fetching ${slug} records...</div>`;
+
+            try {
+                const res = await fetch(`/api/v1/cms/collections/${slug}/items`);
+                if (!res.ok) return;
+                const items = await res.json();
+
+                if (items.length === 0) {
+                    container.innerHTML = `<div class="panel-subtle p-6 rounded text-center text-xs text-neutral-500 mono col-span-full">No items currently stored in this collection. Click 'ADD CMS RECORD' to create one.</div>`;
+                    return;
+                }
+
+                container.innerHTML = '';
+                items.forEach(it => {
+                    const card = document.createElement('div');
+                    card.className = 'panel p-4 space-y-3 border border-neutral-800 hover:border-neutral-600 transition flex flex-col justify-between';
+                    
+                    let fieldsHtml = '<div class="space-y-1 text-[11px] mono text-neutral-400">';
+                    for (const [k, v] of Object.entries(it.fields || {})) {
+                        fieldsHtml += `<div class="flex justify-between border-b border-neutral-900 py-0.5"><span class="text-neutral-500">${k}:</span><span class="text-white font-medium">${v}</span></div>`;
+                    }
+                    fieldsHtml += '</div>';
+
+                    card.innerHTML = `
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between text-xs mono">
+                                <span class="px-1.5 py-0.5 rounded bg-neutral-900 text-neutral-300 border border-neutral-700 text-[10px]">${it.item_id}</span>
+                                <span class="text-[10px] text-neutral-500">/${it.slug}</span>
+                            </div>
+                            <h3 class="font-bold text-sm text-white mono">${it.title}</h3>
+                            ${fieldsHtml}
+                        </div>
+                        <div class="pt-2 flex items-center justify-between border-t border-neutral-900 text-[10px] mono">
+                            <span class="text-neutral-600">${it.updated_at.substring(0, 10)}</span>
+                            <div class="flex gap-2">
+                                <button onclick="deleteCMSItem('${slug}', '${it.item_id}')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white border border-neutral-700">DELETE</button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error("CMS items err:", err);
+            }
+        }
+
+        async function deleteCMSItem(slug, itemId) {
+            if (!confirm(`Delete CMS item ${itemId}?`)) return;
+            try {
+                const res = await fetch(`/api/v1/cms/collections/${slug}/items/${itemId}`, { method: 'DELETE' });
+                if (res.ok) {
+                    await selectCMSCollection(slug);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function promptCreateCMSItem() {
+            const title = prompt("Enter Title for new record:", "New Dynamic Item");
+            if (!title) return;
+            const itemId = "REC-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+            const slug = title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+            const payload = {
+                item_id: itemId,
+                title: title,
+                slug: slug,
+                fields: {
+                    status: "ACTIVE",
+                    notes: "Created via Framer-Style Headless CMS Studio"
+                }
+            };
+
+            try {
+                const res = await fetch(`/api/v1/cms/collections/${activeCMSCollection}/items`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    await selectCMSCollection(activeCMSCollection);
+                }
+            } catch (err) {
+                console.error(err);
             }
         }
 
