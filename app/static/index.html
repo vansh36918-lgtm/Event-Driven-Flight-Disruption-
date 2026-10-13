@@ -1140,9 +1140,21 @@
                 </div>
             </div>
 
+            <!-- Multi-Answer Quick Query Pills -->
+            <div class="flex flex-wrap gap-1.5 text-[10px] mono">
+                <button type="button" onclick="askQuickAi('Can I get a hotel voucher?')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition">🏨 Hotel Voucher</button>
+                <button type="button" onclick="askQuickAi('How much compensation under DGCA CAR?')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition">⚖️ DGCA ₹10k Payout</button>
+                <button type="button" onclick="askQuickAi('What is my baggage allowance and RFID status?')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition">🧳 Baggage & RFID</button>
+                <button type="button" onclick="askQuickAi('Do I get free meals or lounge access?')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition">🍽️ Meal & Lounge</button>
+                <button type="button" onclick="askQuickAi('Which terminal does my flight depart from in Delhi?')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition">✈️ Delhi T3 Gate</button>
+                <button type="button" onclick="askQuickAi('Can I cancel my ticket and get a full refund?')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition">🔄 100% Refund</button>
+                <button type="button" onclick="askQuickAi('How does this architecture work?')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition">🏗️ Tech Stack</button>
+                <button type="button" onclick="askQuickAi('होटल वाउचर और खाना मिलेगा क्या?')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-800 transition">🇮🇳 हिन्दी सहायता</button>
+            </div>
+
             <!-- Input Bar -->
             <div class="flex items-center gap-2">
-                <input id="chat-input" type="text" placeholder="Ask in English or हिन्दी (e.g. 'Can I get a hotel voucher?' or 'मेरी अगली फ्लाइट कौन सी है?')" class="flex-1 bg-neutral-900 border border-neutral-700 rounded-full px-4 py-2.5 text-xs text-white mono focus:outline-none focus:border-white" onkeydown="if(event.key === 'Enter') sendChatMessage()">
+                <input id="chat-input" type="text" placeholder="Ask anything in English or हिन्दी (e.g. 'Can I get a hotel voucher?' or 'मुआवजा कितना मिलेगा?')" class="flex-1 bg-neutral-900 border border-neutral-700 rounded-full px-4 py-2.5 text-xs text-white mono focus:outline-none focus:border-white" onkeydown="if(event.key === 'Enter') sendChatMessage()">
                 <button onclick="sendChatMessage()" class="bg-white hover:bg-neutral-200 text-black px-6 py-2.5 rounded-full text-xs font-bold mono transition shadow">
                     SEND
                 </button>
@@ -3315,6 +3327,14 @@
         function switchToCompensationView() {
             switchTab('boarding');
             loadCompensationVouchers(activePnr);
+        }
+
+        function askQuickAi(query) {
+            const input = document.getElementById('chat-input');
+            if (input) {
+                input.value = query;
+                sendChatMessage();
+            }
         }
 
         async function sendChatMessage() {
