@@ -3,171 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AirOps Dispatch & Autonomous Re-Accommodation</title>
+    <title>AirOps Dispatch - Autonomous Disruption & Re-Accommodation Platform</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Leaflet Map CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Three.js & OrbitControls for 3D Globe -->
+    <script src="/static/js/three.min.js"></script>
+    <script src="/static/js/OrbitControls.js"></script>
+    <script>
+        if (typeof THREE === 'undefined') {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');
+            document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"><\/script>');
+        }
+    </script>
     <!-- QRCode.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
-            --bg-main: #090a0f;
-            --bg-panel: #11141c;
-            --bg-panel-hover: #161a24;
-            --border-subtle: #1e2433;
-            --border-active: #2f384d;
+            --bg-pitch: #000000;
+            --bg-panel: #080808;
+            --bg-panel-subtle: #0d0d0d;
+            --border-line: #1c1c1c;
+            --border-hover: #333333;
         }
         body {
-            background-color: var(--bg-main);
-            color: #e2e8f0;
+            background-color: var(--bg-pitch);
+            color: #d4d4d4;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             -webkit-font-smoothing: antialiased;
         }
         .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
         .panel {
             background-color: var(--bg-panel);
-            border: 1px solid var(--border-subtle);
-            border-radius: 0.75rem;
+            border: 1px solid var(--border-line);
+            border-radius: 0.5rem;
         }
         .panel-subtle {
-            background-color: #0d1017;
-            border: 1px solid var(--border-subtle);
+            background-color: var(--bg-panel-subtle);
+            border: 1px solid var(--border-line);
         }
-        .custom-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #272f42; border-radius: 2px; }
-        #network-map { height: 360px; width: 100%; border-radius: 0.5rem; }
-        .leaflet-container { background: #080a10 !important; }
+        .custom-scroll::-webkit-scrollbar { width: 3px; height: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #262626; border-radius: 2px; }
+        #network-map-3d { height: 420px; width: 100%; border-radius: 0.5rem; background: #000000; position: relative; overflow: hidden; }
+        #canvas-3d { width: 100%; height: 100%; display: block; outline: none; }
+        .hud-overlay { position: absolute; pointer-events: none; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col text-slate-200">
+<body class="min-h-screen flex flex-col text-neutral-300">
 
-    <!-- Minimal Enterprise Header -->
-    <header class="border-b border-[#1e2433] bg-[#0c0e14] sticky top-0 z-50">
+    <!-- Minimalist Black & White Top Bar -->
+    <header class="border-b border-neutral-900 bg-black sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-5 h-14 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-7 h-7 rounded bg-blue-600 flex items-center justify-center font-bold text-white text-xs">
+                <div class="w-6 h-6 bg-white text-black font-mono font-bold text-xs flex items-center justify-center rounded-sm">
                     AO
                 </div>
                 <div class="flex items-baseline space-x-2">
-                    <span class="font-semibold text-sm tracking-tight text-white">AirOps Dispatch</span>
-                    <span class="text-xs text-slate-500 mono">v2.4.0</span>
-                    <span class="hidden md:inline-block text-slate-600 text-xs">•</span>
-                    <span class="hidden md:inline-block text-xs text-slate-400">Autonomous Disruption Engine</span>
+                    <span class="font-bold text-sm tracking-widest text-white uppercase mono">AirOps Dispatch</span>
+                    <span class="text-[10px] text-neutral-500 mono">v3.0.0-3D</span>
+                    <span class="hidden md:inline-block text-neutral-700 text-xs">/</span>
+                    <span class="hidden md:inline-block text-xs text-neutral-400">Autonomous Re-Accommodation</span>
                 </div>
             </div>
 
             <!-- Header Status Ticker & UTC Clock -->
-            <div class="flex items-center space-x-4 text-xs">
-                <div class="hidden sm:flex items-center space-x-2 px-2.5 py-1 rounded bg-[#11141c] border border-[#1e2433]">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    <span class="text-slate-400 mono">QUEUE: AMQP ACTIVE</span>
+            <div class="flex items-center space-x-3 text-xs">
+                <div class="hidden sm:flex items-center space-x-2 px-2.5 py-1 rounded-sm bg-neutral-950 border border-neutral-800">
+                    <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                    <span class="text-neutral-400 mono text-[11px]">3D RADAR ACTIVE</span>
                 </div>
-                <div id="utc-clock" class="text-slate-400 mono px-2.5 py-1 rounded bg-[#11141c] border border-[#1e2433]">
+                <div id="utc-clock" class="text-neutral-300 mono text-[11px] px-2.5 py-1 rounded-sm bg-neutral-950 border border-neutral-800">
                     --:--:-- UTC
                 </div>
-                <a href="/docs" target="_blank" class="text-slate-400 hover:text-white px-2.5 py-1 rounded hover:bg-[#161a24] transition mono">
-                    API Docs
+                <a href="/docs" target="_blank" class="text-neutral-400 hover:text-white px-2 py-1 rounded border border-neutral-800 hover:border-neutral-600 transition mono text-[11px]">
+                    API
                 </a>
             </div>
         </div>
 
-        <!-- Navigation Tabs -->
-        <div class="max-w-7xl mx-auto px-5 flex space-x-1 border-t border-[#1e2433]/60 text-xs">
-            <button onclick="switchTab('ops')" id="tab-btn-ops" class="tab-btn px-3 py-2 text-white border-b-2 border-blue-500 font-medium transition">
-                Operations & Radar
+        <!-- Navigation Tabs (Monochrome High Contrast) -->
+        <div class="max-w-7xl mx-auto px-5 flex space-x-1 border-t border-neutral-900 text-xs">
+            <button onclick="switchTab('ops')" id="tab-btn-ops" class="tab-btn px-4 py-2.5 text-white border-b-2 border-white font-medium transition mono">
+                3D OPERATIONS & RADAR
             </button>
-            <button onclick="switchTab('portal')" id="tab-btn-portal" class="tab-btn px-3 py-2 text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition">
-                Passenger Re-Booking
+            <button onclick="switchTab('portal')" id="tab-btn-portal" class="tab-btn px-4 py-2.5 text-neutral-500 hover:text-neutral-300 border-b-2 border-transparent transition mono">
+                PASSENGER RE-BOOKING
             </button>
-            <button onclick="switchTab('boarding')" id="tab-btn-boarding" class="tab-btn px-3 py-2 text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition">
-                Boarding Documents & Vouchers
+            <button onclick="switchTab('boarding')" id="tab-btn-boarding" class="tab-btn px-4 py-2.5 text-neutral-500 hover:text-neutral-300 border-b-2 border-transparent transition mono">
+                BOARDING & BAGGAGE (IATA 753)
             </button>
-            <button onclick="switchTab('dispatch')" id="tab-btn-dispatch" class="tab-btn px-3 py-2 text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition">
-                Dispatch Console
+            <button onclick="switchTab('dispatch')" id="tab-btn-dispatch" class="tab-btn px-4 py-2.5 text-neutral-500 hover:text-neutral-300 border-b-2 border-transparent transition mono">
+                DISPATCH CONSOLE
             </button>
-            <button onclick="switchTab('analytics')" id="tab-btn-analytics" class="tab-btn px-3 py-2 text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition">
-                Operational Metrics
+            <button onclick="switchTab('analytics')" id="tab-btn-analytics" class="tab-btn px-4 py-2.5 text-neutral-500 hover:text-neutral-300 border-b-2 border-transparent transition mono">
+                INCIDENT AUDIT & METRICS
             </button>
         </div>
     </header>
 
-    <!-- KPI Strip -->
-    <div class="max-w-7xl mx-auto px-5 py-4 w-full">
+    <!-- Monochrome KPI Strip -->
+    <div class="max-w-7xl mx-auto px-5 py-3 w-full">
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
             <div class="panel p-3">
-                <div class="text-slate-500 uppercase tracking-wider text-[10px]">Active Schedule</div>
-                <div id="metric-flights" class="text-lg font-semibold text-white mono mt-0.5">540</div>
-                <div class="text-[10px] text-slate-500">10 Hub Multi-Graph</div>
+                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono">Active Schedule</div>
+                <div id="metric-flights" class="text-lg font-bold text-white mono mt-0.5">540</div>
+                <div class="text-[9px] text-neutral-600 mono">10 Hubs • 3D Topology</div>
             </div>
             <div class="panel p-3">
-                <div class="text-slate-500 uppercase tracking-wider text-[10px]">Tracked PNRs</div>
-                <div id="metric-pnrs" class="text-lg font-semibold text-slate-200 mono mt-0.5">1,096</div>
-                <div class="text-[10px] text-slate-500">6-char authentic</div>
+                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono">Monitored PNRs</div>
+                <div id="metric-pnrs" class="text-lg font-bold text-neutral-200 mono mt-0.5">1,152</div>
+                <div class="text-[9px] text-neutral-600 mono">Sabre/Amadeus Format</div>
             </div>
             <div class="panel p-3">
-                <div class="text-slate-500 uppercase tracking-wider text-[10px]">Disruptions</div>
-                <div id="metric-disruptions" class="text-lg font-semibold text-amber-400 mono mt-0.5">0</div>
-                <div class="text-[10px] text-slate-500">Telemetry Ingested</div>
+                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono">Disruptions</div>
+                <div id="metric-disruptions" class="text-lg font-bold text-white mono mt-0.5">0</div>
+                <div class="text-[9px] text-neutral-600 mono">Ingested Telemetry</div>
             </div>
             <div class="panel p-3">
-                <div class="text-slate-500 uppercase tracking-wider text-[10px]">Auto-Resolved</div>
-                <div id="metric-reaccommodated" class="text-lg font-semibold text-emerald-400 mono mt-0.5">0 (100%)</div>
-                <div class="text-[10px] text-slate-500">NetworkX solver</div>
+                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono">Auto-Resolved</div>
+                <div id="metric-reaccommodated" class="text-lg font-bold text-white mono mt-0.5">0 (100%)</div>
+                <div class="text-[9px] text-neutral-600 mono">NetworkX Solver</div>
             </div>
             <div class="panel p-3">
-                <div class="text-slate-500 uppercase tracking-wider text-[10px]">Solve Latency</div>
-                <div id="metric-latency" class="text-lg font-semibold text-cyan-400 mono mt-0.5">1.56 ms</div>
-                <div class="text-[10px] text-slate-500">4-Hour Constraint</div>
+                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono">Solve Latency</div>
+                <div id="metric-latency" class="text-lg font-bold text-white mono mt-0.5">1.82 ms</div>
+                <div class="text-[9px] text-neutral-600 mono">[T0, T0+4h] Pareto Cap</div>
             </div>
             <div class="panel p-3">
-                <div class="text-slate-500 uppercase tracking-wider text-[10px]">Agent Hours Saved</div>
-                <div id="metric-hours-saved" class="text-lg font-semibold text-indigo-400 mono mt-0.5">0.0 hrs</div>
-                <div class="text-[10px] text-slate-500">80% Reduction</div>
+                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono">Labor Saved</div>
+                <div id="metric-hours-saved" class="text-lg font-bold text-white mono mt-0.5">0.0 hrs</div>
+                <div class="text-[9px] text-neutral-600 mono">80% Agent Reduction</div>
             </div>
         </div>
     </div>
 
-    <!-- TAB 1: OPERATIONS & RADAR -->
-    <main id="tab-content-ops" class="tab-content max-w-7xl mx-auto px-5 pb-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <!-- Map & Schedule (8 Cols) -->
+    <!-- TAB 1: 3D OPERATIONS & RADAR -->
+    <main id="tab-content-ops" class="tab-content max-w-7xl mx-auto px-5 pb-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <!-- 3D Globe & Schedule (8 Cols) -->
         <section class="lg:col-span-8 space-y-4">
-            <!-- Map Panel -->
+            <!-- 3D Flight Network Globe Panel -->
             <div class="panel p-4 space-y-3">
                 <div class="flex items-center justify-between text-xs">
-                    <span class="font-medium text-slate-200">Hub Topology & Vector Radar</span>
-                    <div class="flex items-center space-x-3 text-[11px] text-slate-400">
-                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Scheduled</span>
-                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Disrupted</span>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-semibold text-white uppercase tracking-wider mono text-[11px]">3D Flight Vector Radar</span>
+                        <span class="px-1.5 py-0.5 rounded text-[9px] bg-neutral-900 border border-neutral-700 text-neutral-400 mono">WebGL / Three.js</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-[10px] text-neutral-400 mono">
+                        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-white"></span> SCHEDULED ARCS</span>
+                        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-neutral-600"></span> DISRUPTED ARCS</span>
+                        <button onclick="resetGlobeView()" class="hover:text-white transition underline">RESET VIEW</button>
                     </div>
                 </div>
-                <div id="network-map"></div>
+
+                <!-- 3D Canvas Container -->
+                <div id="network-map-3d">
+                    <canvas id="canvas-3d"></canvas>
+                    <div class="hud-overlay top-3 left-3 text-[9px] mono text-neutral-500 space-y-1">
+                        <div>ORBIT: LEFT-CLICK + DRAG TO ROTATE</div>
+                        <div>ZOOM: SCROLL WHEEL IN/OUT</div>
+                        <div>ACTIVE HUBS: <span id="hud-hubs-count" class="text-white">10</span></div>
+                    </div>
+                </div>
             </div>
 
             <!-- Flight Roster / FIDS -->
             <div class="panel p-4 space-y-3">
                 <div class="flex items-center justify-between text-xs">
-                    <span class="font-medium text-slate-200">Active Flight Operations</span>
-                    <button onclick="loadFlights()" class="text-slate-400 hover:text-white transition mono">
+                    <span class="font-semibold text-white uppercase tracking-wider mono text-[11px]">Flight Operations Roster (FIDS)</span>
+                    <button onclick="loadFlights()" class="text-neutral-400 hover:text-white transition mono text-[11px]">
                         <i class="fa-solid fa-rotate-right mr-1"></i>REFRESH
                     </button>
                 </div>
                 <div class="overflow-x-auto max-h-72 custom-scroll">
                     <table class="w-full text-left text-xs">
-                        <thead class="text-slate-500 uppercase text-[10px] border-b border-[#1e2433] bg-[#0c0e14] sticky top-0">
+                        <thead class="text-neutral-500 uppercase text-[9px] border-b border-neutral-800 bg-black sticky top-0 mono">
                             <tr>
-                                <th class="p-2 mono">Flight</th>
+                                <th class="p-2">Flight</th>
                                 <th class="p-2">Route</th>
-                                <th class="p-2 mono">Departure</th>
+                                <th class="p-2">Departure</th>
                                 <th class="p-2">Status</th>
-                                <th class="p-2 mono">Sample PNR</th>
+                                <th class="p-2">Sample PNR</th>
                                 <th class="p-2 text-right">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="flights-table-body" class="divide-y divide-[#1e2433]/60 text-slate-300">
+                        <tbody id="flights-table-body" class="divide-y divide-neutral-900 text-neutral-300 mono text-[11px]">
                             <!-- Populated dynamically -->
                         </tbody>
                     </table>
@@ -179,31 +199,31 @@
         <section class="lg:col-span-4 space-y-4">
             <!-- Disruption Trigger Control -->
             <div class="panel p-4 space-y-3">
-                <div class="text-xs font-medium text-slate-200">Inject Telemetry Event</div>
+                <div class="text-xs font-semibold text-white uppercase tracking-wider mono text-[11px]">Dispatch Disruption Telemetry</div>
                 <div class="space-y-2.5 text-xs">
                     <div>
-                        <label class="block text-slate-500 text-[10px] uppercase mb-1">Target Flight</label>
-                        <select id="select-flight" class="w-full bg-[#0c0e14] border border-[#1e2433] rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 mono">
+                        <label class="block text-neutral-500 text-[9px] uppercase mono mb-1">Target Flight</label>
+                        <select id="select-flight" class="w-full bg-black border border-neutral-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-white mono">
                             <!-- Dynamically loaded -->
                         </select>
                     </div>
                     <div>
-                        <label class="block text-slate-500 text-[10px] uppercase mb-1">IATA Disruption Code</label>
-                        <select id="select-event" class="w-full bg-[#0c0e14] border border-[#1e2433] rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 mono">
-                            <option value="CANCELLATION">CODE 89: Mechanical Maintenance (Cancel)</option>
-                            <option value="WEATHER_DELAY">CODE 71: Weather Ground Stop (+2h)</option>
+                        <label class="block text-neutral-500 text-[9px] uppercase mono mb-1">IATA Disruption Event</label>
+                        <select id="select-event" class="w-full bg-black border border-neutral-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-white mono">
+                            <option value="CANCELLATION">CODE 89: Mechanical Equipment Failure (Cancel)</option>
+                            <option value="WEATHER_DELAY">CODE 71: Convective Weather Ground Stop (+2h)</option>
                         </select>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="triggerDisruption()" id="btn-trigger" class="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-medium py-1.5 px-3 rounded text-xs transition">
-                            Dispatch Disruption
+                    <div class="flex gap-2 pt-1">
+                        <button onclick="triggerDisruption()" id="btn-trigger" class="flex-1 bg-white hover:bg-neutral-200 text-black font-semibold py-1.5 px-3 rounded text-xs transition mono">
+                            DISPATCH IRROPS
                         </button>
-                        <button onclick="triggerSquallLineStorm()" id="btn-squall" class="bg-amber-600/80 hover:bg-amber-500 text-white font-medium py-1.5 px-2.5 rounded text-xs transition mono" title="Simulate multi-hub derecho across ORD/DFW/ATL/JFK">
-                            <i class="fa-solid fa-bolt mr-1"></i>Squall Storm
+                        <button onclick="triggerSquallLineStorm()" id="btn-squall" class="bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 font-semibold py-1.5 px-2.5 rounded text-xs transition mono" title="Simulate multi-hub squall storm across ORD/DFW/ATL/JFK">
+                            <i class="fa-solid fa-bolt mr-1"></i>SQUALL STORM
                         </button>
                     </div>
                 </div>
-                <div id="trigger-status" class="hidden p-2 rounded text-[11px] bg-[#1a0f14] border border-rose-900/60 text-rose-300">
+                <div id="trigger-status" class="hidden p-2 rounded text-[11px] bg-neutral-950 border border-neutral-700 text-neutral-200 mono">
                     <span id="trigger-msg"></span>
                 </div>
             </div>
@@ -211,22 +231,22 @@
             <!-- FAA ATC GDP & Fleet Ops Panel -->
             <div class="panel p-4 space-y-3">
                 <div class="flex items-center justify-between text-xs">
-                    <span class="font-medium text-slate-200">ATC Ground Stops & Fleet Recovery</span>
-                    <span class="text-[10px] text-amber-400 mono">FAA CDM Active</span>
+                    <span class="font-semibold text-white uppercase tracking-wider mono text-[11px]">ATC Ground Stops & Fleet Ops</span>
+                    <span class="text-[9px] text-neutral-400 mono">FAA CDM ACTIVE</span>
                 </div>
                 <div id="atc-fleet-box" class="space-y-2 max-h-48 overflow-y-auto custom-scroll text-xs">
-                    <div class="text-slate-600 text-xs py-2 text-center">Monitoring ATC programs...</div>
+                    <div class="text-neutral-600 text-xs py-2 text-center mono">Monitoring ATC programs...</div>
                 </div>
             </div>
 
             <!-- Live Telemetry Stream Ticker -->
             <div class="panel p-4 space-y-3">
                 <div class="flex items-center justify-between text-xs">
-                    <span class="font-medium text-slate-200">Telemetry Ingestion Log</span>
-                    <span class="text-[10px] text-slate-500 mono">AMQP: flight_disruptions</span>
+                    <span class="font-semibold text-white uppercase tracking-wider mono text-[11px]">Telemetry Ingestion Stream</span>
+                    <span class="text-[9px] text-neutral-500 mono">AMQP: flight_disruptions</span>
                 </div>
-                <div id="telemetry-stream-box" class="space-y-2 max-h-60 overflow-y-auto custom-scroll text-xs">
-                    <div class="text-slate-600 text-xs py-4 text-center">Awaiting telemetry webhooks...</div>
+                <div id="telemetry-stream-box" class="space-y-2 max-h-56 overflow-y-auto custom-scroll text-xs">
+                    <div class="text-neutral-600 text-xs py-4 text-center mono">Awaiting telemetry webhooks...</div>
                 </div>
             </div>
         </section>
@@ -235,83 +255,84 @@
     <!-- TAB 2: PASSENGER RE-BOOKING PORTAL -->
     <main id="tab-content-portal" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-4">
         <div class="panel p-5 space-y-5">
-            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-[#1e2433] pb-4">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-900 pb-4">
                 <div>
-                    <h2 class="text-sm font-semibold text-white">Passenger Record Management</h2>
-                    <p class="text-xs text-slate-400">Review disrupted flight reservations and execute deterministic graph re-accommodations.</p>
+                    <h2 class="text-sm font-bold text-white uppercase tracking-wider mono">Passenger Record Management</h2>
+                    <p class="text-xs text-neutral-400 mt-0.5">Autonomous graph re-accommodations with IATA Rule 240 involuntary endorsement and Op-Up protection.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input id="portal-pnr-input" type="text" placeholder="PNR (e.g. EK7P9X)" class="uppercase bg-[#0c0e14] border border-[#1e2433] rounded px-3 py-1.5 text-xs text-white mono text-center focus:outline-none focus:border-blue-500 w-32">
-                    <button onclick="fetchPortalPnrDetails()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded text-xs font-medium transition">
-                        Lookup Record
+                    <input id="portal-pnr-input" type="text" placeholder="PNR (e.g. EK7P9X)" class="uppercase bg-black border border-neutral-800 rounded px-3 py-1.5 text-xs text-white mono text-center focus:outline-none focus:border-white w-32">
+                    <button onclick="fetchPortalPnrDetails()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-1.5 rounded text-xs font-semibold transition mono">
+                        LOOKUP RECORD
                     </button>
                 </div>
             </div>
 
             <!-- Booking Summary -->
-            <div id="portal-booking-summary" class="hidden panel-subtle p-4 rounded-lg space-y-3">
+            <div id="portal-booking-summary" class="hidden panel-subtle p-4 rounded space-y-3">
                 <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
                     <div>
                         <div class="flex items-center space-x-2">
-                            <span id="portal-passenger-name" class="font-semibold text-white">--</span>
-                            <span id="portal-pnr-badge" class="px-1.5 py-0.5 rounded bg-blue-950/60 text-blue-400 border border-blue-900/60 mono text-[10px]">------</span>
-                            <span id="portal-status-badge" class="px-1.5 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-900/60 text-[10px]">DISRUPTED</span>
+                            <span id="portal-passenger-name" class="font-bold text-white">--</span>
+                            <span id="portal-pnr-badge" class="px-1.5 py-0.5 rounded bg-neutral-900 text-neutral-300 border border-neutral-700 mono text-[10px]">------</span>
+                            <span id="portal-status-badge" class="px-1.5 py-0.5 rounded bg-neutral-900 text-white border border-white mono text-[10px]">DISRUPTED</span>
                         </div>
-                        <div id="portal-flight-route" class="text-slate-400 text-[11px] mt-1">--</div>
+                        <div id="portal-flight-route" class="text-neutral-400 text-[11px] mt-1 mono">--</div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="switchToBoardingPassView()" class="px-2.5 py-1 rounded bg-[#161a24] hover:bg-[#1f2533] text-slate-300 text-xs border border-[#1e2433]">
-                            Boarding Pass
+                        <button onclick="switchToBoardingPassView()" class="px-2.5 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 text-xs border border-neutral-700 mono">
+                            BOARDING PASS & BAGS
                         </button>
-                        <button onclick="switchToCompensationView()" class="px-2.5 py-1 rounded bg-[#161a24] hover:bg-[#1f2533] text-slate-300 text-xs border border-[#1e2433]">
-                            Care Vouchers
+                        <button onclick="switchToCompensationView()" class="px-2.5 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 text-xs border border-neutral-700 mono">
+                            CARE VOUCHERS
                         </button>
                     </div>
                 </div>
+
                 <!-- IATA Rule 240 & Baggage Protocol Banner -->
-                <div id="portal-endorsement-banner" class="hidden panel-subtle p-2.5 rounded border border-[#1e2433] flex flex-wrap items-center justify-between text-[10px] mono text-slate-300 gap-2">
+                <div id="portal-endorsement-banner" class="hidden panel-subtle p-2.5 rounded border border-neutral-800 flex flex-wrap items-center justify-between text-[10px] mono text-neutral-300 gap-2">
                     <div class="flex items-center gap-2">
-                        <span class="text-blue-400 font-semibold">IATA RULE 240:</span>
-                        <span id="portal-endorsement-text" class="text-slate-300">--</span>
+                        <span class="text-white font-bold">IATA RULE 240:</span>
+                        <span id="portal-endorsement-text" class="text-neutral-300">--</span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <span id="portal-baggage-transfer" class="text-emerald-400 font-medium">BAG: THROUGH-CHECK APPROVED</span>
-                        <span id="portal-pvs-badge" class="px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-900">PVS: ---</span>
+                        <span id="portal-baggage-transfer" class="text-white font-medium">BAG: THROUGH-CHECK APPROVED</span>
+                        <span id="portal-pvs-badge" class="px-1.5 py-0.5 rounded bg-neutral-900 text-white border border-neutral-700">PVS: ---</span>
                     </div>
                 </div>
             </div>
 
             <!-- Alternative Routes Container -->
             <div id="portal-options-container" class="space-y-3">
-                <div class="text-center py-8 text-slate-500 text-xs">
-                    Enter or select a PNR to display viable alternative routing vectors.
+                <div class="text-center py-8 text-neutral-500 text-xs mono">
+                    Enter or select a PNR to display viable alternative routing vectors within the 4-hour departure window.
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- TAB 3: BOARDING PASS & VOUCHERS -->
+    <!-- TAB 3: BOARDING PASS & BAGGAGE (IATA 753) -->
     <main id="tab-content-boarding" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
             <!-- Mobile Boarding Pass Mockup (6 Cols) -->
             <div class="md:col-span-6 flex justify-center">
-                <div class="w-full max-w-sm panel p-5 space-y-4 text-xs">
-                    <div class="flex items-center justify-between border-b border-[#1e2433] pb-3">
+                <div class="w-full max-w-sm panel p-5 space-y-4 text-xs bg-black border-neutral-800">
+                    <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
                         <div>
-                            <span class="font-semibold text-white">AirOps Priority</span>
-                            <div class="text-[10px] text-slate-500">IATA E-BOARDING DOCUMENT</div>
+                            <span class="font-bold text-white tracking-wider mono uppercase">AirOps Priority</span>
+                            <div class="text-[9px] text-neutral-500 mono">IATA E-BOARDING DOCUMENT</div>
                         </div>
-                        <span id="bp-class-badge" class="px-2 py-0.5 rounded bg-blue-950 text-blue-400 font-mono text-[10px]">CLASS: Y</span>
+                        <span id="bp-class-badge" class="px-2 py-0.5 rounded bg-white text-black font-mono text-[10px] font-bold">CLASS: Y</span>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <div class="text-[10px] text-slate-500 uppercase">Passenger</div>
+                            <div class="text-[9px] text-neutral-500 uppercase mono">Passenger</div>
                             <div id="bp-passenger" class="font-medium text-white">--</div>
                         </div>
                         <div class="text-right">
-                            <div class="text-[10px] text-slate-500 uppercase">PNR Locator</div>
-                            <div id="bp-pnr" class="font-medium text-blue-400 mono">------</div>
+                            <div class="text-[9px] text-neutral-500 uppercase mono">PNR Locator</div>
+                            <div id="bp-pnr" class="font-bold text-white mono">------</div>
                         </div>
                     </div>
 
@@ -319,99 +340,99 @@
                     <div class="panel-subtle p-3 rounded flex items-center justify-between">
                         <div>
                             <div id="bp-origin" class="text-xl font-bold text-white mono">---</div>
-                            <div class="text-[10px] text-slate-500">ORIGIN</div>
+                            <div class="text-[9px] text-neutral-500 mono">ORIGIN</div>
                         </div>
                         <div class="flex flex-col items-center">
-                            <span id="bp-flight-num" class="text-[10px] mono text-slate-400">FLIGHT --</span>
-                            <div class="w-12 h-px bg-slate-700 my-1"></div>
+                            <span id="bp-flight-num" class="text-[10px] mono text-neutral-400">FLIGHT --</span>
+                            <div class="w-12 h-px bg-neutral-700 my-1"></div>
                         </div>
                         <div class="text-right">
                             <div id="bp-dest" class="text-xl font-bold text-white mono">---</div>
-                            <div class="text-[10px] text-slate-500">DESTINATION</div>
+                            <div class="text-[9px] text-neutral-500 mono">DESTINATION</div>
                         </div>
                     </div>
 
                     <!-- Gate / Seat -->
-                    <div class="grid grid-cols-4 gap-2 text-center panel-subtle p-2.5 rounded text-[11px]">
+                    <div class="grid grid-cols-4 gap-2 text-center panel-subtle p-2.5 rounded text-[11px] mono">
                         <div>
-                            <div class="text-[9px] text-slate-500 uppercase">Gate</div>
-                            <div id="bp-gate" class="font-semibold text-white mono">--</div>
+                            <div class="text-[8px] text-neutral-500 uppercase">Gate</div>
+                            <div id="bp-gate" class="font-bold text-white">--</div>
                         </div>
                         <div>
-                            <div class="text-[9px] text-slate-500 uppercase">Terminal</div>
-                            <div id="bp-terminal" class="font-semibold text-white mono">--</div>
+                            <div class="text-[8px] text-neutral-500 uppercase">Terminal</div>
+                            <div id="bp-terminal" class="font-bold text-white">--</div>
                         </div>
                         <div>
-                            <div class="text-[9px] text-slate-500 uppercase">Boarding</div>
-                            <div id="bp-time" class="font-semibold text-emerald-400 mono">--:--</div>
+                            <div class="text-[8px] text-neutral-500 uppercase">Boarding</div>
+                            <div id="bp-time" class="font-bold text-white">--:--</div>
                         </div>
                         <div>
-                            <div class="text-[9px] text-slate-500 uppercase">Seat</div>
-                            <div id="bp-seat" class="font-semibold text-blue-400 mono">--</div>
+                            <div class="text-[8px] text-neutral-500 uppercase">Seat</div>
+                            <div id="bp-seat" class="font-bold text-white">--</div>
                         </div>
                     </div>
 
                     <!-- QR Barcode -->
-                    <div class="border-t border-[#1e2433] pt-4 flex flex-col items-center justify-center">
+                    <div class="border-t border-neutral-800 pt-4 flex flex-col items-center justify-center">
                         <div id="qrcode-box" class="bg-white p-2 rounded"></div>
-                        <div id="bp-baggage-tag" class="text-[9px] text-slate-500 mt-2 mono">TAG: 001-000000</div>
+                        <div id="bp-baggage-tag" class="text-[9px] text-neutral-400 mt-2 mono">TAG: 001-000000</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Vouchers & Rights (6 Cols) -->
+            <!-- Vouchers & IATA 753 Baggage Radar (6 Cols) -->
             <div class="md:col-span-6 space-y-4">
                 <div class="panel p-5 space-y-4 text-xs">
                     <div>
-                        <h3 class="font-semibold text-white">Regulatory Passenger Rights (EU261 / 14 CFR 259)</h3>
-                        <p class="text-slate-400 text-[11px] mt-0.5">Automated entitlement package for passengers affected by carrier disruptions.</p>
+                        <h3 class="font-bold text-white uppercase tracking-wider mono text-[11px]">Regulatory Entitlements (EU261 / US DOT)</h3>
+                        <p class="text-neutral-400 text-[11px] mt-0.5">Automated statutory compensation package issued by AirOps engine.</p>
                     </div>
 
                     <div class="space-y-2.5">
                         <div class="panel-subtle p-3 rounded flex items-center justify-between">
                             <div>
-                                <div class="font-medium text-slate-200">Terminal Meal & Refreshment Voucher</div>
-                                <div class="text-[10px] text-slate-500">Valid at all airside dining vendors</div>
+                                <div class="font-medium text-neutral-200">Terminal Meal & Refreshment Voucher</div>
+                                <div class="text-[10px] text-neutral-500">Valid at airside vendors</div>
                             </div>
-                            <span id="vch-meal-code" class="mono text-emerald-400 font-semibold">$30.00 (VCH-MEAL)</span>
+                            <span id="vch-meal-code" class="mono text-white font-semibold">$30.00 (VCH-MEAL)</span>
                         </div>
 
                         <div class="panel-subtle p-3 rounded flex items-center justify-between">
                             <div>
-                                <div class="font-medium text-slate-200">Overnight Accommodation Entitlement</div>
-                                <div class="text-[10px] text-slate-500">Applicable on delays &gt;6 hours</div>
+                                <div class="font-medium text-neutral-200">Overnight Hotel Accommodation</div>
+                                <div class="text-[10px] text-neutral-500">Applicable on delays &gt;6 hours</div>
                             </div>
-                            <span id="vch-hotel-status" class="text-slate-400 font-medium">Standard Policy</span>
+                            <span id="vch-hotel-status" class="text-neutral-400 font-medium">Standard Policy</span>
                         </div>
 
                         <div class="panel-subtle p-3 rounded flex items-center justify-between">
                             <div>
-                                <div class="font-medium text-slate-200">Statutory Cash Compensation</div>
-                                <div class="text-[10px] text-slate-500">Fixed rate distance compensation</div>
+                                <div class="font-medium text-neutral-200">Statutory Cash Compensation</div>
+                                <div class="text-[10px] text-neutral-500">Fixed rate distance compensation</div>
                             </div>
-                            <span id="vch-comp-amount" class="mono text-blue-400 font-semibold">$250.00 USD</span>
+                            <span id="vch-comp-amount" class="mono text-white font-bold">$250.00 USD</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- IATA Resolution 753 Baggage Tracking & RFID Checkpoints -->
                 <div class="panel p-5 space-y-3 text-xs">
-                    <div class="flex items-center justify-between border-b border-[#1e2433] pb-2">
+                    <div class="flex items-center justify-between border-b border-neutral-800 pb-2">
                         <div>
-                            <h3 class="font-semibold text-white">IATA Resolution 753 Baggage Tracking</h3>
-                            <p class="text-slate-500 text-[10px]">Real-time ramp sorter custody transfer & RFID checkpoints.</p>
+                            <h3 class="font-bold text-white uppercase tracking-wider mono text-[11px]">IATA Resolution 753 Baggage Tracking</h3>
+                            <p class="text-neutral-500 text-[10px] mono">Real-time ramp sorter custody transfer & RFID checkpoints.</p>
                         </div>
-                        <span id="bag-status-badge" class="px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-900 mono">EXPEDITED TRANSFER</span>
+                        <span id="bag-status-badge" class="px-2 py-0.5 rounded text-[10px] bg-neutral-900 text-white border border-neutral-700 mono">EXPEDITED TRANSFER</span>
                     </div>
 
                     <div class="grid grid-cols-2 gap-2 text-[11px] mono">
                         <div class="panel-subtle p-2 rounded">
-                            <div class="text-[9px] text-slate-500 uppercase">IATA Barcode Tag</div>
-                            <div id="bag-tag-num" class="font-bold text-cyan-400 mt-0.5">001-000000</div>
+                            <div class="text-[9px] text-neutral-500 uppercase">IATA Barcode Tag</div>
+                            <div id="bag-tag-num" class="font-bold text-white mt-0.5">001-000000</div>
                         </div>
                         <div class="panel-subtle p-2 rounded">
-                            <div class="text-[9px] text-slate-500 uppercase">BHS Sorter Bay</div>
-                            <div id="bag-sorter-bay" class="font-bold text-amber-400 mt-0.5">RAMP-BAY-Alpha-1</div>
+                            <div class="text-[9px] text-neutral-500 uppercase">BHS Sorter Bay</div>
+                            <div id="bag-sorter-bay" class="font-bold text-white mt-0.5">RAMP-BAY-Alpha-1</div>
                         </div>
                     </div>
 
@@ -420,27 +441,26 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </main>
 
     <!-- TAB 4: DISPATCH CONSOLE -->
     <main id="tab-content-dispatch" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full">
         <div class="panel p-5 max-w-4xl mx-auto flex flex-col h-[580px] space-y-4 text-xs">
-            <div class="flex items-center justify-between border-b border-[#1e2433] pb-3">
+            <div class="flex items-center justify-between border-b border-neutral-900 pb-3">
                 <div>
-                    <h2 class="font-semibold text-white">Operations Dispatch & Autonomous Re-Ticketing Console</h2>
-                    <p class="text-slate-500 text-[11px]">Command line interface for fast PNR re-routing, schedule queries, and automated ticketing.</p>
+                    <h2 class="font-bold text-white uppercase tracking-wider mono text-[12px]">Operations Dispatch & Command Terminal</h2>
+                    <p class="text-neutral-500 text-[11px] mono">Natural language IATA re-accommodation console and flight controller telemetry.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input id="main-ai-pnr" type="text" placeholder="PNR" class="uppercase bg-[#0c0e14] border border-[#1e2433] rounded px-2.5 py-1 text-xs text-white mono text-center focus:outline-none w-24">
-                    <button onclick="loadMainAiPnr()" class="bg-[#161a24] hover:bg-[#1f2533] text-slate-300 px-2.5 py-1 rounded text-xs border border-[#1e2433]">Set Target</button>
+                    <input id="main-ai-pnr" type="text" placeholder="PNR" class="uppercase bg-black border border-neutral-800 rounded px-2.5 py-1 text-xs text-white mono text-center focus:outline-none focus:border-white w-24">
+                    <button onclick="loadMainAiPnr()" class="bg-neutral-900 hover:bg-neutral-800 text-neutral-300 px-2.5 py-1 rounded text-xs border border-neutral-700 mono">Set Target</button>
                 </div>
             </div>
 
             <!-- Terminal Message Stream -->
             <div id="main-chat-messages" class="flex-1 overflow-y-auto space-y-2.5 pr-2 custom-scroll mono text-[11px]">
-                <div class="panel-subtle p-3 rounded text-slate-400">
+                <div class="panel-subtle p-3 rounded text-neutral-400">
                     DISPATCH INTERFACE READY.<br>
                     Commands supported: 'Check status', 'Show options', 'Confirm Option 1'.<br>
                     Target passenger PNR can be selected from the Operations table or entered above.
@@ -448,87 +468,78 @@
             </div>
 
             <!-- Input bar -->
-            <form onsubmit="handleMainChatSubmit(event)" class="flex gap-2 pt-2 border-t border-[#1e2433]">
-                <input id="main-chat-input" type="text" placeholder="Enter command or query (e.g. 'Show alternatives within 4h')..." class="flex-1 bg-[#0c0e14] border border-[#1e2433] rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500 mono">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-xs font-medium transition mono">
+            <form onsubmit="handleMainChatSubmit(event)" class="flex gap-2 pt-2 border-t border-neutral-900">
+                <input id="main-chat-input" type="text" placeholder="Enter command or query (e.g. 'Show alternatives within 4h')..." class="flex-1 bg-black border border-neutral-800 rounded px-3 py-2 text-xs text-white focus:outline-none focus:border-white mono">
+                <button type="submit" class="bg-white hover:bg-neutral-200 text-black px-4 py-2 rounded text-xs font-bold transition mono">
                     EXECUTE
                 </button>
             </form>
         </div>
     </main>
 
-    <!-- TAB 5: OPERATIONAL METRICS -->
+    <!-- TAB 5: INCIDENT AUDIT & OPERATIONAL METRICS -->
     <main id="tab-content-analytics" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-4 text-xs">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="panel p-4 space-y-2">
-                <div class="text-[10px] text-slate-500 uppercase tracking-wider">Manual Labor Reduction</div>
-                <div class="text-2xl font-bold text-emerald-400 mono">80.0%</div>
-                <p class="text-slate-400 leading-relaxed text-[11px]">
+                <div class="text-[9px] text-neutral-500 uppercase tracking-widest mono">Manual Labor Reduction</div>
+                <div class="text-2xl font-bold text-white mono">80.0%</div>
+                <p class="text-neutral-400 leading-relaxed text-[11px] mono">
                     Autonomous graph re-routing resolves passenger connections in under 2ms, removing travel agent re-ticketing queues.
                 </p>
             </div>
             <div class="panel p-4 space-y-2">
-                <div class="text-[10px] text-slate-500 uppercase tracking-wider">Estimated Compensation Liability</div>
-                <div id="analytics-liability" class="text-2xl font-bold text-amber-400 mono">$0.00</div>
-                <p class="text-slate-400 leading-relaxed text-[11px]">
+                <div class="text-[9px] text-neutral-500 uppercase tracking-widest mono">Compensation Liability</div>
+                <div id="analytics-liability" class="text-2xl font-bold text-white mono">$0.00</div>
+                <p class="text-neutral-400 leading-relaxed text-[11px] mono">
                     Consumer delay liabilities tracked in real-time under EU261 and US DOT passenger protection standards.
                 </p>
             </div>
             <div class="panel p-4 space-y-2">
-                <div class="text-[10px] text-slate-500 uppercase tracking-wider">Graph Search Mean Latency</div>
-                <div id="analytics-solve-time" class="text-2xl font-bold text-cyan-400 mono">1.56 ms</div>
-                <p class="text-slate-400 leading-relaxed text-[11px]">
+                <div class="text-[9px] text-neutral-500 uppercase tracking-widest mono">Graph Mean Solve Time</div>
+                <div id="analytics-solve-time" class="text-2xl font-bold text-white mono">1.82 ms</div>
+                <p class="text-neutral-400 leading-relaxed text-[11px] mono">
                     Constrained multi-hop NetworkX search across all North American and transatlantic hubs.
                 </p>
             </div>
         </div>
 
-        <div class="panel p-4 space-y-3">
-            <div class="font-semibold text-white">Architectural Specifications</div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-[11px] text-slate-300">
-                    <thead class="bg-[#0c0e14] border-b border-[#1e2433] text-slate-500 uppercase text-[10px]">
-                        <tr>
-                            <th class="p-2.5">Pipeline Layer</th>
-                            <th class="p-2.5">Technology</th>
-                            <th class="p-2.5">Operational Invariant</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-[#1e2433]">
-                        <tr>
-                            <td class="p-2.5 font-medium text-white">Event Telemetry Broker</td>
-                            <td class="p-2.5 mono text-slate-400">RabbitMQ (AMQP) / Async Bus</td>
-                            <td class="p-2.5 text-slate-400">Sub-second ingestion with durable queue delivery</td>
-                        </tr>
-                        <tr>
-                            <td class="p-2.5 font-medium text-white">Re-Accommodation Engine</td>
-                            <td class="p-2.5 mono text-slate-400">NetworkX MultiDiGraph</td>
-                            <td class="p-2.5 text-slate-400">Hard constraint: [T0, T0+4h], transfer layovers 45m-240m</td>
-                        </tr>
-                        <tr>
-                            <td class="p-2.5 font-medium text-white">GDS Master Inventory</td>
-                            <td class="p-2.5 mono text-slate-400">PostgreSQL / In-Memory Cache</td>
-                            <td class="p-2.5 text-slate-400">Authentic 6-character PNRs and IATA fare classes</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <!-- IATA Incident Audit Dossier Card -->
+        <div class="panel p-5 space-y-3">
+            <div class="flex items-center justify-between border-b border-neutral-900 pb-3">
+                <div>
+                    <h3 class="font-bold text-white uppercase tracking-wider mono text-[12px]">IATA IRROPS Incident Post-Mortem Dossier</h3>
+                    <p class="text-neutral-500 text-[10px] mono">Regulatory audit export under FAA FAR Part 117, EU 261/2004, and US DOT 14 CFR 259.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="downloadMarkdownAuditReport()" class="bg-white hover:bg-neutral-200 text-black px-3 py-1.5 rounded text-xs font-semibold mono transition">
+                        <i class="fa-solid fa-download mr-1"></i>EXPORT MARKDOWN
+                    </button>
+                    <button onclick="loadIncidentAuditDossier()" class="bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 px-3 py-1.5 rounded text-xs font-semibold mono transition">
+                        REFRESH
+                    </button>
+                </div>
             </div>
+
+            <pre id="audit-dossier-preview" class="p-4 bg-black border border-neutral-900 rounded font-mono text-[11px] text-neutral-300 overflow-x-auto max-h-72 custom-scroll leading-relaxed whitespace-pre-wrap">Loading incident audit record...</pre>
         </div>
     </main>
 
-    <!-- Minimal Footer -->
-    <footer class="mt-auto border-t border-[#1e2433] bg-[#0c0e14] py-3 text-center text-[11px] text-slate-500 mono">
-        AirOps Dispatch Platform • Real-Time Airline Operations & Re-Accommodation
+    <!-- Minimalist Footer -->
+    <footer class="mt-auto border-t border-neutral-900 bg-black py-3 text-center text-[10px] text-neutral-600 mono uppercase tracking-widest">
+        AirOps Autonomous Disruption Platform • 3D Telemetry Radar • IATA Resolution 753 / 766
     </footer>
 
-    <!-- App JavaScript -->
+    <!-- 3D Globe & Application Logic -->
     <script>
-        let map = null;
-        let airportMarkers = {};
-        let routePolylines = [];
+        let scene, camera, renderer, controls;
+        let globeMesh, atmMesh;
+        let airportNodes3D = {};
+        let flightArcs3D = [];
+        let photonParticles = [];
         let activePnr = "";
         let cachedFlights = [];
         let airportsData = [];
+        const GLOBE_RADIUS = 100;
 
         function updateClock() {
             const now = new Date();
@@ -542,79 +553,261 @@
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('text-white', 'border-blue-500');
-                btn.classList.add('text-slate-400', 'border-transparent');
+                btn.classList.remove('text-white', 'border-white');
+                btn.classList.add('text-neutral-500', 'border-transparent');
             });
 
             const content = document.getElementById(`tab-content-${tabId}`);
             const btn = document.getElementById(`tab-btn-${tabId}`);
             if (content) content.classList.remove('hidden');
             if (btn) {
-                btn.classList.add('text-white', 'border-blue-500');
-                btn.classList.remove('text-slate-400', 'border-transparent');
+                btn.classList.add('text-white', 'border-white');
+                btn.classList.remove('text-neutral-500', 'border-transparent');
             }
 
-            if (tabId === 'ops' && map) {
-                setTimeout(() => map.invalidateSize(), 150);
+            if (tabId === 'ops' && renderer) {
+                setTimeout(onWindowResize, 100);
+            }
+            if (tabId === 'analytics') {
+                loadIncidentAuditDossier();
             }
         }
 
-        async function initMap() {
+        // Coordinate conversion from lat/lng to 3D Cartesian
+        function latLngToVector3(lat, lng, radius) {
+            const phi = lat * (Math.PI / 180);
+            const theta = (lng + 180) * (Math.PI / 180);
+            const x = -(radius * Math.cos(phi) * Math.cos(theta));
+            const y = radius * Math.sin(phi);
+            const z = radius * Math.cos(phi) * Math.sin(theta);
+            return new THREE.Vector3(x, y, z);
+        }
+
+        // 3D Scene Initialization
+        async function init3DGlobe() {
+            const container = document.getElementById('network-map-3d');
+            const canvas = document.getElementById('canvas-3d');
+            const width = container.clientWidth || 800;
+            const height = 420;
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+
+            camera = new THREE.PerspectiveCamera(45, width / height, 1, 2000);
+            camera.position.set(0, 80, 260);
+
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            // OrbitControls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.rotateSpeed = 0.6;
+            controls.minDistance = 140;
+            controls.maxDistance = 500;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.4;
+
+            // Base Wireframe Sphere
+            const sphereGeo = new THREE.SphereGeometry(GLOBE_RADIUS, 36, 18);
+            const sphereMat = new THREE.MeshBasicMaterial({
+                color: 0x0a0a0a,
+                wireframe: false,
+            });
+            globeMesh = new THREE.Mesh(sphereGeo, sphereMat);
+            scene.add(globeMesh);
+
+            // Subtle Coordinate Grid Lines
+            const wireMat = new THREE.MeshBasicMaterial({
+                color: 0x1f1f1f,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.6,
+            });
+            const gridMesh = new THREE.Mesh(sphereGeo, wireMat);
+            scene.add(gridMesh);
+
+            // Outer Atmospheric Halo Ring
+            const ringGeo = new THREE.RingGeometry(GLOBE_RADIUS * 1.01, GLOBE_RADIUS * 1.02, 64);
+            const ringMat = new THREE.MeshBasicMaterial({ color: 0x333333, side: THREE.DoubleSide });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.rotation.x = Math.PI / 2;
+            scene.add(ring);
+
+            // Ambient lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+            scene.add(ambientLight);
+
+            // Load airports and build 3D nodes
+            await loadAirportsAndBuild3DNodes();
+
+            // Resize listener
+            window.addEventListener('resize', onWindowResize);
+
+            // Render loop
+            animate3D();
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('network-map-3d');
+            if (!container || !renderer || !camera) return;
+            const width = container.clientWidth;
+            const height = 420;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        function resetGlobeView() {
+            if (camera && controls) {
+                camera.position.set(0, 80, 260);
+                controls.target.set(0, 0, 0);
+            }
+        }
+
+        async function loadAirportsAndBuild3DNodes() {
             try {
                 const res = await fetch('/api/v1/airports');
+                if (!res.ok) return;
                 airportsData = await res.json();
-
-                map = L.map('network-map', {
-                    center: [39.8283, -98.5795],
-                    zoom: 4,
-                    zoomControl: false,
-                    attributionControl: false
-                });
-
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                    maxZoom: 19
-                }).addTo(map);
+                document.getElementById('hud-hubs-count').innerText = airportsData.length;
 
                 airportsData.forEach(apt => {
-                    const icon = L.divIcon({
-                        className: 'custom-pin',
-                        html: `<div style="background:#1d4ed8; color:#fff; font-family:monospace; font-size:9px; padding:2px 4px; border-radius:3px; border:1px solid #3b82f6;">${apt.code}</div>`,
-                        iconSize: [32, 18],
-                        iconAnchor: [16, 9]
-                    });
+                    const pos = latLngToVector3(apt.lat, apt.lng, GLOBE_RADIUS);
 
-                    const marker = L.marker([apt.lat, apt.lng], { icon: icon }).addTo(map);
-                    marker.bindPopup(`<span class="mono text-xs"><strong>${apt.code}</strong> - ${apt.name}</span>`);
-                    airportMarkers[apt.code] = { marker, lat: apt.lat, lng: apt.lng };
+                    // Airport Pin (Small white sphere)
+                    const pinGeo = new THREE.SphereGeometry(1.6, 12, 12);
+                    const pinMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                    const pin = new THREE.Mesh(pinGeo, pinMat);
+                    pin.position.copy(pos);
+                    scene.add(pin);
+
+                    // Concentric Halo Ring around Airport
+                    const haloGeo = new THREE.RingGeometry(2.2, 3.0, 16);
+                    const haloMat = new THREE.MeshBasicMaterial({ color: 0x888888, side: THREE.DoubleSide });
+                    const halo = new THREE.Mesh(haloGeo, haloMat);
+                    halo.position.copy(pos);
+                    halo.lookAt(pos.clone().multiplyScalar(2));
+                    scene.add(halo);
+
+                    // Text Sprite Label
+                    const labelSprite = createTextSprite(apt.code);
+                    const labelPos = pos.clone().multiplyScalar(1.05);
+                    labelSprite.position.copy(labelPos);
+                    scene.add(labelSprite);
+
+                    airportNodes3D[apt.code] = { position: pos, data: apt };
                 });
 
-                drawRouteArcs();
+                // Build initial scheduled flight curves in 3D
+                build3DFlightArcs();
             } catch (e) {
-                console.error("Map init error:", e);
+                console.error("Airports 3D load error:", e);
             }
         }
 
-        function drawRouteArcs(disruptedOrigin, disruptedDest) {
-            routePolylines.forEach(l => map.removeLayer(l));
-            routePolylines = [];
+        function createTextSprite(text) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(0, 0, 128, 64);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(2, 2, 124, 60);
 
-            const hubs = Object.keys(airportMarkers);
-            for (let i = 0; i < hubs.length - 1; i++) {
-                const a1 = airportMarkers[hubs[i]];
-                const a2 = airportMarkers[hubs[i + 1]];
-                if (a1 && a2) {
-                    const isDisrupted = (hubs[i] === disruptedOrigin && hubs[i+1] === disruptedDest) || (hubs[i] === 'JFK' && hubs[i+1] === 'ORD' && disruptedOrigin);
-                    const poly = L.polyline([[a1.lat, a1.lng], [a2.lat, a2.lng]], {
-                        color: isDisrupted ? '#f43f5e' : '#38bdf8',
-                        weight: isDisrupted ? 2.5 : 1,
-                        opacity: isDisrupted ? 0.9 : 0.25,
-                        dashArray: isDisrupted ? '3, 3' : null
-                    }).addTo(map);
-                    routePolylines.push(poly);
-                }
+            ctx.font = 'bold 28px monospace';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, 64, 32);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({ map: texture, depthTest: false, transparent: true });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(12, 6, 1);
+            return sprite;
+        }
+
+        function build3DFlightArcs(disruptedOrigin, disruptedDest) {
+            // Remove previous curves
+            flightArcs3D.forEach(arc => scene.remove(arc));
+            flightArcs3D = [];
+            photonParticles.forEach(p => scene.remove(p.mesh));
+            photonParticles = [];
+
+            const codes = Object.keys(airportNodes3D);
+            for (let i = 0; i < codes.length - 1; i++) {
+                const origin = codes[i];
+                const dest = codes[i + 1];
+                const node1 = airportNodes3D[origin];
+                const node2 = airportNodes3D[dest];
+
+                if (!node1 || !node2) continue;
+
+                const p1 = node1.position;
+                const p2 = node2.position;
+                const dist = p1.distanceTo(p2);
+
+                // Elevated control point for 3D great circle trajectory
+                const mid = p1.clone().add(p2).multiplyScalar(0.5);
+                const altitude = Math.min(45, dist * 0.25 + 10);
+                const pCtrl = mid.clone().normalize().multiplyScalar(GLOBE_RADIUS + altitude);
+
+                const curve = new THREE.QuadraticBezierCurve3(p1, pCtrl, p2);
+                const points = curve.getPoints(50);
+                const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+                const isDisrupted = (origin === disruptedOrigin && dest === disruptedDest) || (origin === 'JFK' && dest === 'ORD' && disruptedOrigin);
+
+                const material = new THREE.LineBasicMaterial({
+                    color: isDisrupted ? 0xffffff : 0x666666,
+                    transparent: true,
+                    opacity: isDisrupted ? 0.95 : 0.35,
+                    linewidth: isDisrupted ? 2 : 1
+                });
+
+                const line = new THREE.Line(geometry, material);
+                scene.add(line);
+                flightArcs3D.push(line);
+
+                // Photon particle traversing the curve
+                const photonGeo = new THREE.SphereGeometry(1.2, 8, 8);
+                const photonMat = new THREE.MeshBasicMaterial({ color: isDisrupted ? 0xffffff : 0xcccccc });
+                const photonMesh = new THREE.Mesh(photonGeo, photonMat);
+                scene.add(photonMesh);
+
+                photonParticles.push({
+                    mesh: photonMesh,
+                    curve: curve,
+                    progress: Math.random(),
+                    speed: 0.003 + Math.random() * 0.002
+                });
             }
         }
 
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+
+            if (controls) controls.update();
+
+            // Animate flying photon particles along 3D flight arcs
+            photonParticles.forEach(p => {
+                p.progress += p.speed;
+                if (p.progress > 1) p.progress = 0;
+                const pt = p.curve.getPoint(p.progress);
+                p.mesh.position.copy(pt);
+            });
+
+            if (renderer && scene && camera) {
+                renderer.render(scene, camera);
+            }
+        }
+
+        // Operational Metrics & Flight Table Logic
         async function loadMetrics() {
             try {
                 const res = await fetch('/api/v1/metrics');
@@ -650,28 +843,28 @@
                     cachedFlights.forEach(f => {
                         const opt = document.createElement('option');
                         opt.value = f.flight_number;
-                        opt.innerText = `${f.flight_number} (${f.origin}->${f.destination}) [${f.status}]`;
+                        opt.innerText = `${f.flight_number} (${f.origin} \u2192 ${f.destination}) [${f.status}]`;
                         select.appendChild(opt);
 
                         const tr = document.createElement('tr');
                         const statusBadge = f.status === 'CANCELLED'
-                            ? '<span class="px-1.5 py-0.5 rounded text-[10px] bg-rose-950/80 text-rose-400 border border-rose-900/60 mono">CANCELLED</span>'
+                            ? '<span class="px-1.5 py-0.5 rounded text-[10px] bg-white text-black font-bold mono">CANCELLED</span>'
                             : (f.status === 'DELAYED'
-                                ? '<span class="px-1.5 py-0.5 rounded text-[10px] bg-amber-950/80 text-amber-400 border border-amber-900/60 mono">DELAYED</span>'
-                                : '<span class="px-1.5 py-0.5 rounded text-[10px] bg-emerald-950/80 text-emerald-400 border border-emerald-900/60 mono">ON TIME</span>');
+                                ? '<span class="px-1.5 py-0.5 rounded text-[10px] border border-neutral-400 text-neutral-200 mono">DELAYED</span>'
+                                : '<span class="px-1.5 py-0.5 rounded text-[10px] text-neutral-400 mono">ON TIME</span>');
 
                         const depTime = f.departure_time.substring(11, 16);
                         const samplePnr = f.sample_pnr || 'N/A';
 
                         tr.innerHTML = `
-                            <td class="p-2 mono font-bold text-white">${f.flight_number}</td>
+                            <td class="p-2 font-bold text-white">${f.flight_number}</td>
                             <td class="p-2">${f.origin} &rarr; ${f.destination}</td>
-                            <td class="p-2 mono text-slate-400">${depTime} UTC</td>
+                            <td class="p-2 text-neutral-400">${depTime} UTC</td>
                             <td class="p-2">${statusBadge}</td>
-                            <td class="p-2 mono text-blue-400 cursor-pointer hover:underline" onclick="selectActivePnr('${samplePnr}')">${samplePnr}</td>
+                            <td class="p-2 text-white underline cursor-pointer" onclick="selectActivePnr('${samplePnr}')">${samplePnr}</td>
                             <td class="p-2 text-right">
-                                <button onclick="quickCancel('${f.flight_number}')" class="text-[11px] text-rose-400 hover:text-rose-300 font-medium">
-                                    Disrupt
+                                <button onclick="quickCancel('${f.flight_number}')" class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-700 hover:bg-neutral-800 text-white font-mono text-[10px]">
+                                    DISRUPT
                                 </button>
                             </td>
                         `;
@@ -693,19 +886,19 @@
                         box.innerHTML = '';
                         logs.forEach(log => {
                             const item = document.createElement('div');
-                            item.className = 'panel-subtle p-2.5 rounded border border-[#1e2433] space-y-1';
+                            item.className = 'panel-subtle p-2.5 rounded border border-neutral-800 space-y-1 mono text-[11px]';
                             item.innerHTML = `
-                                <div class="flex items-center justify-between mono">
-                                    <span class="text-blue-400 font-medium text-[11px]">${log.event_id}</span>
-                                    <span class="text-[10px] text-slate-500">${log.timestamp}</span>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-white font-bold">${log.event_id}</span>
+                                    <span class="text-[10px] text-neutral-500">${log.timestamp}</span>
                                 </div>
-                                <div class="flex items-center justify-between text-slate-300 text-xs">
+                                <div class="flex items-center justify-between text-neutral-300">
                                     <span>${log.flight_number} (${log.origin} &rarr; ${log.destination})</span>
-                                    <span class="text-[10px] text-rose-400 mono">${log.disruption_type}</span>
+                                    <span class="text-[10px] border border-neutral-600 px-1 rounded">${log.disruption_type}</span>
                                 </div>
-                                <div class="flex items-center justify-between text-[10px] text-slate-500 pt-0.5 mono">
+                                <div class="flex items-center justify-between text-[10px] text-neutral-500 pt-0.5">
                                     <span>Affected: ${log.affected_count} PNRs</span>
-                                    <span class="text-cyan-400">${log.latency_ms} ms</span>
+                                    <span class="text-white">${log.latency_ms} ms</span>
                                 </div>
                             `;
                             box.appendChild(item);
@@ -722,7 +915,7 @@
             const eventType = document.getElementById('select-event').value;
             const btn = document.getElementById('btn-trigger');
             btn.disabled = true;
-            btn.innerText = 'Routing...';
+            btn.innerText = 'ROUTING...';
 
             try {
                 const fObj = cachedFlights.find(f => f.flight_number === flight);
@@ -748,17 +941,18 @@
                 statusMsg.innerHTML = `Disruption executed for ${flight}. ${data.affected_pnrs} PNRs re-accommodated in ${data.solve_time_ms} ms.`;
 
                 if (fObj) {
-                    drawRouteArcs(fObj.origin, fObj.destination);
+                    build3DFlightArcs(fObj.origin, fObj.destination);
                 }
 
                 await loadFlights();
                 await loadMetrics();
                 await loadTelemetryStream();
+                await loadAtcAndFleet();
             } catch (err) {
                 console.error(err);
             } finally {
                 btn.disabled = false;
-                btn.innerText = 'Dispatch Disruption';
+                btn.innerText = 'DISPATCH IRROPS';
             }
         }
 
@@ -767,6 +961,132 @@
             triggerDisruption();
         }
 
+        async function triggerSquallLineStorm() {
+            const btn = document.getElementById('btn-squall');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>STORM INJECTED...';
+            }
+            try {
+                const hubs = ['ORD', 'DFW', 'ATL', 'JFK'];
+                const targets = cachedFlights.filter(f => hubs.includes(f.origin) || hubs.includes(f.destination)).slice(0, 8);
+                const promises = targets.map(f => {
+                    return fetch('/api/v1/gds/simulate-disruption', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            event_id: 'SQUALL-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
+                            disruption_type: 'WEATHER_DELAY',
+                            flight_number: f.flight_number,
+                            carrier: f.carrier || f.flight_number.substring(0, 2),
+                            origin: f.origin,
+                            destination: f.destination,
+                            scheduled_departure: f.departure_time,
+                            reason: 'Severe Convective Squall Line / Ground Stop'
+                        })
+                    });
+                });
+                await Promise.all(promises);
+                const statusBox = document.getElementById('trigger-status');
+                const statusMsg = document.getElementById('trigger-msg');
+                statusBox.classList.remove('hidden');
+                statusMsg.innerHTML = `Squall Storm Grounded ${targets.length} hub flights concurrently. CDM slots and tail-swaps resolved.`;
+
+                build3DFlightArcs('JFK', 'ORD');
+
+                await loadFlights();
+                await loadMetrics();
+                await loadTelemetryStream();
+                await loadAtcAndFleet();
+            } catch (err) {
+                console.error(err);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-bolt mr-1"></i>SQUALL STORM';
+                }
+            }
+        }
+
+        async function loadAtcAndFleet() {
+            try {
+                const [gdpRes, slotRes, tailRes, crewRes] = await Promise.all([
+                    fetch('/api/v1/atc/ground-delay-programs'),
+                    fetch('/api/v1/atc/slot-swaps'),
+                    fetch('/api/v1/fleet/tail-swaps'),
+                    fetch('/api/v1/crew/alerts')
+                ]);
+                if (gdpRes.ok && slotRes.ok && tailRes.ok && crewRes.ok) {
+                    const gdps = await gdpRes.json();
+                    const slots = await slotRes.json();
+                    const tails = await tailRes.json();
+                    const crews = await crewRes.json();
+
+                    const atcBox = document.getElementById('atc-fleet-box');
+                    if (!atcBox) return;
+
+                    let html = '';
+                    if (gdps && gdps.length > 0) {
+                        const g = gdps[0];
+                        html += `
+                            <div class="panel-subtle p-2.5 rounded border border-neutral-700 text-[11px] space-y-1 mono">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-white">${g.program_id} (${g.airport})</span>
+                                    <span class="text-[10px] text-neutral-400">-${g.capacity_cut_pct}% AAR</span>
+                                </div>
+                                <div class="text-neutral-400 text-[10px]">${g.reason}</div>
+                                <div class="text-neutral-500 text-[9px]">Normal: ${g.normal_aar}/hr &rarr; Reduced: ${g.reduced_aar}/hr</div>
+                            </div>
+                        `;
+                    }
+
+                    if (slots && slots.length > 0) {
+                        const s = slots[0];
+                        html += `
+                            <div class="panel-subtle p-2.5 rounded border border-neutral-800 text-[11px] space-y-1 mono">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-white">CDM SLOT SWAP</span>
+                                    <span class="text-[10px] text-neutral-300">+${s.pax_delay_minutes_saved}m saved</span>
+                                </div>
+                                <div class="text-neutral-400 text-[10px]">${s.high_priority_flight} prioritized into slot ${s.protected_slot}</div>
+                            </div>
+                        `;
+                    }
+
+                    if (tails && tails.length > 0) {
+                        const t = tails[0];
+                        html += `
+                            <div class="panel-subtle p-2.5 rounded border border-neutral-800 text-[11px] space-y-1 mono">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-white">AIRCRAFT TAIL SWAP</span>
+                                    <span class="text-[10px] text-neutral-500">${t.hub}</span>
+                                </div>
+                                <div class="text-neutral-400 text-[10px]">${t.flight_number}: Swap ${t.original_tail} &rarr; ${t.assigned_spare_tail}</div>
+                            </div>
+                        `;
+                    }
+
+                    if (crews && crews.length > 0) {
+                        const c = crews[0];
+                        html += `
+                            <div class="panel-subtle p-2.5 rounded border border-neutral-800 text-[11px] space-y-1 mono">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-white">FAR PART 117 BREACH</span>
+                                    <span class="text-[10px] text-neutral-400">${c.cascading_flight_number}</span>
+                                </div>
+                                <div class="text-neutral-400 text-[10px]">${c.reason}</div>
+                            </div>
+                        `;
+                    }
+
+                    atcBox.innerHTML = html || '<div class="text-neutral-600 text-xs py-2 text-center mono">No active ATC ground stops.</div>';
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // PNR & Booking Portal Logic
         function selectActivePnr(pnr) {
             if (pnr && pnr !== 'N/A') {
                 activePnr = pnr;
@@ -798,8 +1118,8 @@
                 const badge = document.getElementById('portal-status-badge');
                 badge.innerText = data.status;
                 badge.className = data.status === 'RE_ACCOMMODATED'
-                    ? 'px-1.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-900/60 text-[10px]'
-                    : 'px-1.5 py-0.5 rounded bg-amber-950/60 text-amber-400 border border-amber-900/60 text-[10px]';
+                    ? 'px-1.5 py-0.5 rounded bg-white text-black font-bold border border-white text-[10px] mono'
+                    : 'px-1.5 py-0.5 rounded bg-neutral-900 text-white border border-neutral-600 text-[10px] mono';
 
                 try {
                     const endRes = await fetch(`/api/v1/pnr/${pnr}/endorsement`);
@@ -821,7 +1141,7 @@
                 container.innerHTML = '';
 
                 if (!data.reaccommodation_options || data.reaccommodation_options.length === 0) {
-                    container.innerHTML = `<div class="panel-subtle p-4 rounded text-center text-xs text-slate-400">Flight is currently on schedule or graph engine is evaluating alternatives.</div>`;
+                    container.innerHTML = `<div class="panel-subtle p-4 rounded text-center text-xs text-neutral-400 mono">Flight is currently on schedule or graph engine is evaluating alternatives.</div>`;
                     return;
                 }
 
@@ -831,37 +1151,37 @@
                     const isSelected = data.selected_option_id === opt.option_id;
 
                     const card = document.createElement('div');
-                    card.className = `panel p-4 border ${isSelected ? 'border-emerald-500 bg-emerald-950/10' : 'border-[#1e2433]'} space-y-2.5 text-xs`;
+                    card.className = `panel p-4 border ${isSelected ? 'border-white bg-neutral-950' : 'border-neutral-800'} space-y-2.5 text-xs`;
 
                     const legs = opt.segments.map(s => `${s.flight_number} (${s.origin} -> ${s.destination})`).join(' &rarr; ');
 
                     card.innerHTML = `
-                        <div class="flex items-center justify-between border-b border-[#1e2433] pb-2">
-                            <div class="flex items-center space-x-2">
-                                <span class="px-1.5 py-0.5 rounded bg-blue-950 text-blue-400 mono font-medium text-[10px]">OPTION ${idx + 1}</span>
-                                <span class="font-medium text-white">${opt.route_type}</span>
-                                ${idx === 0 ? '<span class="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 text-[9px] mono border border-emerald-900">RECOMMENDED</span>' : ''}
+                        <div class="flex items-center justify-between border-b border-neutral-900 pb-2">
+                            <div class="flex items-center space-x-2 mono">
+                                <span class="px-1.5 py-0.5 rounded bg-neutral-900 text-neutral-300 font-bold text-[10px] border border-neutral-700">OPTION ${idx + 1}</span>
+                                <span class="font-bold text-white">${opt.route_type}</span>
+                                ${idx === 0 ? '<span class="px-1.5 py-0.5 rounded bg-white text-black text-[9px] font-bold">RECOMMENDED</span>' : ''}
                             </div>
-                            <span class="text-slate-400 mono text-[11px]">+${opt.departure_delay_minutes}m departure delta</span>
+                            <span class="text-neutral-400 mono text-[11px]">+${opt.departure_delay_minutes}m departure delta</span>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px]">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px] mono">
                             <div>
-                                <div class="text-[10px] text-slate-500 uppercase">Routing</div>
-                                <div class="font-medium text-slate-200 mono mt-0.5">${legs}</div>
+                                <div class="text-[9px] text-neutral-500 uppercase">Routing</div>
+                                <div class="font-medium text-neutral-200 mt-0.5">${legs}</div>
                             </div>
                             <div>
-                                <div class="text-[10px] text-slate-500 uppercase">Schedule</div>
-                                <div class="font-medium text-slate-200 mono mt-0.5">${opt.departure_time.substring(11, 16)} &rarr; ${opt.arrival_time.substring(11, 16)} UTC</div>
+                                <div class="text-[9px] text-neutral-500 uppercase">Schedule</div>
+                                <div class="font-medium text-neutral-200 mt-0.5">${opt.departure_time.substring(11, 16)} &rarr; ${opt.arrival_time.substring(11, 16)} UTC</div>
                             </div>
                             <div>
-                                <div class="text-[10px] text-slate-500 uppercase">Duration & Luggage</div>
-                                <div class="font-medium text-slate-200 mt-0.5">${durHours}h ${durMins}m • Auto-transferred</div>
+                                <div class="text-[9px] text-neutral-500 uppercase">Duration & Luggage</div>
+                                <div class="font-medium text-neutral-200 mt-0.5">${durHours}h ${durMins}m • Auto-transferred</div>
                             </div>
                         </div>
                         <div class="flex justify-end pt-1">
                             ${isSelected 
-                                ? '<span class="text-emerald-400 text-xs font-medium mono"><i class="fa-solid fa-check mr-1"></i> TICKETED AND CONFIRMED</span>'
-                                : `<button onclick="confirmPortalRebook('${data.pnr_id}', '${opt.option_id}')" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded text-xs font-medium transition mono">CONFIRM REBOOK</button>`
+                                ? '<span class="text-white text-xs font-bold mono"><i class="fa-solid fa-check mr-1"></i> TICKETED AND CONFIRMED</span>'
+                                : `<button onclick="confirmPortalRebook('${data.pnr_id}', '${opt.option_id}')" class="bg-white hover:bg-neutral-200 text-black px-3 py-1.5 rounded text-xs font-bold transition mono">CONFIRM REBOOK</button>`
                             }
                         </div>
                     `;
@@ -946,8 +1266,8 @@
                     if (badge) {
                         badge.innerText = b.custody_status.replace(/_/g, ' ');
                         badge.className = b.interline_transfer
-                            ? 'px-2 py-0.5 rounded text-[10px] bg-purple-950 text-purple-400 border border-purple-900 mono'
-                            : 'px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-900 mono';
+                            ? 'px-2 py-0.5 rounded text-[10px] bg-white text-black font-bold mono'
+                            : 'px-2 py-0.5 rounded text-[10px] bg-neutral-900 text-white border border-neutral-600 mono';
                     }
 
                     const list = document.getElementById('bag-checkpoints-list');
@@ -955,15 +1275,15 @@
                         list.innerHTML = '';
                         b.rfid_scan_history.forEach(cp => {
                             const item = document.createElement('div');
-                            item.className = 'panel-subtle p-2 rounded flex items-center justify-between text-[10px] border border-[#1e2433]';
+                            item.className = 'panel-subtle p-2 rounded flex items-center justify-between text-[10px] border border-neutral-800';
                             item.innerHTML = `
                                 <div>
-                                    <span class="text-blue-400 font-bold">${cp.checkpoint}</span>
-                                    <div class="text-slate-400 text-[9px]">${cp.location}</div>
+                                    <span class="text-white font-bold">${cp.checkpoint}</span>
+                                    <div class="text-neutral-400 text-[9px]">${cp.location}</div>
                                 </div>
                                 <div class="text-right">
-                                    <span class="text-slate-300 font-mono">${cp.timestamp_utc}</span>
-                                    <div class="text-[9px] text-emerald-400">${cp.status}</div>
+                                    <span class="text-neutral-300 font-mono">${cp.timestamp_utc}</span>
+                                    <div class="text-[9px] text-white font-bold">${cp.status}</div>
                                 </div>
                             `;
                             list.appendChild(item);
@@ -975,7 +1295,6 @@
             }
         }
 
-
         function switchToBoardingPassView() {
             switchTab('boarding');
             loadBoardingPass(activePnr);
@@ -985,6 +1304,7 @@
             switchTab('boarding');
         }
 
+        // Dispatch Console Chat Logic
         function loadMainAiPnr() {
             const p = document.getElementById('main-ai-pnr').value.trim().toUpperCase();
             if (p) {
@@ -1022,143 +1342,43 @@
             const box = document.getElementById('main-chat-messages');
             const div = document.createElement('div');
             if (type === 'user') {
-                div.className = 'panel-subtle p-2.5 rounded border border-[#1e2433] text-slate-200 ml-6';
-                div.innerHTML = `<span class="text-slate-500 font-semibold">[${sender}]</span> ${text}`;
+                div.className = 'panel-subtle p-2.5 rounded border border-neutral-800 text-neutral-200 ml-6 mono';
+                div.innerHTML = `<span class="text-neutral-500 font-bold">[${sender}]</span> ${text}`;
             } else if (type === 'system') {
-                div.className = 'text-slate-500 text-[10px] py-1';
+                div.className = 'text-neutral-500 text-[10px] py-1 mono';
                 div.innerHTML = text;
             } else {
-                div.className = 'panel-subtle p-2.5 rounded border border-[#2f384d] text-slate-100 mr-6';
-                div.innerHTML = `<div class="text-blue-400 font-medium mb-1">[${sender}]</div><div class="whitespace-pre-line">${text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
+                div.className = 'panel-subtle p-2.5 rounded border border-neutral-700 text-white mr-6 mono';
+                div.innerHTML = `<div class="text-white font-bold mb-1">[${sender}]</div><div class="whitespace-pre-line">${text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>`;
             }
             box.appendChild(div);
             box.scrollTop = box.scrollHeight;
         }
 
-        async function triggerSquallLineStorm() {
-            const btn = document.getElementById('btn-squall');
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Storm Injected...';
-            }
+        // Incident Audit Dossier Export Logic
+        async function loadIncidentAuditDossier() {
             try {
-                const hubs = ['ORD', 'DFW', 'ATL', 'JFK'];
-                const targets = cachedFlights.filter(f => hubs.includes(f.origin) || hubs.includes(f.destination)).slice(0, 8);
-                const promises = targets.map(f => {
-                    return fetch('/api/v1/gds/simulate-disruption', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            event_id: 'SQUALL-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
-                            disruption_type: 'WEATHER_DELAY',
-                            flight_number: f.flight_number,
-                            carrier: f.carrier || f.flight_number.substring(0, 2),
-                            origin: f.origin,
-                            destination: f.destination,
-                            scheduled_departure: f.departure_time,
-                            reason: 'Severe Convective Squall Line / Ground Stop'
-                        })
-                    });
-                });
-                await Promise.all(promises);
-                const statusBox = document.getElementById('trigger-status');
-                const statusMsg = document.getElementById('trigger-msg');
-                statusBox.classList.remove('hidden');
-                statusMsg.innerHTML = `<strong>Squall Line Storm Injected:</strong> Grounded ${targets.length} hub flights concurrently. CDM slots, tail-swaps, and Part 117 crew timeouts calculated.`;
-                await loadFlights();
-                await loadMetrics();
-                await loadTelemetryStream();
-                await loadAtcAndFleet();
-            } catch (err) {
-                console.error(err);
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-bolt mr-1"></i>Squall Storm';
+                const res = await fetch('/api/v1/audit/incident-report/markdown');
+                if (res.ok) {
+                    const text = await res.text();
+                    document.getElementById('audit-dossier-preview').innerText = text;
                 }
+            } catch (e) {
+                console.error("Audit load error:", e);
             }
         }
 
-        async function loadAtcAndFleet() {
-            try {
-                const [gdpRes, slotRes, tailRes, crewRes] = await Promise.all([
-                    fetch('/api/v1/atc/ground-delay-programs'),
-                    fetch('/api/v1/atc/slot-swaps'),
-                    fetch('/api/v1/fleet/tail-swaps'),
-                    fetch('/api/v1/crew/alerts')
-                ]);
-                if (gdpRes.ok && slotRes.ok && tailRes.ok && crewRes.ok) {
-                    const gdps = await gdpRes.json();
-                    const slots = await slotRes.json();
-                    const tails = await tailRes.json();
-                    const crews = await crewRes.json();
-
-                    const atcBox = document.getElementById('atc-fleet-box');
-                    if (!atcBox) return;
-
-                    let html = '';
-                    if (gdps && gdps.length > 0) {
-                        const g = gdps[0];
-                        html += `
-                            <div class="panel-subtle p-2.5 rounded border border-amber-900/40 text-[11px] space-y-1">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-bold text-amber-400 mono">${g.program_id} (${g.airport})</span>
-                                    <span class="text-[10px] text-amber-500 font-mono">-${g.capacity_cut_pct}% AAR</span>
-                                </div>
-                                <div class="text-slate-300 text-[10px]">${g.reason}</div>
-                                <div class="text-slate-500 text-[10px] mono">Normal AAR: ${g.normal_aar}/hr &rarr; Reduced: ${g.reduced_aar}/hr</div>
-                            </div>
-                        `;
-                    }
-
-                    if (slots && slots.length > 0) {
-                        const s = slots[0];
-                        html += `
-                            <div class="panel-subtle p-2.5 rounded border border-blue-900/40 text-[11px] space-y-1">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-bold text-blue-400 mono">CDM SLOT COMPRESSION</span>
-                                    <span class="text-[10px] text-emerald-400 font-mono">+${s.pax_delay_minutes_saved}m saved</span>
-                                </div>
-                                <div class="text-slate-300 text-[10px]">${s.high_priority_flight} prioritized into slot ${s.protected_slot}</div>
-                            </div>
-                        `;
-                    }
-
-                    if (tails && tails.length > 0) {
-                        const t = tails[0];
-                        html += `
-                            <div class="panel-subtle p-2.5 rounded border border-cyan-900/40 text-[11px] space-y-1">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-bold text-cyan-400 mono">AIRCRAFT TAIL SWAP</span>
-                                    <span class="text-[10px] text-slate-400 mono">${t.hub}</span>
-                                </div>
-                                <div class="text-slate-300 text-[10px]">${t.flight_number}: Swap ${t.original_tail} &rarr; ${t.assigned_spare_tail}</div>
-                            </div>
-                        `;
-                    }
-
-                    if (crews && crews.length > 0) {
-                        const c = crews[0];
-                        html += `
-                            <div class="panel-subtle p-2.5 rounded border border-rose-900/40 text-[11px] space-y-1">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-bold text-rose-400 mono">PART 117 TIMEOUT</span>
-                                    <span class="text-[10px] text-rose-500 mono">${c.cascading_flight_number}</span>
-                                </div>
-                                <div class="text-slate-300 text-[10px]">${c.reason}</div>
-                            </div>
-                        `;
-                    }
-
-                    atcBox.innerHTML = html || '<div class="text-slate-600 text-xs py-2 text-center">No active ATC ground stops.</div>';
-                }
-            } catch (e) {
-                console.error(e);
-            }
+        function downloadMarkdownAuditReport() {
+            const text = document.getElementById('audit-dossier-preview').innerText;
+            const blob = new Blob([text], { type: 'text/markdown' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `IATA_IRROPS_Incident_PostMortem_${Date.now()}.md`;
+            a.click();
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
-            await initMap();
+            await init3DGlobe();
             await loadFlights();
             await loadMetrics();
             await loadTelemetryStream();
@@ -1168,7 +1388,6 @@
             setInterval(loadTelemetryStream, 3000);
             setInterval(loadAtcAndFleet, 4000);
         });
-
     </script>
 </body>
 </html>

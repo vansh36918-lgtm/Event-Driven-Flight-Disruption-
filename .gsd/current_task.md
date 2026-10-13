@@ -1,14 +1,16 @@
 # CURRENT_TASK.md — Active Sprint Focus
 
-- **Current Goal**: Completed Phase 16: IATA Resolution 753 Baggage Tracking & RFID Auto-Reroute Engine.
+- **Current Goal**: Phase 18: Multi-Leg Crew Deadhead Recovery & CRS E-Hotel Voucher Integration.
 - **Verification Status**:
-  - `python test_system.py`: All 14 test suites passed with 0 regressions.
-  - Live server running on `http://localhost:8000` (`task-866`).
-  - Active background 10-hour scheduler `task-669` actively running (Iteration 2 processed).
-  - Real-time IATA Resolution 753 baggage tracking endpoint (`/api/v1/pnr/{pnr_id}/baggage`) verified.
-  - 10-digit IATA barcode tags, SITA BSM messages, and 4-point RFID custody checkpoints operational.
+  - Phase 17 completed: Monochromatic minimalist black-and-white theme & 3D Three.js interactive flight vector globe live on `http://localhost:8000`.
+  - `python test_system.py`: 14/14 test suites passing.
+  - Active background daemon `task-866` running `python run.py`.
+  - Active 10-hour scheduler `task-669` waking agent continuously.
 - **Next Steps**:
-  - Phase 17: Multi-Leg Crew Recovery & Hotel Voucher Integration across remaining iterations.
+  - Implement `app/engine/hotel_engine.py` for automated CRS/Sabre electronic hotel & meal vouchers for overnight IRROPS delays (>6h or 22:00-06:00).
+  - Implement Crew Deadhead Recovery in `app/engine/crew_engine.py` to re-position reserve crew members on non-disrupted flights to rescue downstream rotations.
+  - Expose API endpoints in `app/main.py`.
+  - Update `test_system.py` with test suite 15.
 
 
 

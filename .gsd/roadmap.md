@@ -95,10 +95,19 @@
 - [x] REST endpoint `GET /api/v1/pnr/{pnr_id}/baggage` for instant baggage custody inspection.
 - [x] Integration with UI digital boarding pass and automated test verification in `test_system.py` step 14.
 
-## Phase 17: Multi-Leg Crew Recovery & Hotel Voucher Integration [IN PROGRESS]
+## Phase 17: Minimalist Black-and-White Aesthetic & 3D Three.js Flight Vector Globe [COMPLETED]
+- [x] Full monochromatic black-and-white aerospace redesign (obsidian black `#000000`, crisp white borders `#ffffff`, high-contrast typography, zero generic AI gradients).
+- [x] Interactive 3D WebGL Flight Vector Globe rendered with Three.js and OrbitControls (drag to rotate, scroll to zoom, glowing atmospheric rim).
+- [x] 3D Great-Circle Quadratic Bezier arcs calculated dynamically from airport latitude/longitude coordinates with elevated orbital apex.
+- [x] Animated photon pulses traversing 3D curved flight trajectories in real time.
+- [x] Local bundling of `three.min.js` and `OrbitControls.js` in `app/static/js/` ensuring 100% offline air-gapped capability.
+- [x] All 14 verification test suites passed with 0 regressions.
+
+## Phase 18: Multi-Leg Crew Deadhead Recovery & E-Hotel Voucher Integration [IN PROGRESS]
 - [ ] Automated FAR Part 117 crew deadhead re-assignment when downstream flight rotations risk cancellation.
-- [ ] Live integration with hotel voucher provider inventory (CRS/SABRE e-hotel vouchers) on overnight delays.
-- [ ] Autonomous loop execution across remaining iterations of 10-hour cycle.
+- [ ] CRS / Sabre e-hotel voucher issuance and inventory engine for overnight delays (>6 hours or past 22:00 local).
+- [ ] Dedicated REST endpoints: `POST /api/v1/crew/deadhead-recovery` and `GET /api/v1/pnr/{pnr_id}/hotel-voucher`.
+- [ ] Verification suite 15 in `test_system.py`.
 
 
 
