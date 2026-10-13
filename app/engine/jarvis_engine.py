@@ -170,7 +170,7 @@ class JarvisVoiceEngine:
             )
 
         # 5. THEME SWITCHING (WHITE ALABASTER VS STEALTH BLACK)
-        if any(w in cmd_lower for w in ["dark mode", "black mode", "stealth", "night mode", "dark theme"]):
+        if any(w in cmd_lower for w in ["dark mode", "black mode", "stealth", "night mode", "dark theme", "black theme", "switch to black", "switch to dark"]):
             return VoiceCommandResponse(
                 command=cmd,
                 intent="SWITCH_THEME",
@@ -179,7 +179,7 @@ class JarvisVoiceEngine:
                 speech_response="Switching cockpit visuals to Obsidian Stealth Night mode.",
                 ui_action={"type": "SET_THEME", "mode": "stealth"}
             )
-        if any(w in cmd_lower for w in ["white mode", "light mode", "alabaster", "two tone", "day mode"]):
+        if any(w in cmd_lower for w in ["white mode", "light mode", "alabaster", "two tone", "day mode", "white theme", "light theme", "switch to white", "switch to light"]):
             return VoiceCommandResponse(
                 command=cmd,
                 intent="SWITCH_THEME",

@@ -176,6 +176,8 @@
                 <button onclick="switchTab('ops')" class="text-neutral-400 hover:text-white font-medium transition">FLIGHTS & 3D RADAR</button>
                 <button onclick="switchTab('portal')" class="text-neutral-400 hover:text-white font-medium transition">PASSENGER PORTAL</button>
                 <button onclick="switchTab('boarding')" class="text-neutral-400 hover:text-white font-medium transition">HOTELS & BAGGAGE</button>
+                <button onclick="switchTab('dispatch')" class="text-neutral-400 hover:text-white font-medium transition">DISPATCH OCC</button>
+                <button onclick="switchTab('analytics')" class="text-neutral-400 hover:text-white font-medium transition">CAR-3 AUDIT</button>
                 <button onclick="switchTab('cms')" class="text-neutral-400 hover:text-white font-medium transition">FRAMER CMS</button>
                 <a href="#letsfly-faq" class="text-neutral-400 hover:text-white font-medium transition">FAQ</a>
             </nav>
@@ -337,7 +339,7 @@
                             </div>
                             <div>
                                 <label class="block text-neutral-400 text-[10px] uppercase font-bold mb-1">PNR / Flight No.</label>
-                                <input id="hero-pnr-input" type="text" placeholder="e.g. 6E204 / EK7P9X" class="w-full uppercase bg-black border border-neutral-700 rounded px-2.5 py-1.5 text-white text-[11px] focus:outline-none focus:border-white text-center">
+                                <input id="hero-pnr-input" type="text" placeholder="e.g. 6E204 / EK7P9X" class="w-full uppercase bg-black border border-neutral-700 rounded px-2.5 py-1.5 text-white text-[11px] focus:outline-none focus:border-white text-center" onkeydown="if(event.key === 'Enter') handleHeroSearch()">
                             </div>
                         </div>
 
@@ -554,6 +556,37 @@
         </div>
     </section>
 
+    <!-- LET'S FLY FLOATING TAB NAVIGATION BAR -->
+    <div id="letsfly-tab-nav" class="max-w-7xl mx-auto px-5 mb-6">
+        <div class="framer-white-card framer-theme-card p-2 sm:p-2.5 rounded-2xl border border-neutral-300 shadow-lg flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2 pl-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                <span class="text-xs font-bold font-albert text-black">WORKSPACE CONSOLE</span>
+                <span class="text-[10px] text-neutral-500 mono hidden sm:inline">• 6 MODULES</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold mono">
+                <button id="tab-pill-ops" onclick="switchTab('ops')" class="tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-black text-white shadow">
+                    <i class="fa-solid fa-radar mr-1.5 text-[10px]"></i>3D RADAR & FIDS
+                </button>
+                <button id="tab-pill-portal" onclick="switchTab('portal')" class="tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-white text-black hover:bg-neutral-100 border border-neutral-300">
+                    <i class="fa-solid fa-user-shield mr-1.5 text-[10px]"></i>PASSENGER PORTAL
+                </button>
+                <button id="tab-pill-boarding" onclick="switchTab('boarding')" class="tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-white text-black hover:bg-neutral-100 border border-neutral-300">
+                    <i class="fa-solid fa-hotel mr-1.5 text-[10px]"></i>BOARDING & HOTEL
+                </button>
+                <button id="tab-pill-dispatch" onclick="switchTab('dispatch')" class="tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-white text-black hover:bg-neutral-100 border border-neutral-300">
+                    <i class="fa-solid fa-sliders mr-1.5 text-[10px]"></i>DISPATCH OCC
+                </button>
+                <button id="tab-pill-analytics" onclick="switchTab('analytics')" class="tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-white text-black hover:bg-neutral-100 border border-neutral-300">
+                    <i class="fa-solid fa-file-shield mr-1.5 text-[10px]"></i>CAR-3 AUDIT
+                </button>
+                <button id="tab-pill-cms" onclick="switchTab('cms')" class="tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-white text-black hover:bg-neutral-100 border border-neutral-300">
+                    <i class="fa-solid fa-pen-to-square mr-1.5 text-[10px]"></i>FRAMER CMS
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN BODY TABS -->
     <!-- TAB 1: 3D OPERATIONS & RADAR -->
     <main id="tab-content-ops" class="tab-content max-w-7xl mx-auto px-5 pb-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-5">
@@ -664,7 +697,7 @@
                     <p class="text-xs sm:text-sm text-neutral-700 mt-1 leading-relaxed font-sans">Autonomous graph re-accommodations with DGCA CAR Section 3 & IATA Rule 240 involuntary endorsement.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input id="portal-pnr-input" type="text" placeholder="PNR (e.g. EK7P9X)" class="uppercase bg-white border-2 border-neutral-300 rounded-full px-4 py-2.5 text-xs text-black font-mono font-bold text-center focus:outline-none focus:border-black shadow-sm w-44">
+                    <input id="portal-pnr-input" type="text" placeholder="PNR (e.g. EK7P9X)" class="uppercase bg-white border-2 border-neutral-300 rounded-full px-4 py-2.5 text-xs text-black font-mono font-bold text-center focus:outline-none focus:border-black shadow-sm w-44" onkeydown="if(event.key === 'Enter') fetchPortalPnrDetails()">
                     <button onclick="fetchPortalPnrDetails()" class="bg-black hover:bg-neutral-800 text-white px-6 py-2.5 rounded-full text-xs font-bold transition shadow mono flex items-center gap-2">
                         <i class="fa-solid fa-magnifying-glass text-[10px]"></i><span>LOOKUP RECORD</span>
                     </button>
@@ -731,7 +764,7 @@
                         <p class="text-[10px] text-neutral-400 mono">Autonomous flight consultation, DGCA statutory compensation claims, and booking updates.</p>
                     </div>
                 </div>
-                <input id="main-ai-pnr" type="text" placeholder="Active PNR" class="bg-neutral-900 border border-neutral-700 rounded-full px-3 py-1.5 text-xs text-white mono text-center w-28 uppercase focus:border-white focus:outline-none">
+                <input id="main-ai-pnr" type="text" placeholder="Active PNR" class="bg-neutral-900 border border-neutral-700 rounded-full px-3 py-1.5 text-xs text-white mono text-center w-28 uppercase focus:border-white focus:outline-none" onkeydown="if(event.key === 'Enter') selectActivePnr(this.value.trim().toUpperCase())" onchange="selectActivePnr(this.value.trim().toUpperCase())">
             </div>
 
             <!-- Chat Message Box -->
@@ -744,7 +777,7 @@
 
             <!-- Input Bar -->
             <div class="flex items-center gap-2">
-                <input id="chat-input" type="text" placeholder="Ask in English or हिन्दी (e.g. 'Can I get a hotel voucher?' or 'मेरी अगली फ्लाइट कौन सी है?')" class="flex-1 bg-neutral-900 border border-neutral-700 rounded-full px-4 py-2.5 text-xs text-white mono focus:outline-none focus:border-white">
+                <input id="chat-input" type="text" placeholder="Ask in English or हिन्दी (e.g. 'Can I get a hotel voucher?' or 'मेरी अगली फ्लाइट कौन सी है?')" class="flex-1 bg-neutral-900 border border-neutral-700 rounded-full px-4 py-2.5 text-xs text-white mono focus:outline-none focus:border-white" onkeydown="if(event.key === 'Enter') sendChatMessage()">
                 <button onclick="sendChatMessage()" class="bg-white hover:bg-neutral-200 text-black px-6 py-2.5 rounded-full text-xs font-bold mono transition shadow">
                     SEND
                 </button>
@@ -1285,8 +1318,36 @@
                 content.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
+            // Synchronize Let's Fly Tab Pills
+            const tabKeys = ['ops', 'portal', 'boarding', 'dispatch', 'analytics', 'cms'];
+            tabKeys.forEach(key => {
+                const btn = document.getElementById(`tab-pill-${key}`);
+                if (btn) {
+                    if (key === tabId) {
+                        btn.className = "tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-black text-white shadow font-bold";
+                    } else {
+                        btn.className = "tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-white text-black hover:bg-neutral-100 border border-neutral-300 font-bold";
+                    }
+                }
+            });
+
             if (tabId === 'ops' && renderer) {
                 setTimeout(onWindowResize, 100);
+            }
+            if (tabId === 'portal' && (!activePnr || activePnr === 'N/A')) {
+                if (cachedFlights && cachedFlights.length > 0 && cachedFlights[0].sample_pnr) {
+                    selectActivePnr(cachedFlights[0].sample_pnr);
+                }
+            }
+            if (tabId === 'boarding') {
+                if (!activePnr || activePnr === 'N/A') {
+                    if (cachedFlights && cachedFlights.length > 0 && cachedFlights[0].sample_pnr) {
+                        activePnr = cachedFlights[0].sample_pnr;
+                    }
+                }
+                if (activePnr && activePnr !== 'N/A') {
+                    loadBoardingPass(activePnr);
+                }
             }
             if (tabId === 'analytics') {
                 loadIncidentAuditDossier();
@@ -1305,11 +1366,18 @@
         }
 
         function handleHeroSearch() {
-            const pnrVal = document.getElementById('hero-pnr-input').value.trim().toUpperCase();
+            let pnrVal = document.getElementById('hero-pnr-input').value.trim().toUpperCase();
             const orig = document.getElementById('hero-origin-select').value;
             const dest = document.getElementById('hero-dest-select').value;
 
             if (pnrVal) {
+                // If user entered flight number (e.g. 6E204 or AI803), resolve to flight's sample PNR
+                if (cachedFlights && cachedFlights.length > 0) {
+                    const fltMatch = cachedFlights.find(f => f.flight_number.toUpperCase() === pnrVal);
+                    if (fltMatch && fltMatch.sample_pnr) {
+                        pnrVal = fltMatch.sample_pnr;
+                    }
+                }
                 selectActivePnr(pnrVal);
             } else {
                 switchTab('portal');
@@ -1873,8 +1941,17 @@
         }
 
         async function fetchPortalPnrDetails() {
-            const pnr = document.getElementById('portal-pnr-input').value.trim().toUpperCase() || activePnr;
+            let pnr = document.getElementById('portal-pnr-input').value.trim().toUpperCase() || activePnr;
             if (!pnr) return;
+
+            // If user entered a flight number instead of PNR, auto-resolve to flight's sample PNR
+            if (cachedFlights && cachedFlights.length > 0) {
+                const fltMatch = cachedFlights.find(f => f.flight_number.toUpperCase() === pnr);
+                if (fltMatch && fltMatch.sample_pnr) {
+                    pnr = fltMatch.sample_pnr;
+                    document.getElementById('portal-pnr-input').value = pnr;
+                }
+            }
             activePnr = pnr;
 
             try {
