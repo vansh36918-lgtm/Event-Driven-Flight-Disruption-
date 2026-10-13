@@ -73,6 +73,8 @@ class ReaccommodationWorker:
             gds_service.update_pnr_reaccommodation(pnr.pnr_id, routes_payload)
             self.total_reaccommodated_pnrs += 1
 
+
+
         # 2. Check for cascading crew timeout violations under FAA Part 117
         delay_est = 180 if disruption_type == "CANCELLATION" else 120
         cascading = crew_engine.evaluate_cascading_timeout(flight_num, delay_minutes=delay_est)

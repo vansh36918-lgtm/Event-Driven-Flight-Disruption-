@@ -4,11 +4,12 @@ Handles GDS disruption telemetry webhooks, PNR queries, re-ticketing,
 and AI Passenger Concierge chat interactions.
 """
 import os
+import time
 import asyncio
 from contextlib import asynccontextmanager
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException, BackgroundTasks
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.models.schemas import (
@@ -29,6 +30,9 @@ from app.engine.audit_engine import audit_engine
 from app.bus.event_broker import event_broker
 from app.worker.reaccommodation_worker import reaccommodation_worker
 from app.ai.assistant import ai_assistant
+
+
+SERVER_START_TIME = time.time()
 
 
 @asynccontextmanager
@@ -298,7 +302,47 @@ async def get_iata_incident_audit_report():
     return audit_engine.generate_incident_post_mortem()
 
 
+@app.get("/api/v1/audit/incident-report/markdown", response_class=PlainTextResponse)
+async def get_iata_incident_audit_report_markdown():
+    """
+    Renders exportable/printable plain text Markdown dossier for airline operations dispatchers.
+    """
+    return audit_engine.generate_incident_post_mortem_markdown()
+
+
+@app.get("/api/v1/health")
+async def get_system_health():
+    """
+    Comprehensive platform health diagnostics: uptime, graph nodes, telemetry backlog, and worker status.
+    """
+    uptime_sec = round(time.time() - SERVER_START_TIME, 1)
+    graph = reaccommodation_engine.graph
+    return {
+        "status": "HEALTHY",
+        "service": "AirOps-IRROPS-Engine",
+        "uptime_seconds": uptime_sec,
+        "gds_inventory": {
+            "active_flights": len(gds_service.flights),
+            "total_pnrs": len(gds_service.pnrs),
+            "disrupted_count": len([f for f in gds_service.flights.values() if f.status != "SCHEDULED"]),
+        },
+        "networkx_topology": {
+            "nodes": graph.number_of_nodes() if graph else 0,
+            "edges": graph.number_of_edges() if graph else 0,
+        },
+        "worker_telemetry": {
+            "processed_events": reaccommodation_worker.total_processed_events,
+            "reaccommodated_pnrs": reaccommodation_worker.total_reaccommodated_pnrs,
+            "last_solve_time_ms": reaccommodation_worker.last_solve_time_ms,
+            "recent_crew_alerts": len(reaccommodation_worker.crew_alerts),
+            "recent_tail_swaps": len(reaccommodation_worker.tail_swaps),
+            "recent_slot_swaps": len(reaccommodation_worker.slot_swaps),
+        },
+    }
+
+
 @app.get("/api/v1/metrics", response_model=SystemMetrics)
+
 
 async def get_metrics():
     """Returns platform real-time operational metrics, ROI, and compensation liability."""

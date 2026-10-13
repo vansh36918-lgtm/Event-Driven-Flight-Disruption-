@@ -58,6 +58,8 @@ class PassengerRecord(BaseModel):
     pvs_score: int = 450  # Passenger Value Score (100 - 1000)
     reaccommodation_options: List[Dict[str, Any]] = []
     selected_option_id: Optional[str] = None
+    upgraded_cabin: Optional[str] = None
+    upgrade_reason: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 

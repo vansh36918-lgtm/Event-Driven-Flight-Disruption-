@@ -70,6 +70,8 @@ class PostMortemAuditEngine:
         tail_swaps_count = len(reaccommodation_worker.tail_swaps)
         crew_breaches_count = len(reaccommodation_worker.crew_alerts)
 
+        op_ups = len([p for p in disrupted_pnrs if getattr(p, "upgraded_cabin", None)])
+
         incident_report = {
             "incident_report_id": f"IATA-IRROPS-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}",
             "generated_utc": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
@@ -85,6 +87,7 @@ class PostMortemAuditEngine:
                 "loyalty_tier_breakdown": loyalty_breakdown,
                 "average_pvs_score": avg_pvs,
                 "high_value_pax_protected": loyalty_breakdown.get("DIAMOND", 0) + loyalty_breakdown.get("PLATINUM", 0),
+                "operational_upgrades_awarded": op_ups,
             },
             "route_distribution": {
                 "direct_nonstop_routes": direct_reaccommodations,
@@ -117,6 +120,58 @@ class PostMortemAuditEngine:
 
         return incident_report
 
+    def generate_incident_post_mortem_markdown(self) -> str:
+        """
+        Renders a printable/exportable IATA IRROPS Incident Post-Mortem Dossier in Markdown format.
+        """
+        rep = self.generate_incident_post_mortem()
+        scope = rep["disruption_scope"]
+        pax = rep["pax_segmentation"]
+        ops = rep["operations_mitigation"]
+        fin = rep["financial_impact_usd"]
+        perf = rep["engine_performance"]
+        loyalty = pax["loyalty_tier_breakdown"]
+
+        return f"""# IATA IRROPS INCIDENT POST-MORTEM & REGULATORY AUDIT DOSSIER
+**Incident Reference:** `{rep['incident_report_id']}`
+**Timestamp:** `{rep['generated_utc']}`
+**Governing Standards:** {', '.join(rep['regulatory_frameworks'])}
+
+---
+
+## 1. Disruption Scope & Solvers
+- **Total Flights Monitored:** {scope['total_active_flights']}
+- **Total Monitored PNRs:** {scope['total_monitored_pnrs']}
+- **Disrupted PNRs Ingested:** {scope['total_disrupted_pnrs']}
+- **Autonomous Resolution Rate:** {scope['autonomous_resolution_rate_pct']}%
+- **Mean Solve Latency:** {perf['mean_solve_latency_ms']} ms (P99: {perf['p99_solve_latency_ms']} ms)
+- **Engine Concurrency:** {perf['concurrency_status']}
+
+## 2. Passenger Segmentation & Loyalty Protection
+- **Diamond Tier:** {loyalty.get('DIAMOND', 0)}
+- **Platinum Tier:** {loyalty.get('PLATINUM', 0)}
+- **Gold Tier:** {loyalty.get('GOLD', 0)}
+- **Silver Tier:** {loyalty.get('SILVER', 0)}
+- **General Tier:** {loyalty.get('GENERAL', 0)}
+- **High-Value Travelers Shielded:** {pax['high_value_pax_protected']}
+- **Operational Upgrades (Op-Up) to Class J:** {pax['operational_upgrades_awarded']} (IATA Res 766)
+
+## 3. Operations & Regulatory Mitigation
+- **FAA Ground Delay Programs (GDP):** {ops['faa_active_gdps']} active restriction programs
+- **CDM Slot Compressions:** {ops['cdm_slot_swaps_confirmed']} confirmed mainline priority swaps
+- **Aircraft Fleet Tail Swaps:** {ops['fleet_aircraft_tail_swaps']} aircraft rotations salvaged
+- **FAR Part 117 Crew Breaches:** {ops['far_part_117_crew_alerts']} downstream duty timeouts mitigated
+
+## 4. Financial ROI & Regulatory Compensation Liabilities
+- **Gross EU261 / US DOT Liability:** ${fin['gross_statutory_liability']:,.2f} USD
+- **Voucher Mitigation Cost Retained:** ${fin['voucher_mitigation_savings']:,.2f} USD
+- **Net Airline Cash Exposure:** ${fin['net_airline_exposure']:,.2f} USD
+- **Agent Labor Hours Saved:** {fin['labor_hours_saved']} hours (80% manual reduction)
+- **Agent Labor Savings:** ${fin['labor_cost_savings_usd']:,.2f} USD ($45/hr loaded)
+- **TOTAL PLATFORM NET ROI:** ${fin['total_platform_roi_usd']:,.2f} USD
+"""
+
 
 # Singleton instance
 audit_engine = PostMortemAuditEngine()
+

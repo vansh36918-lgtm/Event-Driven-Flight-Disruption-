@@ -1,15 +1,15 @@
 # CURRENT_TASK.md — Active Sprint Focus
 
-- **Current Goal**: Completed Phase 14: IATA IRROPS Incident Post-Mortem & Regulatory Audit Engine.
+- **Current Goal**: Completed Phase 15: Operational Cabin Upgrades (Op-Up) & Production Hardening.
 - **Verification Status**:
-  - `python test_system.py`: All 12 test suites passed with 0 regressions.
-  - Live server running on `http://localhost:8000`.
-  - Regulatory Incident Report endpoint (`/api/v1/audit/incident-report`) tested and verified under multi-hub storm conditions.
-  - Total platform ROI ($280k+) and high-value passenger protection verified.
-  - Background scheduler `task-669` actively driving restarted 10-hour autonomous loop (60 iterations @ 10m).
-  - Background server daemon `task-663` running on `http://localhost:8000`.
+  - `python test_system.py`: All 13 test suites passed with 0 regressions.
+  - Live server running on `http://localhost:8000` (`task-763`).
+  - Active background 10-hour scheduler `task-669` actively running (Iteration 1 processed).
+  - Deep health endpoint (`/api/v1/health`) and printable Markdown incident dossier (`/api/v1/audit/incident-report/markdown`) verified.
+  - IATA Resolution 766 Operational Cabin Upgrade (Op-Up) to Business Class J tested and operational.
 - **Next Steps**:
-  - Phase 15: Continuous IRROPS Daemon Watch & Production Hardening.
+  - Phase 16: Extended Autonomous IRROPS Monitoring & Soak Testing across remaining iterations.
+
 
 
 

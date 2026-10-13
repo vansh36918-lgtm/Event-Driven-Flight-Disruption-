@@ -159,7 +159,16 @@ class GDSService:
             return None
         pnr.status = "RE_ACCOMMODATED"
         pnr.selected_option_id = option_id
+
+        # IATA Resolution 766 Operational Cabin Upgrade (Op-Up) rule:
+        # High-value travelers (DIAMOND / PLATINUM or PVS >= 650) rebooked from Economy receive complimentary Business cabin protection
+        if pnr.pvs_score >= 650 or pnr.loyalty_tier in ("DIAMOND", "PLATINUM"):
+            if pnr.fare_class in (FareClass.ECONOMY, FareClass.PREMIUM_ECONOMY):
+                pnr.upgraded_cabin = "BUSINESS (CLASS J)"
+                pnr.upgrade_reason = "IATA RES 766 HIGH-PVS PRIORITY MITIGATION"
+
         return pnr
+
 
     def record_disruption(self, payload: DisruptionWebhookPayload):
         self.disruption_history.append(payload)

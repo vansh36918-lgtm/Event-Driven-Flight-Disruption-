@@ -183,6 +183,19 @@ async def test_event_pipeline_and_ai():
     assert "pax_segmentation" in report
     print(f"  [OK] IATA IRROPS Incident Post-Mortem Audit Report generated ({report['incident_report_id']}) with financial ROI!")
 
+    # 13. IATA Res 766 Operational Cabin Upgrade (Op-Up) & Printable Audit Markdown Dossier
+    pnr_final.pvs_score = 750
+    from app.models.schemas import FareClass
+    pnr_final.fare_class = FareClass.ECONOMY
+    pnr_upgraded = gds_service.confirm_pnr_rebook(pnr_final.pnr_id, pnr_final.reaccommodation_options[0]["option_id"])
+    assert pnr_upgraded.upgraded_cabin == "BUSINESS (CLASS J)"
+    assert "IATA RES 766" in pnr_upgraded.upgrade_reason
+    md_dossier = audit_engine.generate_incident_post_mortem_markdown()
+    assert "# IATA IRROPS INCIDENT POST-MORTEM" in md_dossier
+    assert "TOTAL PLATFORM NET ROI" in md_dossier
+    print(f"  [OK] IATA Res 766 Op-Up ({pnr_upgraded.upgraded_cabin}) & Printable Audit Dossier verified!")
+
+
 
 
 

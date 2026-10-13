@@ -81,10 +81,18 @@
 - [x] REST endpoint `GET /api/v1/audit/incident-report` for instant regulatory export.
 - [x] Verification in `test_system.py` step 12 with 100% pass rate.
 
-## Phase 15: Continuous IRROPS Daemon Watch & Production Hardening [IN PROGRESS]
-- [ ] Daemon health monitoring and automatic socket retry recovery.
-- [ ] Telemetry stream rotation and memory profile verification under extended runtime.
-- [ ] Maintenance of 10-hour background autonomous loop (`task-350`).
+## Phase 15: Operational Cabin Upgrades (Op-Up) & Production Hardening [COMPLETED]
+- [x] Deep platform health diagnostics endpoint `GET /api/v1/health` (uptime, graph nodes/edges, telemetry backlog).
+- [x] IATA Resolution 766 Operational Cabin Upgrade (Op-Up) engine automatically upgrading eligible VIPs (DIAMOND/PLATINUM or PVS >= 650) to Business Class J upon disruption re-accommodation.
+- [x] Exportable printable Markdown incident post-mortem audit dossier `GET /api/v1/audit/incident-report/markdown`.
+- [x] Automated test coverage in `test_system.py` step 13 with 100% pass rate.
+- [x] Multi-hub chaos simulation verified under sustained concurrent load.
+
+## Phase 16: Extended Autonomous IRROPS Monitoring & Soak Testing [IN PROGRESS]
+- [ ] Active monitoring of 10-hour background scheduler (`task-669`).
+- [ ] Memory footprint and solver latency stability tracking across recurring iterations.
+- [ ] Continuous git checkpoint commits per iteration.
+
 
 
 
