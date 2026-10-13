@@ -257,6 +257,44 @@ async def test_event_pipeline_and_ai():
     assert divert_engine.get_diversion_by_flight("UA100") is not None
     print(f"  [OK] Airborne Diversion ({div_rec.flight_number} -> {div_rec.diverted_airport}) & Intermodal Coach Dispatch ({div_rec.coach_dispatch.dispatch_id} to {div_rec.coach_dispatch.arrival_hub}) verified!")
 
+    # 17. DOT 14 CFR 259.4 Tarmac Delay Rule, Multi-Channel Push, and DGCA CAR India Verification
+    from app.engine.tarmac_engine import tarmac_engine
+    # Test Tarmac Delay & Gate Return Extraction
+    tmc_inc = tarmac_engine.evaluate_tarmac_delay("UA240", "ORD", elapsed_minutes=170, is_international=False, passenger_count=180)
+    assert tmc_inc.alert_level == "CRITICAL_DOT_BREACH_AVERTED"
+    assert tmc_inc.assigned_deplaning_gate is not None
+    assert tmc_inc.status == "EXTRACTED_TO_GATE"
+    assert tmc_inc.potential_dot_liability_usd == 180 * 27500.0
+
+    # Test Multi-Channel Push Notifications
+    notif = tarmac_engine.push_notification(pnr_final.pnr_id, "SMS", "DISRUPTION_ALERT", "AirOps IRROPS Alert", "Flight rebooked.")
+    assert notif.status == "DELIVERED"
+    notifs = tarmac_engine.get_pnr_notifications(pnr_final.pnr_id)
+    assert len(notifs) >= 1
+
+    # Test DGCA CAR Section 3 Indian Passenger Entitlements
+    india_flight = gds_service.get_flight("6E204")
+    assert india_flight is not None, "Expected Indian flight 6E204 in GDS!"
+    from app.models.schemas import PassengerRecord, FareClass
+    test_india_pnr = PassengerRecord(
+        pnr_id="6E99XP",
+        passenger_name="Aarav Sharma",
+        email="aarav.sharma@example.in",
+        phone="+919876543210",
+        original_flight_number="6E204",
+        origin="DEL",
+        destination="BOM",
+        status="DISRUPTED",
+        fare_class=FareClass.ECONOMY,
+        loyalty_tier="GOLD",
+        pvs_score=450,
+    )
+    india_comp = compensation_engine.calculate_entitlements(test_india_pnr, delay_minutes=150)
+    assert india_comp["is_india_sector"] is True
+    assert india_comp["dgca_compensation_inr"] >= 5000, f"Expected DGCA compensation, got {india_comp}"
+    assert "DGCA CAR Sec 3" in india_comp["regulation"]
+    print(f"  [OK] DOT 14 CFR 259.4 Tarmac Delay (${tmc_inc.potential_dot_liability_usd:,.0f} fines averted) & DGCA CAR India (₹{india_comp['dgca_compensation_inr']} statutory compensation) verified!")
+
 
 if __name__ == "__main__":
     print("=" * 60)

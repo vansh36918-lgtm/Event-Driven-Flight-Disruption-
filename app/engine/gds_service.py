@@ -87,12 +87,47 @@ class GDSService:
                     self.flights[flight_num] = flight
                     self.flight_to_pnrs[flight_num] = []
 
+        # Seed Indian Domestic & International Corridor (IndiGo 6E, Air India AI, Akasa QP, Vistara UK)
+        indian_routes = [
+            ("6E204", "6E", "DEL", "BOM", 0, 130, "A321neo"),
+            ("AI803", "AI", "DEL", "BOM", 1, 125, "B787-8"),
+            ("UK995", "UK", "DEL", "BOM", 2, 130, "A320neo"),
+            ("QP1102", "QP", "DEL", "BOM", 3, 135, "B737 MAX"),
+            ("6E505", "6E", "BOM", "DEL", 0, 130, "A320neo"),
+            ("AI804", "AI", "BOM", "DEL", 2, 125, "B787-8"),
+            ("6E712", "6E", "DEL", "BLR", 0, 170, "A321neo"),
+            ("AI506", "AI", "DEL", "BLR", 2, 165, "A320neo"),
+            ("QP1420", "QP", "BLR", "DEL", 1, 175, "B737 MAX"),
+            ("6E331", "6E", "BOM", "GOI", 0, 75, "A320neo"),
+            ("AI685", "AI", "BOM", "GOI", 2, 70, "A320neo"),
+            ("6E903", "6E", "BOM", "DXB", 1, 210, "A321neo"),
+            ("AI101", "AI", "DEL", "JFK", 0, 920, "B777-300ER"),
+            ("AI161", "AI", "DEL", "LHR", 1, 570, "B787-8"),
+        ]
+        for f_num, carrier, orig, dest, hr_off, dur, ac in indian_routes:
+            dep = base_time + timedelta(hours=hr_off, minutes=15)
+            arr = dep + timedelta(minutes=dur)
+            flt = FlightSegment(
+                flight_number=f_num,
+                carrier=carrier,
+                origin=orig,
+                destination=dest,
+                departure_time=dep,
+                arrival_time=arr,
+                duration_minutes=dur,
+                seats_available=random.randint(20, 95),
+                aircraft_type=ac,
+                status=FlightStatus.SCHEDULED,
+            )
+            self.flights[f_num] = flt
+            self.flight_to_pnrs[f_num] = []
+
         # Generate realistic PNR bookings
-        first_names = ["Alex", "Jordan", "Taylor", "Morgan", "Sam", "Chris", "Pat", "David", "Emma", "Michael", "Sophia", "Liam", "Olivia", "James", "Elena"]
-        last_names = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Wilson", "Taylor", "Anderson", "Thomas", "Jackson", "White", "Harris"]
+        first_names = ["Alex", "Jordan", "Taylor", "Morgan", "Sam", "Chris", "Pat", "David", "Emma", "Michael", "Sophia", "Liam", "Olivia", "James", "Elena", "Aarav", "Priya", "Rohan", "Ananya", "Vikram", "Neha", "Aditya"]
+        last_names = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Wilson", "Taylor", "Anderson", "Thomas", "Jackson", "Sharma", "Verma", "Patel", "Reddy", "Gupta", "Nair", "Iyer"]
 
         # Ensure high-profile flights have passengers for immediate demo
-        demo_flights = list(self.flights.keys())[:25]
+        demo_flights = list(self.flights.keys())[:25] + [f[0] for f in indian_routes]
         for flight_num in demo_flights:
             flight = self.flights[flight_num]
             num_passengers = random.randint(25, 60)

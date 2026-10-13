@@ -30,6 +30,21 @@ AIRPORT_COORDINATES = {
     "BHM": {"name": "Birmingham-Shuttlesworth (ATL Alternate)", "lat": 33.5629, "lng": -86.7535, "city": "Birmingham"},
     "AUS": {"name": "Austin-Bergstrom (DFW Alternate)", "lat": 30.1975, "lng": -97.6664, "city": "Austin"},
     "ONT": {"name": "Ontario International (LAX Alternate)", "lat": 34.0560, "lng": -117.6012, "city": "Ontario"},
+    # Indian Hubs (DGCA Sector)
+    "DEL": {"name": "Indira Gandhi International", "lat": 28.5562, "lng": 77.1000, "city": "New Delhi", "country": "India"},
+    "BOM": {"name": "Chhatrapati Shivaji Maharaj", "lat": 19.0896, "lng": 72.8656, "city": "Mumbai", "country": "India"},
+    "BLR": {"name": "Kempegowda International", "lat": 13.1986, "lng": 77.7066, "city": "Bengaluru", "country": "India"},
+    "HYD": {"name": "Rajiv Gandhi International", "lat": 17.2403, "lng": 78.4294, "city": "Hyderabad", "country": "India"},
+    "MAA": {"name": "Chennai International", "lat": 12.9941, "lng": 80.1709, "city": "Chennai", "country": "India"},
+    "CCU": {"name": "Netaji Subhash Chandra Bose", "lat": 22.6547, "lng": 88.4467, "city": "Kolkata", "country": "India"},
+    "GOI": {"name": "Goa Dabolim / MOPA", "lat": 15.3800, "lng": 73.8314, "city": "Goa", "country": "India"},
+    "AMD": {"name": "Sardar Vallabhbhai Patel", "lat": 23.0772, "lng": 72.6347, "city": "Ahmedabad", "country": "India"},
+    "JAI": {"name": "Jaipur International (DEL Alternate)", "lat": 26.8242, "lng": 75.8122, "city": "Jaipur", "country": "India"},
+    "PNQ": {"name": "Pune International (BOM Alternate)", "lat": 18.5822, "lng": 73.9197, "city": "Pune", "country": "India"},
+    # Middle East & Europe Connectors
+    "DXB": {"name": "Dubai International", "lat": 25.2532, "lng": 55.3657, "city": "Dubai", "country": "UAE"},
+    "SIN": {"name": "Singapore Changi", "lat": 1.3644, "lng": 103.9915, "city": "Singapore", "country": "Singapore"},
+    "LHR": {"name": "London Heathrow", "lat": 51.4700, "lng": -0.4543, "city": "London", "country": "UK"},
 }
 
 
@@ -75,6 +90,21 @@ class CompensationEngine:
         needs_hotel = delay_minutes >= 360 or (datetime.utcnow().hour >= 20 and delay_minutes >= 180)
         hotel_voucher = f"VCH-HTL-{random.randint(1000, 9999)}" if needs_hotel else None
 
+        # DGCA CAR Section 3, Series M, Part IV Statutory Compensation (India)
+        is_india_flight = (
+            pnr.origin in ["DEL", "BOM", "BLR", "HYD", "MAA", "CCU", "GOI", "AMD", "JAI", "PNQ"] or
+            pnr.destination in ["DEL", "BOM", "BLR", "HYD", "MAA", "CCU", "GOI", "AMD", "JAI", "PNQ"] or
+            pnr.original_flight_number.startswith(("6E", "AI", "QP", "UK", "SG"))
+        )
+        dgca_compensation_inr = 0
+        if is_india_flight and delay_minutes >= 120:
+            if distance_km < 1000:
+                dgca_compensation_inr = 5000
+            elif distance_km <= 2000:
+                dgca_compensation_inr = 7500
+            else:
+                dgca_compensation_inr = 10000
+
         lounge_access = pnr.fare_class.value in ["J", "F"] or delay_minutes >= 240
 
         return {
@@ -85,10 +115,13 @@ class CompensationEngine:
             "haul_tier": tier,
             "delay_minutes": delay_minutes,
             "cash_compensation_usd": cash_compensation if delay_minutes >= 180 else 0,
-            "regulation": "EU261 / US-DOT Consumer Rule 14 CFR 259",
+            "dgca_compensation_inr": dgca_compensation_inr,
+            "is_india_sector": is_india_flight,
+            "regulation": "DGCA CAR Sec 3 (India) & EU261 / US-DOT 14 CFR 259",
             "vouchers": {
                 "meal_voucher_code": meal_voucher,
                 "meal_amount_usd": meal_amount,
+                "meal_amount_inr": 450.0 if is_india_flight else None,
                 "hotel_voucher_code": hotel_voucher,
                 "hotel_provided": needs_hotel,
                 "lounge_access_granted": lounge_access,

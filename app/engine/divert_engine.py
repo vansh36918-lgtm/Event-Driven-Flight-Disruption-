@@ -147,6 +147,37 @@ class DivertEngine:
                     has_customs_clearance=True,
                 ),
             ],
+            # Indian Aviation Sector Alternates (DGCA Approved)
+            "DEL": [
+                AlternateAirport(
+                    iata_code="JAI",
+                    name="Jaipur International Airport",
+                    distance_miles_from_hub=145,
+                    ground_coach_eligible=True,
+                    coach_transit_time_minutes=180,
+                    has_customs_clearance=True,
+                ),
+            ],
+            "BOM": [
+                AlternateAirport(
+                    iata_code="PNQ",
+                    name="Pune International Airport",
+                    distance_miles_from_hub=95,
+                    ground_coach_eligible=True,
+                    coach_transit_time_minutes=140,
+                    has_customs_clearance=True,
+                ),
+            ],
+            "BLR": [
+                AlternateAirport(
+                    iata_code="CJB",
+                    name="Coimbatore International Airport",
+                    distance_miles_from_hub=180,
+                    ground_coach_eligible=False,
+                    coach_transit_time_minutes=240,
+                    has_customs_clearance=False,
+                ),
+            ],
         }
 
     def execute_flight_diversion(

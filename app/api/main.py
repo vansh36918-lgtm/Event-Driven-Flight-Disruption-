@@ -33,6 +33,7 @@ from app.engine.baggage_engine import baggage_engine
 from app.engine.crew_engine import crew_engine
 from app.engine.hotel_engine import hotel_engine
 from app.engine.divert_engine import divert_engine
+from app.engine.tarmac_engine import tarmac_engine
 from app.bus.event_broker import event_broker
 from app.worker.reaccommodation_worker import reaccommodation_worker
 from app.ai.assistant import ai_assistant
@@ -88,9 +89,13 @@ async def serve_dashboard():
 
 
 @app.get("/api/v1/flights")
-async def get_flights(limit: int = 50):
-    """Returns scheduled flights with sample PNRs for testing."""
-    flights = gds_service.list_flights(limit=limit)
+async def get_flights(limit: int = 60):
+    """Returns scheduled flights with sample PNRs for testing, prioritizing Indian sector & active demo flights."""
+    all_flights = list(gds_service.flights.values())
+    indian_or_active = [f for f in all_flights if f.carrier in ("6E", "AI", "QP", "UK") or f.status != "SCHEDULED"]
+    other_flights = [f for f in all_flights if f not in indian_or_active]
+    flights = (indian_or_active + other_flights)[:limit]
+
     response_data = []
     for f in flights:
         f_dict = f.model_dump(mode="json")
@@ -418,6 +423,61 @@ async def get_flight_diversion(flight_number: str):
 async def get_airport_designated_alternates(hub: str):
     """Returns FAA-designated fuel alternates and ground coach eligibility for a hub."""
     return divert_engine.get_designated_alternates(hub.upper())
+
+
+@app.get("/api/v1/tarmac/alerts")
+async def get_active_tarmac_alerts():
+    """
+    Returns active taxi queue operations and DOT 14 CFR 259.4 tarmac rule compliance statuses
+    (2h food/water mandate, 3h domestic / 4h international gate-return extractions).
+    """
+    return tarmac_engine.get_all_tarmac_incidents()
+
+
+@app.post("/api/v1/tarmac/evaluate")
+async def evaluate_flight_tarmac_delay(
+    flight_number: str,
+    airport: str,
+    elapsed_minutes: int = 135,
+    is_international: bool = False,
+    passenger_count: int = 160,
+):
+    """
+    Evaluates taxi wait time under US DOT 14 CFR 259.4 and triggers gate return extraction if imminent.
+    """
+    return tarmac_engine.evaluate_tarmac_delay(
+        flight_number=flight_number,
+        airport=airport,
+        elapsed_minutes=elapsed_minutes,
+        is_international=is_international,
+        passenger_count=passenger_count,
+    )
+
+
+@app.get("/api/v1/pnr/{pnr_id}/notifications")
+async def get_passenger_push_notifications(pnr_id: str):
+    """
+    Returns multi-channel push notification history (SMS, WhatsApp, Apple Wallet PKPass, Email).
+    """
+    pnr = gds_service.get_pnr(pnr_id)
+    if not pnr:
+        raise HTTPException(status_code=404, detail=f"PNR '{pnr_id}' not found.")
+    return tarmac_engine.get_pnr_notifications(pnr.pnr_id)
+
+
+@app.post("/api/v1/pnr/{pnr_id}/notifications")
+async def send_passenger_push_notification(
+    pnr_id: str,
+    channel: str = "SMS",
+    event_type: str = "DISRUPTION_ALERT",
+    title: str = "AirOps Flight Update",
+    message: str = "Flight re-accommodation confirmed.",
+):
+    """Dispatches a real-time multi-channel notification to passenger."""
+    pnr = gds_service.get_pnr(pnr_id)
+    if not pnr:
+        raise HTTPException(status_code=404, detail=f"PNR '{pnr_id}' not found.")
+    return tarmac_engine.push_notification(pnr.pnr_id, channel, event_type, title, message)
 
 
 @app.get("/api/v1/audit/incident-report")
