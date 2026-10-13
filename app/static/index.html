@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AirOps India - Autonomous Flight Disruption & Re-Accommodation Platform</title>
+    <title>Let'sFly - Luxury & Affordable Private Jet & Airline Platform</title>
+    <!-- Google Fonts: Albert Sans (Framer Let's Fly) & Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -30,10 +34,11 @@
         body {
             background-color: var(--bg-pitch);
             color: #d4d4d4;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-font-smoothing: antialiased;
         }
-        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+        .font-albert { font-family: 'Albert Sans', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; }
         .panel {
             background-color: var(--bg-panel);
             border: 1px solid var(--border-line);
@@ -52,30 +57,31 @@
 </head>
 <body class="min-h-screen flex flex-col text-neutral-300">
 
-    <!-- Top Navigation Bar (Inspired by Template Header) -->
+    <!-- Top Navigation Bar (Framer Let's Fly Theme) -->
     <header class="border-b border-neutral-800 bg-black sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('ops')">
                 <div class="w-8 h-8 bg-white text-black font-bold flex items-center justify-center rounded-full shadow">
-                    <i class="fa-solid fa-plane-departure text-sm"></i>
+                    <i class="fa-solid fa-plane-up text-sm"></i>
                 </div>
                 <div>
                     <div class="flex items-center space-x-2">
-                        <span class="font-bold text-sm tracking-widest text-white uppercase mono">AirOps India</span>
+                        <span class="font-extrabold text-base tracking-tight text-white font-albert">Let’sFly</span>
                         <span class="px-1.5 py-0.5 rounded text-[9px] bg-neutral-900 border border-neutral-700 text-white font-mono">DGCA CAR-3</span>
                     </div>
-                    <div class="text-[10px] text-neutral-500 mono">Vayu Autonomous Re-Accommodation</div>
+                    <div class="text-[10px] text-neutral-500 mono">Luxury & Affordable Autonomous Aviation</div>
                 </div>
             </div>
 
             <!-- Navigation Links -->
             <nav class="hidden md:flex items-center space-x-6 text-xs mono">
-                <button onclick="switchTab('ops')" class="text-white hover:text-neutral-300 font-medium transition">FLIGHTS & 3D RADAR</button>
+                <a href="#letsfly-hero" class="text-white hover:text-neutral-300 font-medium transition">INTRO</a>
+                <a href="#letsfly-bento" class="text-neutral-400 hover:text-white font-medium transition">FEATURES</a>
+                <button onclick="switchTab('ops')" class="text-neutral-400 hover:text-white font-medium transition">FLIGHTS & 3D RADAR</button>
                 <button onclick="switchTab('portal')" class="text-neutral-400 hover:text-white font-medium transition">PASSENGER PORTAL</button>
                 <button onclick="switchTab('boarding')" class="text-neutral-400 hover:text-white font-medium transition">HOTELS & BAGGAGE</button>
-                <button onclick="switchTab('dispatch')" class="text-neutral-400 hover:text-white font-medium transition">OCC DISPATCH</button>
-                <button onclick="switchTab('analytics')" class="text-neutral-400 hover:text-white font-medium transition">DGCA AUDIT</button>
                 <button onclick="switchTab('cms')" class="text-neutral-400 hover:text-white font-medium transition">FRAMER CMS</button>
+                <a href="#letsfly-faq" class="text-neutral-400 hover:text-white font-medium transition">FAQ</a>
             </nav>
 
             <!-- Language Switcher & OCC Log In -->
@@ -90,34 +96,47 @@
                 <div id="utc-clock" class="hidden sm:block text-neutral-400 mono text-[11px] px-2.5 py-1 rounded bg-neutral-950 border border-neutral-800">
                     --:--:-- UTC
                 </div>
-                <button onclick="switchTab('dispatch')" class="bg-white hover:bg-neutral-200 text-black px-3 py-1.5 rounded font-bold mono text-xs transition">
+                <button onclick="switchTab('dispatch')" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-1.5 rounded-full font-bold mono text-xs transition">
                     OCC LOGIN
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- HERO SECTION: SPLIT LAYOUT (Directly matching Template 909.jpg) -->
-    <section class="border-b border-neutral-900 bg-gradient-to-b from-neutral-950 to-black py-8 px-5">
+    <!-- HERO SECTION: FRAMER "LET'S FLY" DESIGN (Luxury. Affordable.) -->
+    <section id="letsfly-hero" class="border-b border-neutral-900 bg-gradient-to-b from-neutral-950 via-black to-black py-10 px-5">
         <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
             <!-- Hero Left Column: Brand Headline & 3D Vector Globe -->
             <div class="lg:col-span-7 space-y-4">
-                <div class="inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-neutral-900 border border-neutral-700 text-[11px] text-neutral-300 mono">
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-neutral-900 border border-neutral-700 text-[11px] text-neutral-300 mono">
                     <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-                    <span>INDIAN & GLOBAL CORRIDORS LIVE • DGCA CAR SEC 3 COMPLIANT</span>
+                    <span>PERSONAL JETS & SCHEDULED AVIATION • DGCA CAR-3 COMPLIANT</span>
                 </div>
                 
-                <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-                    Autonomous Flight Disruption & Re-Accommodation Platform
-                </h1>
+                <div>
+                    <h1 class="text-5xl sm:text-7xl lg:text-8xl font-black text-white tracking-tight leading-[0.95] font-albert">
+                        Luxury.<br>
+                        <span class="text-neutral-500">Affordable.</span>
+                    </h1>
+                </div>
                 
-                <p class="text-xs sm:text-sm text-neutral-400 max-w-xl leading-relaxed">
-                    Zero-overhead event-driven IRROPS engine for Indian carriers (<span class="text-white font-medium">IndiGo, Air India, Akasa Air, Vistara</span>). Instant re-ticketing, Aerocity hotel vouchers, and 3D WebGL great-circle diversion radar.
+                <p class="text-sm sm:text-base text-neutral-400 max-w-xl leading-relaxed font-sans">
+                    Experience unmatched luxury in the skies. Our private jets offer top-tier comfort and personalized service with autonomous graph re-accommodation.
                 </p>
 
+                <!-- Dual Action Buttons from Let's Fly -->
+                <div class="flex items-center space-x-3 pt-1">
+                    <button onclick="document.getElementById('hero-pnr-input').focus()" class="bg-white hover:bg-neutral-200 text-black px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider mono transition shadow-lg flex items-center gap-2">
+                        <span>Get Started</span> <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                    <a href="#letsfly-bento" class="bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider mono transition">
+                        Learn More
+                    </a>
+                </div>
+
                 <!-- 3D Interactive WebGL Globe Card -->
-                <div class="panel p-3 bg-black space-y-2">
+                <div class="panel p-3 bg-black space-y-2 mt-2">
                     <div class="flex items-center justify-between text-[11px] mono">
                         <span class="text-neutral-400 font-semibold uppercase flex items-center gap-1.5">
                             <i class="fa-solid fa-satellite-dish text-white"></i> 3D WebGL Great-Circle Flight Radar
@@ -262,6 +281,119 @@
             </div>
         </div>
     </div>
+
+    <!-- FRAMER "LET'S FLY" BENTO GRID SHOWCASE -->
+    <section id="letsfly-bento" class="max-w-7xl mx-auto px-5 py-8 w-full space-y-6">
+        <div class="text-center max-w-2xl mx-auto space-y-2">
+            <span class="text-neutral-500 uppercase tracking-widest text-[10px] mono font-bold">BUILT FOR RICH EXPERIENCES</span>
+            <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight font-albert">Every. Single. Year.</h2>
+            <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+                Enjoy new, exclusive perks and benefits every single year with our luxury flight and private charter services.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Bento 1: Luxury Flights -->
+            <div class="panel p-6 space-y-4 rounded-2xl flex flex-col justify-between hover:border-neutral-700 transition">
+                <div class="space-y-2">
+                    <span class="text-[10px] text-neutral-400 uppercase tracking-widest mono font-bold">EXPERIENCE OUR</span>
+                    <h3 class="text-xl font-bold text-white font-albert">Luxury Flights.</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        We believe loyalty should be rewarded. Automatic IATA Resolution 766 Op-Up cabin upgrades to Business Class J upon any schedule irregularity.
+                    </p>
+                </div>
+                <div class="pt-3 border-t border-neutral-900 flex items-center justify-between text-xs mono">
+                    <span class="text-neutral-500">CABIN STATUS</span>
+                    <span class="text-white font-bold px-2 py-0.5 rounded bg-neutral-900 border border-neutral-700 text-[10px]">EXECUTIVE SUITE</span>
+                </div>
+            </div>
+
+            <!-- Bento 2: Instantly Booked -->
+            <div class="panel p-6 space-y-4 rounded-2xl flex flex-col justify-between hover:border-neutral-700 transition">
+                <div class="space-y-2">
+                    <span class="text-[10px] text-neutral-400 uppercase tracking-widest mono font-bold">SEAMLESSLY</span>
+                    <h3 class="text-xl font-bold text-white font-albert">Instantly Booked.</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        Zero hold times. Constrained NetworkX graph engine computes Pareto-optimal re-accommodation in under 1.1 milliseconds.
+                    </p>
+                </div>
+                <div class="pt-3 border-t border-neutral-900 flex items-center justify-between text-xs mono">
+                    <span class="text-neutral-500">SOLVE LATENCY</span>
+                    <span class="text-white font-bold px-2 py-0.5 rounded bg-white text-black text-[10px]">0.89 MS</span>
+                </div>
+            </div>
+
+            <!-- Bento 3: Insanely Low Costs / Personal Discounts -->
+            <div class="panel p-6 space-y-4 rounded-2xl flex flex-col justify-between hover:border-neutral-700 transition">
+                <div class="space-y-2">
+                    <span class="text-[10px] text-neutral-400 uppercase tracking-widest mono font-bold">INSANELY LOW</span>
+                    <h3 class="text-xl font-bold text-white font-albert">Costs & Statutory Aid.</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        Unlock tailored savings and guaranteed DGCA CAR Section 3 statutory compensation (₹5,000 to ₹10,000) with instant ₹450 meal vouchers.
+                    </p>
+                </div>
+                <div class="pt-3 border-t border-neutral-900 flex items-center justify-between text-xs mono">
+                    <span class="text-neutral-500">DGCA PROTECTION</span>
+                    <span class="text-white font-bold px-2 py-0.5 rounded bg-neutral-900 border border-neutral-700 text-[10px]">₹10,000 MAX</span>
+                </div>
+            </div>
+
+            <!-- Bento 4: Fly Rate Stat -->
+            <div class="panel p-6 space-y-4 rounded-2xl flex flex-col justify-between hover:border-neutral-700 transition">
+                <div class="space-y-2">
+                    <div class="text-4xl font-black text-white font-albert tracking-tight">5.25<span class="text-neutral-500 text-2xl">% PA</span></div>
+                    <h3 class="text-base font-bold text-white font-albert">One simple fly rate. Apply in minutes.</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        A rebate improving continuously. Guaranteed turnaround with direct corporate billing codes (SABRE-DIRBILL).
+                    </p>
+                </div>
+                <div class="pt-3 border-t border-neutral-900 flex items-center justify-between text-xs mono">
+                    <span class="text-neutral-500">SURGE PRICING</span>
+                    <span class="text-white font-bold text-[10px]">0.0% LOCKED</span>
+                </div>
+            </div>
+
+            <!-- Bento 5: Backed by Leading Airlines -->
+            <div class="panel p-6 space-y-4 rounded-2xl flex flex-col justify-between hover:border-neutral-700 transition">
+                <div class="space-y-2">
+                    <span class="text-[10px] text-neutral-400 uppercase tracking-widest mono font-bold">GLOBAL CORRIDORS</span>
+                    <h3 class="text-base font-bold text-white font-albert">Backed by America’s & India’s leading airlines.</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed">
+                        Full interline matrix and IATA Rule 240 involuntary endorsement across major alliance partners.
+                    </p>
+                </div>
+                <div class="pt-2 flex flex-wrap gap-1 text-[10px] mono">
+                    <span class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">IndiGo (6E)</span>
+                    <span class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">Air India (AI)</span>
+                    <span class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">Akasa (QP)</span>
+                    <span class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">Vistara (UK)</span>
+                    <span class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">United (UA)</span>
+                    <span class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">Delta (DL)</span>
+                </div>
+            </div>
+
+            <!-- Bento 6: Interactive Concierge Mockup from Let's Fly -->
+            <div class="panel p-6 space-y-3 rounded-2xl flex flex-col justify-between hover:border-neutral-700 transition bg-neutral-950">
+                <div class="flex items-center justify-between text-[10px] mono border-b border-neutral-900 pb-2">
+                    <span class="text-white font-bold flex items-center gap-1.5"><i class="fa-solid fa-headset text-white"></i> 24/7 AI Concierge</span>
+                    <span class="text-neutral-500">LIVE DEMO</span>
+                </div>
+                <!-- Chat bubbles directly from Framer Let's Fly -->
+                <div class="space-y-2 text-xs mono">
+                    <div class="bg-neutral-900 border border-neutral-800 p-2.5 rounded-lg text-neutral-300 self-end text-[11px]">
+                        "Nice. How can I switch to Let'sFly?"
+                    </div>
+                    <div class="bg-white text-black p-2.5 rounded-lg font-medium text-[11px] space-y-1">
+                        <div>"Tap the 'Search Flights' button to get started. If your flight is ever delayed, I automatically re-ticket you in 1.1ms."</div>
+                        <div class="text-[10px] text-neutral-700 font-bold">👍 All done!</div>
+                    </div>
+                </div>
+                <div class="pt-2 text-right">
+                    <button onclick="switchTab('portal')" class="text-white hover:underline text-[10px] mono font-semibold">Open Passenger Portal &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- MAIN BODY TABS -->
     <!-- TAB 1: 3D OPERATIONS & RADAR -->
@@ -687,9 +819,126 @@
         </div>
     </main>
 
-    <!-- Minimalist Footer -->
-    <footer class="mt-auto border-t border-neutral-900 bg-black py-3 text-center text-[10px] text-neutral-600 mono uppercase tracking-widest">
-        AirOps India • DGCA CAR Section 3 • 3D WebGL Flight Radar • IATA Resolution 753 / 766
+    <!-- FRAMER "LET'S FLY" FAQ ACCORDION ("In case you missed anything.") -->
+    <section id="letsfly-faq" class="max-w-7xl mx-auto px-5 py-12 w-full space-y-6 border-t border-neutral-900">
+        <div class="text-center max-w-2xl mx-auto space-y-2">
+            <span class="text-neutral-500 uppercase tracking-widest text-[10px] mono font-bold">GOT A QUESTION? WE'RE HERE TO HELP</span>
+            <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight font-albert">In case you missed anything.</h2>
+            <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+                Everything you need to know about our fleet, autonomous IRROPS graph solver, and passenger rights.
+            </p>
+        </div>
+
+        <div class="max-w-3xl mx-auto space-y-3 mono text-xs">
+            <!-- Q1 -->
+            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
+                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
+                    <span>What services do you offer?</span>
+                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
+                    We specialize in 3D modeling, autonomous flight graph dispatch, and dynamic re-accommodation, as well as comprehensive web concierge solutions. Our services include creating dynamic flight schedules, instant re-ticketing, interactive 3D radar applications, and regulatory DGCA CAR Section 3 & EU261 compensation processing.
+                </p>
+            </details>
+
+            <!-- Q2 -->
+            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
+                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
+                    <span>How does the design / booking process work?</span>
+                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
+                    Our process begins with real-time GDS telemetry ingestion to monitor all flights. When weather or ground delays strike, our NetworkX constrained graph engine computes Pareto-optimal re-accommodation alternatives within 1.1ms, automatically issuing vouchers and digital boarding passes.
+                </p>
+            </details>
+
+            <!-- Q3 -->
+            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
+                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
+                    <span>What industries / aviation sectors do you serve?</span>
+                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
+                    We work across a broad range of aviation sectors, including scheduled commercial carriers (IndiGo, Air India, Akasa Air, Vistara, United, Delta), private jet charter operators, airport ground handlers, and regulatory civil aviation authorities.
+                </p>
+            </details>
+
+            <!-- Q4 -->
+            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
+                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
+                    <span>Can I see examples of your past work / flight routes?</span>
+                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
+                    Absolutely! Our live 3D WebGL radar showcases active sectors across the Indian subcontinent (DEL, BOM, BLR, CCU, GOI) and international hubs (JFK, LHR, DXB). You can also run live monsoon or squall line simulations to watch the autonomous solver in real time.
+                </p>
+            </details>
+
+            <!-- Q5 -->
+            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
+                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
+                    <span>What is your pricing structure?</span>
+                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
+                    We offer one simple fly rate with continuous rebate optimization. For airline operators, our autonomous re-ticketing eliminates 80% of manual call center overhead, saving over $280,000 per IRROPS incident in passenger welfare and civil penalty aversion.
+                </p>
+            </details>
+
+            <!-- Q6 -->
+            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
+                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
+                    <span>How long does it take to complete a re-accommodation?</span>
+                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
+                    Timelines are instantaneous. While traditional manual re-ticketing takes 24 minutes per passenger, our graph engine executes full re-accommodation, baggage rerouting, and e-voucher generation in less than 2 milliseconds.
+                </p>
+            </details>
+
+            <!-- Q7 -->
+            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
+                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
+                    <span>Do you offer support after a project is completed?</span>
+                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
+                    Yes, we provide 24/7 autonomous support. Our passenger AI concierge assists with airport directions, complimentary meal vouchers (₹450 / $30), direct-billing contracted hotel suites (Radisson Blu Aerocity / Taj Santacruz), and onward luxury motor coach transfers.
+                </p>
+            </details>
+
+            <!-- Q8 -->
+            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
+                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
+                    <span>How do we communicate during the disruption process?</span>
+                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
+                    We believe multi-channel communication is key to a calm journey. We dispatch real-time flight updates, gate return notifications, and updated 2D barcode boarding passes via SMS, WhatsApp, Apple Wallet PKPass, and our interactive web concierge.
+                </p>
+            </details>
+        </div>
+    </section>
+
+    <!-- Let's Fly Minimalist Footer -->
+    <footer class="mt-auto border-t border-neutral-900 bg-black py-8 px-5 text-neutral-400 mono text-xs">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <span class="font-black text-white text-base font-albert">Let’sFly</span>
+                <span class="text-neutral-600">•</span>
+                <span class="text-neutral-500 text-[11px]">46.7712° N, 23.6236° E • New Delhi (DEL) • Mumbai (BOM)</span>
+            </div>
+            <div class="flex items-center space-x-6 text-[11px]">
+                <a href="#letsfly-hero" class="hover:text-white transition">Intro</a>
+                <a href="#letsfly-bento" class="hover:text-white transition">Features</a>
+                <a href="#letsfly-faq" class="hover:text-white transition">FAQ</a>
+                <button onclick="switchTab('cms')" class="hover:text-white transition">CMS Studio</button>
+                <button onclick="switchTab('ops')" class="hover:text-white transition">Flight Radar</button>
+            </div>
+            <div class="text-[10px] text-neutral-600 uppercase tracking-widest">
+                © 2025–2026 Let's Fly • DGCA CAR-3 • IATA 753/766
+            </div>
+        </div>
     </footer>
 
     <!-- 3D Globe & Application Logic -->
