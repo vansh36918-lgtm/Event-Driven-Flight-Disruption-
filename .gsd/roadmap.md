@@ -112,11 +112,19 @@
 - [x] UI integration: Interactive Sabre Voucher card and OCC Reserve Crew Dispatch monitoring.
 - [x] Verification suite 15 in `test_system.py` passing with 100% success rate.
 
-## Phase 19: Airborne In-Flight Diversion & Alternate Hub Ground Intermodal Engine [IN PROGRESS]
-- [ ] En-route airborne diversion optimizer (`app/engine/divert_engine.py`) modeling destination zero-visibility/severe squall line diversions to designated alternate airports (e.g. ORD -> MKE/IND).
-- [ ] Automated intermodal onward dispatch (ground luxury coach transfer vs morning feeder re-flight) with passenger luggage re-tagging.
-- [ ] 3D WebGL Great-Circle Divert Arcs in `index.html` showing mid-air trajectory deviation.
-- [ ] Automated verification in `test_system.py` step 16.
+## Phase 19: Airborne In-Flight Diversion & Alternate Hub Ground Intermodal Engine [COMPLETED]
+- [x] En-route airborne diversion optimizer (`app/engine/divert_engine.py`) modeling destination zero-visibility/severe squall line diversions to designated alternate airports (e.g. ORD -> MKE/IND, JFK -> PHL/SWF, ATL -> BHM/CHA).
+- [x] Automated intermodal onward dispatch (ground luxury coach transfer for short-haul <150 mi vs morning feeder re-flight) with passenger luggage re-tagging.
+- [x] REST endpoints: `POST /api/v1/flights/divert`, `GET /api/v1/flights/diversions`, `GET /api/v1/flights/{flight_number}/diversion`, and `GET /api/v1/airports/{hub}/alternates`.
+- [x] Static files mounting (`app.mount("/static", ...)`) serving Three.js and OrbitControls locally offline with 200 OK.
+- [x] 3D WebGL Great-Circle Divert Arcs and OCC DIVERT simulation toolbar in `index.html`.
+- [x] Full automated test coverage in `test_system.py` suite 16 with zero regressions.
+
+## Phase 20: DOT Tarmac Delay Rule & Multi-Channel Concierge Push Engine [IN PROGRESS]
+- [ ] US DOT 14 CFR 259.4 & EU261 tarmac delay monitoring (`app/engine/tarmac_engine.py`): tracks taxi-out/in minutes, generates 2h food/water alerts, and executes mandatory 3h/4h gate returns to prevent statutory fines ($27,500/pax).
+- [ ] Multi-channel push notification engine: SMS, WhatsApp, Email, and Apple PKPass passbook updates for re-ticketed itineraries, baggage carousels, and hotel vouchers.
+- [ ] REST endpoints: `GET /api/v1/tarmac/alerts` and `GET /api/v1/pnr/{pnr_id}/notifications`.
+- [ ] Automated verification suite 17 in `test_system.py`.
 
 
 

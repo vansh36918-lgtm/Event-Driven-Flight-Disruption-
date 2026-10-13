@@ -214,12 +214,15 @@
                             <option value="WEATHER_DELAY">CODE 71: Convective Weather Ground Stop (+2h)</option>
                         </select>
                     </div>
-                    <div class="flex gap-2 pt-1">
-                        <button onclick="triggerDisruption()" id="btn-trigger" class="flex-1 bg-white hover:bg-neutral-200 text-black font-semibold py-1.5 px-3 rounded text-xs transition mono">
-                            DISPATCH IRROPS
+                    <div class="grid grid-cols-3 gap-1.5 pt-1">
+                        <button onclick="triggerDisruption()" id="btn-trigger" class="bg-white hover:bg-neutral-200 text-black font-semibold py-1.5 px-2 rounded text-[11px] transition mono">
+                            DISPATCH
                         </button>
-                        <button onclick="triggerSquallLineStorm()" id="btn-squall" class="bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 font-semibold py-1.5 px-2.5 rounded text-xs transition mono" title="Simulate multi-hub squall storm across ORD/DFW/ATL/JFK">
-                            <i class="fa-solid fa-bolt mr-1"></i>SQUALL STORM
+                        <button onclick="triggerSquallLineStorm()" id="btn-squall" class="bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 font-semibold py-1.5 px-2 rounded text-[11px] transition mono" title="Simulate multi-hub squall storm across ORD/DFW/ATL/JFK">
+                            <i class="fa-solid fa-bolt mr-1"></i>SQUALL
+                        </button>
+                        <button onclick="triggerDivertSimulation()" id="btn-divert" class="bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 font-semibold py-1.5 px-2 rounded text-[11px] transition mono" title="Simulate en-route airborne flight diversion and ground coach dispatch">
+                            <i class="fa-solid fa-plane-slash mr-1"></i>DIVERT
                         </button>
                     </div>
                 </div>
@@ -1024,14 +1027,51 @@
             }
         }
 
+        async function triggerDivertSimulation() {
+            const btn = document.getElementById('btn-divert');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>DIVERTING...';
+            }
+            try {
+                const flightSelect = document.getElementById('select-flight');
+                const flt = flightSelect && flightSelect.value ? flightSelect.value : 'UA100';
+
+                const res = await fetch(`/api/v1/flights/divert?flight_number=${flt}`, { method: 'POST' });
+                if (res.ok) {
+                    const div = await res.json();
+                    const statusBox = document.getElementById('trigger-status');
+                    const statusMsg = document.getElementById('trigger-msg');
+                    statusBox.classList.remove('hidden');
+                    statusMsg.innerHTML = `AIRBORNE DIVERT: ${div.flight_number} diverted to ${div.diverted_airport}. Intermodal luxury motor coach ${div.coach_dispatch ? div.coach_dispatch.bus_plaque_code : ''} dispatched to ${div.scheduled_destination}.`;
+
+                    // Focus 3D globe and draw trajectory to alternate
+                    build3DFlightArcs(div.origin, div.diverted_airport);
+
+                    await loadFlights();
+                    await loadMetrics();
+                    await loadTelemetryStream();
+                    await loadAtcAndFleet();
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-plane-slash mr-1"></i>DIVERT';
+                }
+            }
+        }
+
         async function loadAtcAndFleet() {
             try {
-                const [gdpRes, slotRes, tailRes, crewRes] = await Promise.all([
+                const [gdpRes, slotRes, tailRes, crewRes, dispatchRes, divertRes] = await Promise.all([
                     fetch('/api/v1/atc/ground-delay-programs'),
                     fetch('/api/v1/atc/slot-swaps'),
                     fetch('/api/v1/fleet/tail-swaps'),
                     fetch('/api/v1/crew/alerts'),
-                    fetch('/api/v1/crew/dispatches')
+                    fetch('/api/v1/crew/dispatches'),
+                    fetch('/api/v1/flights/diversions')
                 ]);
                 if (gdpRes.ok && slotRes.ok && tailRes.ok && crewRes.ok) {
                     const gdps = await gdpRes.json();
@@ -1039,11 +1079,25 @@
                     const tails = await tailRes.json();
                     const crews = await crewRes.json();
                     const dispatches = dispatchRes && dispatchRes.ok ? await dispatchRes.json() : [];
+                    const diversions = divertRes && divertRes.ok ? await divertRes.json() : [];
 
                     const atcBox = document.getElementById('atc-fleet-box');
                     if (!atcBox) return;
 
                     let html = '';
+                    if (diversions && diversions.length > 0) {
+                        const dv = diversions[diversions.length - 1];
+                        html += `
+                            <div class="panel-subtle p-2.5 rounded border border-neutral-700 text-[11px] space-y-1 mono">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-white">AIRBORNE DIVERT</span>
+                                    <span class="text-[10px] text-white font-bold">${dv.flight_number} &rarr; ${dv.diverted_airport}</span>
+                                </div>
+                                <div class="text-neutral-300 text-[10px]">${dv.coach_dispatch ? `Charter Coach: ${dv.coach_dispatch.transit_duration_minutes}m to ${dv.coach_dispatch.arrival_hub}` : 'Ferry Repositioning'}</div>
+                                <div class="text-neutral-500 text-[9px]">${dv.divert_reason}</div>
+                            </div>
+                        `;
+                    }
                     if (dispatches && dispatches.length > 0) {
                         const d = dispatches[dispatches.length - 1];
                         html += `

@@ -237,6 +237,26 @@ async def test_event_pipeline_and_ai():
     assert retrieved_vch is not None and retrieved_vch.voucher_id == hotel_vch.voucher_id
     print(f"  [OK] Reserve Crew Deadhead ({crew_dispatch.assigned_captain} & {crew_dispatch.assigned_first_officer}) & CRS E-Hotel Voucher ({hotel_vch.voucher_id} at {hotel_vch.hotel_name}) verified!")
 
+    # 16. Airborne In-Flight Diversion & Alternate Hub Intermodal Ground Engine Verification
+    from app.engine.divert_engine import divert_engine
+    div_rec = divert_engine.execute_flight_diversion(
+        flight_number="UA100",
+        origin="JFK",
+        destination="ORD",
+        carrier="UA",
+        affected_passengers=160,
+        reason="Severe Squall Line Convective Activity - ORD Runway 10C/28C Closed",
+    )
+    assert div_rec is not None, "Expected flight diversion record!"
+    assert div_rec.diverted_airport == "MKE", f"Expected ORD alternate MKE, got {div_rec.diverted_airport}"
+    assert div_rec.resolution_type == "INTERMODAL_COACH_DISPATCH"
+    assert div_rec.coach_dispatch is not None
+    assert div_rec.coach_dispatch.transit_duration_minutes == 85
+    assert div_rec.coach_dispatch.arrival_hub == "ORD"
+    assert "AIR-OPS-" in div_rec.coach_dispatch.bus_plaque_code
+    assert divert_engine.get_diversion_by_flight("UA100") is not None
+    print(f"  [OK] Airborne Diversion ({div_rec.flight_number} -> {div_rec.diverted_airport}) & Intermodal Coach Dispatch ({div_rec.coach_dispatch.dispatch_id} to {div_rec.coach_dispatch.arrival_hub}) verified!")
+
 
 if __name__ == "__main__":
     print("=" * 60)

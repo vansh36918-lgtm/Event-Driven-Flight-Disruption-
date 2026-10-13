@@ -1,16 +1,17 @@
 # CURRENT_TASK.md — Active Sprint Focus
 
-- **Current Goal**: Phase 19: Airborne In-Flight Diversion & Alternate Hub Ground Intermodal Engine.
+- **Current Goal**: Phase 20: DOT Tarmac Delay Rule & Multi-Channel Concierge Push Notification Engine.
 - **Verification Status**:
-  - Phase 18 completed: Multi-Leg Crew Deadhead Recovery & CRS E-Hotel Voucher Integration.
-  - `python test_system.py`: All 15 test suites passed with 0 regressions.
-  - Live server running on `http://localhost:8000` (`task-1039`).
-  - Active 10-hour scheduler `task-669` continuously maintaining autonomous execution.
-  - Contracted hotel properties and standby reserve crew rosters live at ORD, JFK, ATL, DFW, LAX.
+  - Phase 19 completed: Airborne In-Flight Diversion & Alternate Hub Ground Intermodal Engine.
+  - `python test_system.py`: All 16 test suites passed with 0 regressions.
+  - Live server running on `http://localhost:8000` (`task-1127`).
+  - Active 10-hour scheduler `task-669` actively running.
+  - Local Three.js and OrbitControls static file serving verified with HTTP 200.
 - **Next Steps**:
-  - Implement `app/engine/divert_engine.py` for airborne diversions, designated fuel alternates (e.g. MKE/IND for ORD, PHL/EWR for JFK), and intermodal ground coach dispatch.
-  - Wire airborne divert simulation into worker and API endpoints.
-  - Add test suite 16 to `test_system.py`.
+  - Implement `app/engine/tarmac_engine.py` modeling US DOT 14 CFR 259.4 (2h food/water welfare requirement, 3h domestic / 4h international mandatory gate-return).
+  - Implement passenger multi-channel notifications (SMS, WhatsApp, Email, Apple PKPass) for flight re-ticketing, baggage carousel, and hotel vouchers.
+  - Expose API endpoints in `app/api/main.py`.
+  - Update `test_system.py` with test suite 17.
 
 
 

@@ -25,6 +25,11 @@ AIRPORT_COORDINATES = {
     "DEN": {"name": "Denver International", "lat": 39.8561, "lng": -104.6737, "city": "Denver"},
     "BOS": {"name": "Boston Logan", "lat": 42.3656, "lng": -71.0096, "city": "Boston"},
     "SEA": {"name": "Seattle-Tacoma", "lat": 47.4502, "lng": -122.3088, "city": "Seattle"},
+    "MKE": {"name": "Milwaukee Mitchell (ORD Alternate)", "lat": 42.9475, "lng": -87.8966, "city": "Milwaukee"},
+    "PHL": {"name": "Philadelphia International (JFK Alternate)", "lat": 39.8721, "lng": -75.2411, "city": "Philadelphia"},
+    "BHM": {"name": "Birmingham-Shuttlesworth (ATL Alternate)", "lat": 33.5629, "lng": -86.7535, "city": "Birmingham"},
+    "AUS": {"name": "Austin-Bergstrom (DFW Alternate)", "lat": 30.1975, "lng": -97.6664, "city": "Austin"},
+    "ONT": {"name": "Ontario International (LAX Alternate)", "lat": 34.0560, "lng": -117.6012, "city": "Ontario"},
 }
 
 

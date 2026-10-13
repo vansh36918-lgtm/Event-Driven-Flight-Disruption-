@@ -11,9 +11,11 @@ from typing import List, Optional
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.responses import FileResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.models.schemas import (
     FlightSegment,
+    FlightStatus,
     PassengerRecord,
     DisruptionWebhookPayload,
     ChatMessageRequest,
@@ -30,6 +32,7 @@ from app.engine.audit_engine import audit_engine
 from app.engine.baggage_engine import baggage_engine
 from app.engine.crew_engine import crew_engine
 from app.engine.hotel_engine import hotel_engine
+from app.engine.divert_engine import divert_engine
 from app.bus.event_broker import event_broker
 from app.worker.reaccommodation_worker import reaccommodation_worker
 from app.ai.assistant import ai_assistant
@@ -69,7 +72,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-STATIC_HTML_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static", "index.html")
+STATIC_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
+STATIC_HTML_PATH = os.path.join(STATIC_DIR, "index.html")
+
+if os.path.exists(STATIC_DIR):
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 @app.get("/", include_in_schema=False)
@@ -365,6 +372,52 @@ async def get_atc_slot_swaps():
     Returns FAA Collaborative Decision Making (CDM) slot compression/substitution transactions.
     """
     return reaccommodation_worker.slot_swaps
+
+
+@app.post("/api/v1/flights/divert")
+async def trigger_flight_diversion(
+    flight_number: str,
+    reason: Optional[str] = "Destination CAT III Weather Below Minimums / Squall Line",
+):
+    """
+    Simulates en-route airborne flight diversion to a designated FAA alternate airport.
+    Automatically assigns ground handling and dispatches chartered luxury motor coaches for short-haul transfers.
+    """
+    flight = gds_service.get_flight(flight_number)
+    if not flight:
+        raise HTTPException(status_code=404, detail=f"Flight '{flight_number}' not found.")
+
+    record = divert_engine.execute_flight_diversion(
+        flight_number=flight.flight_number,
+        origin=flight.origin,
+        destination=flight.destination,
+        carrier=flight.carrier,
+        affected_passengers=len(gds_service.flight_to_pnrs.get(flight_number, [])) or 140,
+        reason=reason,
+    )
+    gds_service.update_flight_status(flight_number, FlightStatus.DIVERTED)
+    return record
+
+
+@app.get("/api/v1/flights/diversions")
+async def get_all_flight_diversions():
+    """Returns all active en-route airborne flight diversions and intermodal coach dispatches."""
+    return divert_engine.get_all_diversions()
+
+
+@app.get("/api/v1/flights/{flight_number}/diversion")
+async def get_flight_diversion(flight_number: str):
+    """Returns diversion details and intermodal transfer status for a specific flight."""
+    record = divert_engine.get_diversion_by_flight(flight_number)
+    if not record:
+        raise HTTPException(status_code=404, detail=f"Flight '{flight_number}' has no active diversion record.")
+    return record
+
+
+@app.get("/api/v1/airports/{hub}/alternates")
+async def get_airport_designated_alternates(hub: str):
+    """Returns FAA-designated fuel alternates and ground coach eligibility for a hub."""
+    return divert_engine.get_designated_alternates(hub.upper())
 
 
 @app.get("/api/v1/audit/incident-report")
