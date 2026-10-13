@@ -218,7 +218,7 @@
     <!-- HERO SECTION: FRAMER "LET'S FLY" DESIGN (Luxury. Affordable. on Alabaster Sheet) -->
     <section id="letsfly-hero" class="border-b border-neutral-900 bg-black py-8 px-4 sm:px-6">
         <!-- Framer Signature Floating White Alabaster Card (#eaebee) on Black Canvas -->
-        <div id="hero-main-container" class="max-w-7xl mx-auto framer-white-card p-6 sm:p-10 lg:p-12 relative overflow-hidden border border-neutral-300">
+        <div id="hero-main-container" class="max-w-7xl mx-auto framer-white-card framer-theme-card p-6 sm:p-10 lg:p-12 relative overflow-hidden border border-neutral-300">
             <!-- Subtle Clouds Mist Texture draped across top -->
             <div class="absolute top-0 right-0 left-0 h-64 pointer-events-none opacity-40 overflow-hidden mix-blend-multiply">
                 <img src="/static/images/clouds_mist.png" alt="Mist" class="w-full h-full object-cover">
@@ -385,159 +385,170 @@
         </div>
     </section>
 
-    <!-- Operational KPI Strip -->
+    <!-- Operational KPI Strip (Let's Fly Signature Alabaster Metric Cards) -->
     <div class="max-w-7xl mx-auto px-5 py-4 w-full">
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 text-xs">
-            <div class="panel p-3">
-                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono">Active Indian Network</div>
-                <div id="metric-flights" class="text-lg font-bold text-white mono mt-0.5">540</div>
-                <div class="text-[9px] text-neutral-600 mono">15 Hubs • DEL/BOM/BLR</div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+            <div class="framer-white-card framer-theme-card p-4 rounded-2xl border border-neutral-300 text-black shadow-sm">
+                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono font-bold">Active Network</div>
+                <div id="metric-flights" class="text-2xl font-black text-black mono mt-1">540</div>
+                <div class="text-[9px] text-neutral-600 mono font-medium">15 Hubs • DEL/BOM/BLR</div>
             </div>
-            <div class="panel p-3">
-                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono">Monitored PNRs</div>
-                <div id="metric-pnrs" class="text-lg font-bold text-neutral-200 mono mt-0.5">1,763</div>
-                <div class="text-[9px] text-neutral-600 mono">Sabre/Amadeus Format</div>
+            <div class="framer-white-card framer-theme-card p-4 rounded-2xl border border-neutral-300 text-black shadow-sm">
+                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono font-bold">Monitored PNRs</div>
+                <div id="metric-pnrs" class="text-2xl font-black text-black mono mt-1">1,763</div>
+                <div class="text-[9px] text-neutral-600 mono font-medium">Sabre / Amadeus GDS</div>
             </div>
-            <div class="panel p-3">
-                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono">Disruptions Handled</div>
-                <div id="metric-disruptions" class="text-lg font-bold text-white mono mt-0.5">0</div>
-                <div class="text-[9px] text-neutral-600 mono">Automated Re-routes</div>
+            <div class="framer-white-card framer-theme-card p-4 rounded-2xl border border-neutral-300 text-black shadow-sm">
+                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono font-bold">Disruptions Handled</div>
+                <div id="metric-disruptions" class="text-2xl font-black text-black mono mt-1">0</div>
+                <div class="text-[9px] text-neutral-600 mono font-medium">Automated Re-routes</div>
             </div>
-            <div class="panel p-3">
-                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono">Autonomous Rate</div>
-                <div id="metric-reaccommodated" class="text-lg font-bold text-white mono mt-0.5">100.0%</div>
-                <div class="text-[9px] text-neutral-600 mono">Zero-Human Touch</div>
+            <div class="framer-white-card framer-theme-card p-4 rounded-2xl border border-neutral-300 text-black shadow-sm">
+                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono font-bold">Autonomous Rate</div>
+                <div id="metric-reaccommodated" class="text-2xl font-black text-black mono mt-1">100.0%</div>
+                <div class="text-[9px] text-neutral-600 mono font-medium">Zero-Human Touch</div>
             </div>
-            <div class="panel p-3">
-                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono">Solve Latency</div>
-                <div id="metric-latency" class="text-lg font-bold text-white mono mt-0.5">2.1 ms</div>
-                <div class="text-[9px] text-neutral-600 mono">NetworkX Constrained</div>
+            <div class="framer-white-card framer-theme-card p-4 rounded-2xl border border-neutral-300 text-black shadow-sm">
+                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono font-bold">Solve Latency</div>
+                <div id="metric-latency" class="text-2xl font-black text-black mono mt-1">1.1 ms</div>
+                <div class="text-[9px] text-neutral-600 mono font-medium">NetworkX Constrained</div>
             </div>
-            <div class="panel p-3">
-                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono">DGCA Statutory Aid</div>
-                <div id="metric-hours-saved" class="text-lg font-bold text-white mono mt-0.5">₹0.00</div>
-                <div class="text-[9px] text-neutral-600 mono">CAR Section 3 Protection</div>
+            <div class="framer-white-card framer-theme-card p-4 rounded-2xl border border-neutral-300 text-black shadow-sm">
+                <div class="text-neutral-500 uppercase tracking-widest text-[9px] mono font-bold">Statutory Aid</div>
+                <div id="metric-hours-saved" class="text-2xl font-black text-black mono mt-1">₹0.00</div>
+                <div class="text-[9px] text-neutral-600 mono font-medium">DGCA CAR-3 Protection</div>
             </div>
         </div>
     </div>
 
-    <!-- FRAMER "LET'S FLY" BENTO GRID SHOWCASE -->
+    <!-- FRAMER "LET'S FLY" BENTO GRID SHOWCASE (High-Contrast White & Black Cards) -->
     <section id="letsfly-bento" class="max-w-7xl mx-auto px-5 py-8 w-full space-y-6">
         <div class="text-center max-w-2xl mx-auto space-y-2">
             <span class="text-neutral-500 uppercase tracking-widest text-[10px] mono font-bold">BUILT FOR RICH EXPERIENCES</span>
             <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight font-albert">Every. Single. Year.</h2>
-            <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+            <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed font-sans">
                 Enjoy new, exclusive perks and benefits every single year with our luxury flight and private charter services.
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Bento 1: Luxury Flights -->
-            <div class="panel p-6 space-y-3 rounded-2xl flex flex-col justify-between hover:border-neutral-700 transition">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Bento 1: Luxury Flights (Alabaster White Card) -->
+            <div class="framer-white-card p-6 space-y-3 rounded-3xl flex flex-col justify-between border border-neutral-300 text-black shadow-xl hover:shadow-2xl transition-all duration-300 group">
                 <div class="space-y-2">
-                    <span class="text-[10px] text-neutral-400 uppercase tracking-widest mono font-bold">EXPERIENCE OUR</span>
-                    <h3 class="text-xl font-bold text-white font-albert">Luxury Flights.</h3>
-                    <p class="text-xs text-neutral-400 leading-relaxed">
+                    <span class="text-[10px] text-neutral-500 uppercase tracking-widest mono font-bold">EXPERIENCE OUR</span>
+                    <h3 class="text-2xl font-extrabold text-black font-albert tracking-tight">Luxury Flights.</h3>
+                    <p class="text-xs text-neutral-700 leading-relaxed font-sans">
                         We believe loyalty should be rewarded. Automatic IATA Resolution 766 Op-Up cabin upgrades to Business Class J upon any schedule irregularity.
                     </p>
                 </div>
-                <div class="my-1 py-1 flex items-center justify-center overflow-hidden">
-                    <img src="/static/images/jet_banking_turn.png" alt="3D Jet Banking Turn" class="h-28 object-contain hover:scale-105 transition-transform duration-300 drop-shadow-[0_15px_25px_rgba(0,0,0,0.9)]">
+                <div class="my-2 py-2 flex items-center justify-center overflow-hidden">
+                    <img src="/static/images/jet_banking_turn.png" alt="3D Jet Banking Turn" class="h-32 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_15px_25px_rgba(0,0,0,0.5)]">
                 </div>
-                <div class="pt-3 border-t border-neutral-900 flex items-center justify-between text-xs mono">
-                    <span class="text-neutral-500">CABIN STATUS</span>
-                    <span class="text-white font-bold px-2 py-0.5 rounded bg-neutral-900 border border-neutral-700 text-[10px]">EXECUTIVE SUITE</span>
+                <div class="pt-3 border-t border-neutral-300/80 flex items-center justify-between text-xs mono">
+                    <span class="text-neutral-600 font-medium">CABIN STATUS</span>
+                    <span class="text-white font-bold px-3 py-1 rounded-full bg-black border border-neutral-900 text-[10px] shadow">EXECUTIVE SUITE</span>
                 </div>
             </div>
 
-            <!-- Bento 2: Instantly Booked -->
-            <div class="panel p-6 space-y-3 rounded-2xl flex flex-col justify-between hover:border-neutral-700 transition">
+            <!-- Bento 2: Instantly Booked (Obsidian Black Card) -->
+            <div class="panel p-6 space-y-3 rounded-3xl flex flex-col justify-between border border-neutral-800 bg-neutral-950 text-white shadow-xl hover:border-neutral-600 transition-all duration-300 group">
                 <div class="space-y-2">
                     <span class="text-[10px] text-neutral-400 uppercase tracking-widest mono font-bold">SEAMLESSLY</span>
-                    <h3 class="text-xl font-bold text-white font-albert">Instantly Booked.</h3>
-                    <p class="text-xs text-neutral-400 leading-relaxed">
+                    <h3 class="text-2xl font-extrabold text-white font-albert tracking-tight">Instantly Booked.</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed font-sans">
                         Zero hold times. Constrained NetworkX graph engine computes Pareto-optimal re-accommodation in under 1.1 milliseconds.
                     </p>
                 </div>
-                <div class="my-1 py-1 flex items-center justify-center overflow-hidden">
-                    <img src="/static/images/jet_front_altitude.png" alt="3D Jet Front Altitude" class="h-28 object-contain hover:scale-105 transition-transform duration-300 drop-shadow-[0_15px_25px_rgba(0,0,0,0.9)]">
+                <div class="my-2 py-2 flex items-center justify-center overflow-hidden">
+                    <img src="/static/images/jet_front_altitude.png" alt="3D Jet Front Altitude" class="h-32 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_15px_25px_rgba(0,0,0,0.9)]">
                 </div>
-                <div class="pt-3 border-t border-neutral-900 flex items-center justify-between text-xs mono">
+                <div class="pt-3 border-t border-neutral-800 flex items-center justify-between text-xs mono">
                     <span class="text-neutral-500">SOLVE LATENCY</span>
-                    <span class="text-white font-bold px-2 py-0.5 rounded bg-white text-black text-[10px]">0.89 MS</span>
+                    <span class="text-black font-bold px-3 py-1 rounded-full bg-white text-[10px] shadow">0.89 MS</span>
                 </div>
             </div>
 
-            <!-- Bento 3: Insanely Low Costs / Personal Discounts -->
-            <div class="panel p-6 space-y-4 rounded-2xl flex flex-col justify-between hover:border-neutral-700 transition">
+            <!-- Bento 3: Insanely Low Costs / Statutory Aid (Alabaster White Card) -->
+            <div class="framer-white-card p-6 space-y-4 rounded-3xl flex flex-col justify-between border border-neutral-300 text-black shadow-xl hover:shadow-2xl transition-all duration-300">
                 <div class="space-y-2">
-                    <span class="text-[10px] text-neutral-400 uppercase tracking-widest mono font-bold">INSANELY LOW</span>
-                    <h3 class="text-xl font-bold text-white font-albert">Costs & Statutory Aid.</h3>
-                    <p class="text-xs text-neutral-400 leading-relaxed">
+                    <span class="text-[10px] text-neutral-500 uppercase tracking-widest mono font-bold">INSANELY LOW</span>
+                    <h3 class="text-2xl font-extrabold text-black font-albert tracking-tight">Costs & Statutory Aid.</h3>
+                    <p class="text-xs text-neutral-700 leading-relaxed font-sans">
                         Unlock tailored savings and guaranteed DGCA CAR Section 3 statutory compensation (₹5,000 to ₹10,000) with instant ₹450 meal vouchers.
                     </p>
                 </div>
-                <div class="pt-3 border-t border-neutral-900 flex items-center justify-between text-xs mono">
-                    <span class="text-neutral-500">DGCA PROTECTION</span>
-                    <span class="text-white font-bold px-2 py-0.5 rounded bg-neutral-900 border border-neutral-700 text-[10px]">₹10,000 MAX</span>
+                <div class="p-4 rounded-2xl bg-black/5 border border-neutral-300 space-y-1.5 mono text-[11px]">
+                    <div class="flex justify-between items-center"><span class="text-neutral-600">Short-Haul (&lt;1,500 km)</span> <span class="font-bold text-black">₹5,000 INR</span></div>
+                    <div class="flex justify-between items-center"><span class="text-neutral-600">Long-Haul (&gt;1,500 km)</span> <span class="font-bold text-black">₹10,000 INR</span></div>
+                    <div class="flex justify-between items-center"><span class="text-neutral-600">Airport Refreshment</span> <span class="font-bold text-black">₹450 Meal Pass</span></div>
+                </div>
+                <div class="pt-3 border-t border-neutral-300/80 flex items-center justify-between text-xs mono">
+                    <span class="text-neutral-600 font-medium">DGCA PROTECTION</span>
+                    <span class="text-white font-bold px-3 py-1 rounded-full bg-black border border-neutral-900 text-[10px] shadow">₹10,000 MAX</span>
                 </div>
             </div>
 
-            <!-- Bento 4: Fly Rate Stat -->
-            <div class="panel p-6 space-y-3 rounded-2xl flex flex-col justify-between hover:border-neutral-700 transition">
+            <!-- Bento 4: Fly Rate Stat (Obsidian Black Card) -->
+            <div class="panel p-6 space-y-3 rounded-3xl flex flex-col justify-between border border-neutral-800 bg-neutral-950 text-white shadow-xl hover:border-neutral-600 transition-all duration-300 group">
                 <div class="space-y-2">
-                    <div class="text-4xl font-black text-white font-albert tracking-tight">5.25<span class="text-neutral-500 text-2xl">% PA</span></div>
-                    <h3 class="text-base font-bold text-white font-albert">One simple fly rate. Apply in minutes.</h3>
-                    <p class="text-xs text-neutral-400 leading-relaxed">
+                    <div class="text-5xl font-black text-white font-albert tracking-tight">5.25<span class="text-neutral-500 text-3xl">% PA</span></div>
+                    <h3 class="text-lg font-bold text-white font-albert">One simple fly rate. Apply in minutes.</h3>
+                    <p class="text-xs text-neutral-400 leading-relaxed font-sans">
                         A rebate improving continuously. Guaranteed turnaround with direct corporate billing codes (SABRE-DIRBILL).
                     </p>
                 </div>
-                <div class="my-1 py-1 flex items-center justify-center overflow-hidden">
-                    <img src="/static/images/jet_angled_side.png" alt="3D Jet Angled Profile" class="h-24 object-contain hover:scale-105 transition-transform duration-300 drop-shadow-[0_15px_25px_rgba(0,0,0,0.9)]">
+                <div class="my-2 py-1 flex items-center justify-center overflow-hidden">
+                    <img src="/static/images/jet_angled_side.png" alt="3D Jet Angled Profile" class="h-28 object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_15px_25px_rgba(0,0,0,0.9)]">
                 </div>
-                <div class="pt-3 border-t border-neutral-900 flex items-center justify-between text-xs mono">
+                <div class="pt-3 border-t border-neutral-800 flex items-center justify-between text-xs mono">
                     <span class="text-neutral-500">SURGE PRICING</span>
-                    <span class="text-white font-bold text-[10px]">0.0% LOCKED</span>
+                    <span class="text-black font-bold px-3 py-1 rounded-full bg-white text-[10px] shadow">0.0% LOCKED</span>
                 </div>
             </div>
 
-            <!-- Bento 5: Backed by Leading Airlines -->
-            <div class="panel p-6 space-y-4 rounded-2xl flex flex-col justify-between hover:border-neutral-700 transition">
+            <!-- Bento 5: Backed by Leading Airlines (Alabaster White Card) -->
+            <div class="framer-white-card p-6 space-y-4 rounded-3xl flex flex-col justify-between border border-neutral-300 text-black shadow-xl hover:shadow-2xl transition-all duration-300">
                 <div class="space-y-2">
-                    <span class="text-[10px] text-neutral-400 uppercase tracking-widest mono font-bold">GLOBAL CORRIDORS</span>
-                    <h3 class="text-base font-bold text-white font-albert">Backed by America’s & India’s leading airlines.</h3>
-                    <p class="text-xs text-neutral-400 leading-relaxed">
+                    <span class="text-[10px] text-neutral-500 uppercase tracking-widest mono font-bold">GLOBAL CORRIDORS</span>
+                    <h3 class="text-lg font-bold text-black font-albert">Backed by America’s & India’s leading airlines.</h3>
+                    <p class="text-xs text-neutral-700 leading-relaxed font-sans">
                         Full interline matrix and IATA Rule 240 involuntary endorsement across major alliance partners.
                     </p>
                 </div>
-                <div class="pt-2 flex flex-wrap gap-1 text-[10px] mono">
-                    <span class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">IndiGo (6E)</span>
-                    <span class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">Air India (AI)</span>
-                    <span class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">Akasa (QP)</span>
-                    <span class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">Vistara (UK)</span>
-                    <span class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">United (UA)</span>
-                    <span class="px-2 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300">Delta (DL)</span>
+                <div class="pt-2 flex flex-wrap gap-1.5 text-[10px] mono">
+                    <span class="px-3 py-1 rounded-full bg-black text-white font-bold shadow-sm">IndiGo (6E)</span>
+                    <span class="px-3 py-1 rounded-full bg-black text-white font-bold shadow-sm">Air India (AI)</span>
+                    <span class="px-3 py-1 rounded-full bg-black text-white font-bold shadow-sm">Akasa (QP)</span>
+                    <span class="px-3 py-1 rounded-full bg-black text-white font-bold shadow-sm">Vistara (UK)</span>
+                    <span class="px-3 py-1 rounded-full bg-black text-white font-bold shadow-sm">United (UA)</span>
+                    <span class="px-3 py-1 rounded-full bg-black text-white font-bold shadow-sm">Delta (DL)</span>
+                </div>
+                <div class="pt-3 border-t border-neutral-300/80 flex items-center justify-between text-xs mono">
+                    <span class="text-neutral-600 font-medium">INTERLINE CODE</span>
+                    <span class="text-black font-bold text-[10px]">IATA RES 766</span>
                 </div>
             </div>
 
-            <!-- Bento 6: Interactive Concierge Mockup from Let's Fly -->
-            <div class="panel p-6 space-y-3 rounded-2xl flex flex-col justify-between hover:border-neutral-700 transition bg-neutral-950">
+            <!-- Bento 6: Interactive Concierge Mockup (Obsidian Black Card) -->
+            <div class="panel p-6 space-y-3 rounded-3xl flex flex-col justify-between border border-neutral-800 bg-neutral-950 text-white shadow-xl hover:border-neutral-600 transition-all duration-300">
                 <div class="flex items-center justify-between text-[10px] mono border-b border-neutral-900 pb-2">
                     <span class="text-white font-bold flex items-center gap-1.5"><i class="fa-solid fa-headset text-white"></i> 24/7 AI Concierge</span>
-                    <span class="text-neutral-500">LIVE DEMO</span>
+                    <span class="text-neutral-400 font-bold px-2 py-0.5 rounded-full bg-neutral-900 border border-neutral-800 text-[9px]">LIVE DEMO</span>
                 </div>
                 <!-- Chat bubbles directly from Framer Let's Fly -->
                 <div class="space-y-2 text-xs mono">
-                    <div class="bg-neutral-900 border border-neutral-800 p-2.5 rounded-lg text-neutral-300 self-end text-[11px]">
+                    <div class="bg-neutral-900 border border-neutral-800 p-3 rounded-2xl text-neutral-300 self-end text-[11px] leading-relaxed">
                         "Nice. How can I switch to Let'sFly?"
                     </div>
-                    <div class="bg-white text-black p-2.5 rounded-lg font-medium text-[11px] space-y-1">
+                    <div class="bg-white text-black p-3 rounded-2xl font-medium text-[11px] space-y-1 shadow-md">
                         <div>"Tap the 'Search Flights' button to get started. If your flight is ever delayed, I automatically re-ticket you in 1.1ms."</div>
-                        <div class="text-[10px] text-neutral-700 font-bold">👍 All done!</div>
+                        <div class="text-[10px] text-neutral-800 font-bold">👍 All done!</div>
                     </div>
                 </div>
                 <div class="pt-2 text-right">
-                    <button onclick="switchTab('portal')" class="text-white hover:underline text-[10px] mono font-semibold">Open Passenger Portal &rarr;</button>
+                    <button onclick="switchTab('portal')" class="text-white hover:underline text-[10px] mono font-bold flex items-center gap-1 ml-auto">
+                        <span>Open Passenger Portal</span> <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -545,29 +556,30 @@
 
     <!-- MAIN BODY TABS -->
     <!-- TAB 1: 3D OPERATIONS & RADAR -->
-    <main id="tab-content-ops" class="tab-content max-w-7xl mx-auto px-5 pb-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-4">
+    <main id="tab-content-ops" class="tab-content max-w-7xl mx-auto px-5 pb-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-5">
         <!-- Flight Operations Roster (8 Cols) -->
         <section class="lg:col-span-8 space-y-4">
-            <div class="panel p-4 space-y-3">
-                <div class="flex items-center justify-between text-xs">
+            <div class="framer-white-card framer-theme-card p-6 sm:p-8 rounded-3xl border border-neutral-300 text-black shadow-xl space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-300/80 pb-4">
                     <div>
-                        <span class="font-semibold text-white uppercase tracking-wider mono text-[11px]">Flight Operations Roster (FIDS)</span>
-                        <p class="text-[10px] text-neutral-500 mono">Live schedule across Indian metro sectors and global long-haul flights.</p>
+                        <span class="text-[10px] text-neutral-500 uppercase tracking-widest mono font-bold">BUILT FOR PRECISION • 15 ACTIVE HUBS</span>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-black font-albert tracking-tight">Flight Operations Roster (FIDS).</h3>
+                        <p class="text-xs text-neutral-700 leading-relaxed font-sans mt-0.5">Live schedule across Indian metro sectors (DEL, BOM, BLR, GOI) and international alliance flights.</p>
                     </div>
-                    <button onclick="loadFlights()" class="text-neutral-400 hover:text-white transition mono text-[11px]">
-                        <i class="fa-solid fa-rotate-right mr-1"></i>REFRESH
+                    <button onclick="loadFlights()" class="bg-black hover:bg-neutral-800 text-white font-bold px-5 py-2 rounded-full mono text-xs transition shadow flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-right text-[10px]"></i><span>REFRESH</span>
                     </button>
                 </div>
-                <div class="overflow-x-auto max-h-80 custom-scroll">
+                <div class="overflow-x-auto max-h-80 custom-scroll rounded-2xl bg-neutral-950 border border-neutral-800 p-2 shadow-inner">
                     <table class="w-full text-left text-xs">
-                        <thead class="text-neutral-500 uppercase text-[9px] border-b border-neutral-800 bg-black sticky top-0 mono">
+                        <thead class="text-neutral-400 uppercase text-[9px] border-b border-neutral-800 bg-neutral-950 sticky top-0 mono">
                             <tr>
-                                <th class="p-2">Flight</th>
-                                <th class="p-2">Route</th>
-                                <th class="p-2">Departure</th>
-                                <th class="p-2">Status</th>
-                                <th class="p-2">Sample PNR</th>
-                                <th class="p-2 text-right">Action</th>
+                                <th class="p-2.5">Flight</th>
+                                <th class="p-2.5">Route</th>
+                                <th class="p-2.5">Departure</th>
+                                <th class="p-2.5">Status</th>
+                                <th class="p-2.5">Sample PNR</th>
+                                <th class="p-2.5 text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody id="flights-table-body" class="divide-y divide-neutral-900 text-neutral-300 mono text-[11px]">
@@ -581,55 +593,59 @@
         <!-- Right Side: OCC Disruption Controls (4 Cols) -->
         <section class="lg:col-span-4 space-y-4">
             <!-- Disruption Trigger Control -->
-            <div class="panel p-4 space-y-3">
-                <div class="text-xs font-semibold text-white uppercase tracking-wider mono text-[11px]">Dispatch Disruption Telemetry</div>
-                <div class="space-y-2.5 text-xs">
+            <div class="framer-white-card framer-theme-card p-6 rounded-3xl border border-neutral-300 text-black shadow-xl space-y-4">
+                <div class="space-y-1">
+                    <span class="text-[10px] text-neutral-500 uppercase tracking-widest mono font-bold">AUTONOMOUS IRROPS ENGINE</span>
+                    <h4 class="text-xl font-extrabold text-black font-albert tracking-tight">Dispatch Disruption.</h4>
+                    <p class="text-xs text-neutral-600 font-sans">Trigger IATA disruption telemetry to test sub-millisecond graph resolution.</p>
+                </div>
+                <div class="space-y-3 text-xs">
                     <div>
-                        <label class="block text-neutral-500 text-[9px] uppercase mono mb-1">Target Flight</label>
-                        <select id="select-flight" class="w-full bg-black border border-neutral-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-white mono">
+                        <label class="block text-neutral-700 text-[10px] uppercase mono font-bold mb-1">Target Flight</label>
+                        <select id="select-flight" class="w-full bg-white border border-neutral-300 rounded-xl px-3 py-2 text-xs text-black font-mono font-medium focus:outline-none focus:border-black shadow-sm">
                             <!-- Dynamically loaded -->
                         </select>
                     </div>
                     <div>
-                        <label class="block text-neutral-500 text-[9px] uppercase mono mb-1">IATA Disruption Event</label>
-                        <select id="select-event" class="w-full bg-black border border-neutral-800 rounded px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-white mono">
+                        <label class="block text-neutral-700 text-[10px] uppercase mono font-bold mb-1">IATA Disruption Event</label>
+                        <select id="select-event" class="w-full bg-white border border-neutral-300 rounded-xl px-3 py-2 text-xs text-black font-mono font-medium focus:outline-none focus:border-black shadow-sm">
                             <option value="WEATHER_DELAY">CODE 71: Convective Weather / Fog Ground Stop (+2h)</option>
                             <option value="CANCELLATION">CODE 89: Mechanical Equipment Failure (Cancel)</option>
                         </select>
                     </div>
                     <div class="grid grid-cols-3 gap-2 pt-1">
-                        <button onclick="triggerDisruption()" id="btn-trigger" class="bg-white hover:bg-neutral-200 text-black font-bold py-2 px-2.5 rounded-full text-[11px] transition shadow-sm mono flex items-center justify-center gap-1.5">
+                        <button onclick="triggerDisruption()" id="btn-trigger" class="bg-black hover:bg-neutral-800 text-white font-bold py-2.5 px-2 rounded-full text-[11px] transition shadow mono flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-triangle-exclamation text-[10px]"></i><span>DISPATCH</span>
                         </button>
-                        <button onclick="triggerSquallLineStorm()" id="btn-squall" class="bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 hover:border-neutral-500 font-bold py-2 px-2.5 rounded-full text-[11px] transition mono flex items-center justify-center gap-1.5" title="Simulate multi-hub squall storm across DEL/BOM/ORD/DFW">
+                        <button onclick="triggerSquallLineStorm()" id="btn-squall" class="bg-white hover:bg-neutral-100 text-black border border-neutral-300 font-bold py-2.5 px-2 rounded-full text-[11px] transition shadow-sm mono flex items-center justify-center gap-1.5" title="Simulate multi-hub squall storm across DEL/BOM/ORD/DFW">
                             <i class="fa-solid fa-cloud-bolt text-[10px]"></i><span>MONSOON</span>
                         </button>
-                        <button onclick="triggerDivertSimulation()" id="btn-divert" class="bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 hover:border-neutral-500 font-bold py-2 px-2.5 rounded-full text-[11px] transition mono flex items-center justify-center gap-1.5" title="Simulate airborne flight diversion to Jaipur (JAI) or Pune (PNQ)">
+                        <button onclick="triggerDivertSimulation()" id="btn-divert" class="bg-white hover:bg-neutral-100 text-black border border-neutral-300 font-bold py-2.5 px-2 rounded-full text-[11px] transition shadow-sm mono flex items-center justify-center gap-1.5" title="Simulate airborne flight diversion to Jaipur (JAI) or Pune (PNQ)">
                             <i class="fa-solid fa-plane-slash text-[10px]"></i><span>DIVERT</span>
                         </button>
                     </div>
                 </div>
-                <div id="trigger-status" class="hidden p-2 rounded text-[11px] bg-neutral-950 border border-neutral-700 text-neutral-200 mono">
+                <div id="trigger-status" class="hidden p-3 rounded-2xl text-[11px] bg-black text-white mono shadow-sm">
                     <span id="trigger-msg"></span>
                 </div>
             </div>
 
             <!-- ATC Ground Stops & Fleet Ops Panel -->
-            <div class="panel p-4 space-y-3">
-                <div class="flex items-center justify-between text-xs">
-                    <span class="font-semibold text-white uppercase tracking-wider mono text-[11px]">ATC Ground Stops & Fleet Ops</span>
-                    <span class="text-[9px] text-neutral-400 mono">FAA / AAI ACTIVE</span>
+            <div class="framer-white-card framer-theme-card p-6 rounded-3xl border border-neutral-300 text-black shadow-xl space-y-3">
+                <div class="flex items-center justify-between text-xs border-b border-neutral-300/80 pb-2">
+                    <span class="font-extrabold text-black uppercase tracking-wider mono text-[11px]">ATC Ground Stops & Fleet Ops</span>
+                    <span class="text-[9px] text-white font-bold px-2.5 py-0.5 rounded-full bg-black mono">AAI / DGCA ACTIVE</span>
                 </div>
                 <div id="atc-fleet-box" class="space-y-2 max-h-48 overflow-y-auto custom-scroll text-xs">
-                    <div class="text-neutral-600 text-xs py-2 text-center mono">Monitoring ATC programs...</div>
+                    <div class="text-neutral-500 text-xs py-2 text-center mono">Monitoring ATC programs...</div>
                 </div>
             </div>
 
             <!-- Live Telemetry Stream Ticker -->
-            <div class="panel p-4 space-y-3">
-                <div class="flex items-center justify-between text-xs">
-                    <span class="font-semibold text-white uppercase tracking-wider mono text-[11px]">Telemetry Ingestion Stream</span>
-                    <span class="text-[9px] text-neutral-500 mono">AMQP: flight_disruptions</span>
+            <div class="panel p-5 rounded-3xl border border-neutral-800 bg-neutral-950 text-white shadow-xl space-y-3">
+                <div class="flex items-center justify-between text-xs border-b border-neutral-900 pb-2">
+                    <span class="font-bold text-white uppercase tracking-wider mono text-[11px]">Telemetry Ingestion Stream</span>
+                    <span class="text-[9px] text-neutral-400 mono">AMQP: flight_disruptions</span>
                 </div>
                 <div id="telemetry-stream-box" class="space-y-2 max-h-48 overflow-y-auto custom-scroll text-xs">
                     <div class="text-neutral-600 text-xs py-4 text-center mono">Awaiting telemetry webhooks...</div>
@@ -639,51 +655,52 @@
     </main>
 
     <!-- TAB 2: PASSENGER RE-BOOKING PORTAL & AI CONCIERGE -->
-    <main id="tab-content-portal" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-4">
-        <div class="panel p-5 space-y-5">
-            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-900 pb-4">
+    <main id="tab-content-portal" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-6">
+        <div class="framer-white-card framer-theme-card p-6 sm:p-10 rounded-3xl border border-neutral-300 text-black shadow-xl space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-300/80 pb-5">
                 <div>
-                    <h2 class="text-sm font-bold text-white uppercase tracking-wider mono">Passenger Record Management</h2>
-                    <p class="text-xs text-neutral-400 mt-0.5">Autonomous graph re-accommodations with DGCA CAR Section 3 & IATA Rule 240 involuntary endorsement.</p>
+                    <span class="text-[10px] text-neutral-500 uppercase tracking-widest mono font-bold">SEAMLESS RE-BOOKING • ZERO HOLD TIMES</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-black font-albert tracking-tight">Passenger Record Management.</h2>
+                    <p class="text-xs sm:text-sm text-neutral-700 mt-1 leading-relaxed font-sans">Autonomous graph re-accommodations with DGCA CAR Section 3 & IATA Rule 240 involuntary endorsement.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input id="portal-pnr-input" type="text" placeholder="PNR (e.g. EK7P9X)" class="uppercase bg-black border border-neutral-700 rounded-full px-4 py-2 text-xs text-white mono text-center focus:outline-none focus:border-white w-36">
-                    <button onclick="fetchPortalPnrDetails()" class="bg-white hover:bg-neutral-200 text-black px-4 py-2 rounded-full text-xs font-bold transition shadow-sm mono flex items-center gap-1.5">
+                    <input id="portal-pnr-input" type="text" placeholder="PNR (e.g. EK7P9X)" class="uppercase bg-white border-2 border-neutral-300 rounded-full px-4 py-2.5 text-xs text-black font-mono font-bold text-center focus:outline-none focus:border-black shadow-sm w-44">
+                    <button onclick="fetchPortalPnrDetails()" class="bg-black hover:bg-neutral-800 text-white px-6 py-2.5 rounded-full text-xs font-bold transition shadow mono flex items-center gap-2">
                         <i class="fa-solid fa-magnifying-glass text-[10px]"></i><span>LOOKUP RECORD</span>
                     </button>
                 </div>
             </div>
 
             <!-- Booking Summary -->
-            <div id="portal-booking-summary" class="hidden panel-subtle p-4 rounded space-y-3">
+            <div id="portal-booking-summary" class="hidden bg-white p-5 rounded-2xl border border-neutral-300 space-y-4 shadow-sm text-black">
                 <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
                     <div>
                         <div class="flex items-center space-x-2">
-                            <span id="portal-passenger-name" class="font-bold text-white">--</span>
-                            <span id="portal-pnr-badge" class="px-1.5 py-0.5 rounded bg-neutral-900 text-neutral-300 border border-neutral-700 mono text-[10px]">------</span>
-                            <span id="portal-status-badge" class="px-1.5 py-0.5 rounded bg-neutral-900 text-white border border-white mono text-[10px]">DISRUPTED</span>
+                            <span id="portal-passenger-name" class="font-extrabold text-black text-base">--</span>
+                            <span id="portal-pnr-badge" class="px-2.5 py-0.5 rounded-full bg-black text-white mono text-[10px] font-bold">------</span>
+                            <span id="portal-status-badge" class="px-2.5 py-0.5 rounded-full bg-black text-white mono text-[10px] font-bold">DISRUPTED</span>
                         </div>
-                        <div id="portal-flight-route" class="text-neutral-400 text-[11px] mt-1 mono">--</div>
+                        <div id="portal-flight-route" class="text-neutral-600 text-[11px] mt-1 mono font-medium">--</div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="switchToBoardingPassView()" class="px-2.5 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 text-xs border border-neutral-700 mono">
+                        <button onclick="switchToBoardingPassView()" class="px-3.5 py-1.5 rounded-full bg-black hover:bg-neutral-800 text-white text-xs font-bold mono shadow transition">
                             BOARDING PASS & BAGS
                         </button>
-                        <button onclick="switchToCompensationView()" class="px-2.5 py-1 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 text-xs border border-neutral-700 mono">
+                        <button onclick="switchToCompensationView()" class="px-3.5 py-1.5 rounded-full bg-black hover:bg-neutral-800 text-white text-xs font-bold mono shadow transition">
                             HOTEL & VOUCHERS
                         </button>
                     </div>
                 </div>
 
                 <!-- IATA Rule 240 & DGCA CAR Banner -->
-                <div id="portal-endorsement-banner" class="hidden panel-subtle p-2.5 rounded border border-neutral-800 flex flex-wrap items-center justify-between text-[10px] mono text-neutral-300 gap-2">
+                <div id="portal-endorsement-banner" class="hidden p-3 rounded-xl bg-neutral-100 border border-neutral-300 flex flex-wrap items-center justify-between text-[10px] mono text-black gap-2">
                     <div class="flex items-center gap-2">
-                        <span class="text-white font-bold">REGULATION:</span>
-                        <span id="portal-endorsement-text" class="text-neutral-300">--</span>
+                        <span class="text-black font-bold">REGULATION:</span>
+                        <span id="portal-endorsement-text" class="text-neutral-700">--</span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <span id="portal-baggage-transfer" class="text-white font-medium">BAG: THROUGH-CHECK APPROVED</span>
-                        <span id="portal-pvs-badge" class="px-1.5 py-0.5 rounded bg-neutral-900 text-white border border-neutral-700">PVS: ---</span>
+                        <span id="portal-baggage-transfer" class="text-black font-bold">BAG: THROUGH-CHECK APPROVED</span>
+                        <span id="portal-pvs-badge" class="px-2 py-0.5 rounded-full bg-black text-white font-bold">PVS: ---</span>
                     </div>
                 </div>
             </div>
@@ -691,11 +708,11 @@
             <!-- Alternative Routes Discovered by NetworkX -->
             <div class="space-y-3">
                 <div class="flex items-center justify-between text-xs">
-                    <span class="font-semibold text-white uppercase tracking-wider mono text-[11px]">Pareto-Optimal Alternative Options</span>
-                    <span class="text-[10px] text-neutral-500 mono">Constrained [T0, T0+4h] Search</span>
+                    <span class="font-extrabold text-black uppercase tracking-wider mono text-[11px]">Pareto-Optimal Alternative Options</span>
+                    <span class="text-[10px] text-neutral-600 mono font-bold">Constrained [T0, T0+4h] Search</span>
                 </div>
                 <div id="portal-options-container" class="space-y-3">
-                    <div class="panel-subtle p-4 rounded text-center text-xs text-neutral-500 mono">
+                    <div class="p-6 rounded-2xl bg-white border border-neutral-300 text-center text-xs text-neutral-500 mono shadow-sm">
                         Lookup a PNR above or select a flight from the Operations Radar to view re-accommodation options.
                     </div>
                 </div>
@@ -703,22 +720,22 @@
         </div>
 
         <!-- Passenger AI Concierge Chat Section -->
-        <div class="panel p-5 space-y-4">
+        <div class="panel p-6 sm:p-8 rounded-3xl border border-neutral-800 bg-neutral-950 text-white shadow-xl space-y-4">
             <div class="flex items-center justify-between border-b border-neutral-900 pb-3">
-                <div class="flex items-center space-x-2">
-                    <div class="w-6 h-6 rounded bg-white text-black flex items-center justify-center font-bold text-xs mono">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center font-black text-xs mono shadow">
                         AI
                     </div>
                     <div>
-                        <h3 class="font-bold text-white text-xs uppercase tracking-wider mono">Passenger Concierge (English & हिन्दी)</h3>
-                        <p class="text-[10px] text-neutral-500 mono">Autonomous flight consultation, DGCA statutory compensation claims, and booking updates.</p>
+                        <h3 class="font-extrabold text-white text-sm uppercase tracking-wider mono">Passenger Concierge (English & हिन्दी)</h3>
+                        <p class="text-[10px] text-neutral-400 mono">Autonomous flight consultation, DGCA statutory compensation claims, and booking updates.</p>
                     </div>
                 </div>
-                <input id="main-ai-pnr" type="text" placeholder="Active PNR" class="bg-black border border-neutral-800 rounded px-2.5 py-1 text-xs text-white mono text-center w-28 uppercase">
+                <input id="main-ai-pnr" type="text" placeholder="Active PNR" class="bg-neutral-900 border border-neutral-700 rounded-full px-3 py-1.5 text-xs text-white mono text-center w-28 uppercase focus:border-white focus:outline-none">
             </div>
 
             <!-- Chat Message Box -->
-            <div id="chat-messages" class="h-60 overflow-y-auto custom-scroll space-y-3 p-3 bg-black border border-neutral-900 rounded text-xs mono">
+            <div id="chat-messages" class="h-64 overflow-y-auto custom-scroll space-y-3 p-4 bg-black border border-neutral-900 rounded-2xl text-xs mono">
                 <div class="flex items-start space-x-2">
                     <span class="text-white font-bold">[AI]:</span>
                     <span class="text-neutral-300">Namaste! I am your autonomous flight concierge. Enter your PNR above or ask me about alternate routes, DGCA compensation, or hotel vouchers.</span>
@@ -727,8 +744,8 @@
 
             <!-- Input Bar -->
             <div class="flex items-center gap-2">
-                <input id="chat-input" type="text" placeholder="Ask in English or हिन्दी (e.g. 'Can I get a hotel voucher?' or 'मेरी अगली फ्लाइट कौन सी है?')" class="flex-1 bg-black border border-neutral-800 rounded px-3 py-2 text-xs text-white mono focus:outline-none focus:border-white">
-                <button onclick="sendChatMessage()" class="bg-white hover:bg-neutral-200 text-black px-4 py-2 rounded text-xs font-semibold mono transition">
+                <input id="chat-input" type="text" placeholder="Ask in English or हिन्दी (e.g. 'Can I get a hotel voucher?' or 'मेरी अगली फ्लाइट कौन सी है?')" class="flex-1 bg-neutral-900 border border-neutral-700 rounded-full px-4 py-2.5 text-xs text-white mono focus:outline-none focus:border-white">
+                <button onclick="sendChatMessage()" class="bg-white hover:bg-neutral-200 text-black px-6 py-2.5 rounded-full text-xs font-bold mono transition shadow">
                     SEND
                 </button>
             </div>
@@ -737,142 +754,144 @@
 
     <!-- TAB 3: BOARDING PASS, BAGGAGE (IATA 753) & HOTEL VOUCHER -->
     <main id="tab-content-boarding" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
             <!-- Digital Boarding Pass (6 Cols) -->
-            <div class="md:col-span-6 panel p-6 space-y-4">
-                <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
+            <div class="md:col-span-6 framer-white-card framer-theme-card p-6 sm:p-8 space-y-5 rounded-3xl border border-neutral-300 text-black shadow-xl">
+                <div class="flex items-center justify-between border-b border-neutral-300/80 pb-3">
                     <div class="flex items-center space-x-2">
-                        <span class="font-bold text-white tracking-widest uppercase mono text-sm">MOBILE BOARDING PASS</span>
-                        <span class="px-1.5 py-0.5 rounded text-[9px] bg-white text-black font-bold mono">IATA 2D</span>
+                        <span class="font-extrabold text-black tracking-widest uppercase mono text-sm">MOBILE BOARDING PASS</span>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] bg-black text-white font-bold mono">IATA 2D</span>
                     </div>
-                    <span id="bp-flight-num" class="mono text-white font-bold text-sm">--</span>
+                    <span id="bp-flight-num" class="mono text-black font-black text-base">--</span>
                 </div>
 
                 <div class="space-y-4">
                     <div class="flex justify-between items-center text-xs">
                         <div>
-                            <div class="text-[9px] text-neutral-500 uppercase mono">Passenger</div>
-                            <div id="bp-passenger-name" class="font-bold text-white mono">--</div>
+                            <div class="text-[9px] text-neutral-500 uppercase mono font-bold">Passenger</div>
+                            <div id="bp-passenger-name" class="font-extrabold text-black mono text-sm">--</div>
                         </div>
                         <div class="text-right">
-                            <div class="text-[9px] text-neutral-500 uppercase mono">Booking Ref (PNR)</div>
-                            <div id="bp-pnr" class="font-bold text-neutral-300 mono">--</div>
+                            <div class="text-[9px] text-neutral-500 uppercase mono font-bold">Booking Ref (PNR)</div>
+                            <div id="bp-pnr" class="font-extrabold text-neutral-700 mono text-sm">--</div>
                         </div>
                     </div>
 
                     <!-- Origin -> Dest -->
-                    <div class="flex items-center justify-between p-3 panel-subtle rounded border border-neutral-800">
+                    <div class="flex items-center justify-between p-4 bg-black text-white rounded-2xl shadow">
                         <div>
-                            <div id="bp-orig" class="text-xl font-bold text-white mono">---</div>
-                            <div class="text-[9px] text-neutral-500 mono">ORIGIN</div>
+                            <div id="bp-orig" class="text-2xl font-black text-white mono">---</div>
+                            <div class="text-[9px] text-neutral-400 mono">ORIGIN</div>
                         </div>
-                        <i class="fa-solid fa-plane text-neutral-500 text-sm"></i>
+                        <i class="fa-solid fa-plane text-white text-base"></i>
                         <div class="text-right">
-                            <div id="bp-dest" class="text-xl font-bold text-white mono">---</div>
-                            <div class="text-[9px] text-neutral-500 mono">DESTINATION</div>
+                            <div id="bp-dest" class="text-2xl font-black text-white mono">---</div>
+                            <div class="text-[9px] text-neutral-400 mono">DESTINATION</div>
                         </div>
                     </div>
 
                     <!-- Gate / Seat -->
-                    <div class="grid grid-cols-4 gap-2 text-center panel-subtle p-2.5 rounded text-[11px] mono">
+                    <div class="grid grid-cols-4 gap-2 text-center bg-white border border-neutral-300 p-3 rounded-2xl text-[11px] mono shadow-sm">
                         <div>
-                            <div class="text-[8px] text-neutral-500 uppercase">Gate</div>
-                            <div id="bp-gate" class="font-bold text-white">--</div>
+                            <div class="text-[8px] text-neutral-500 uppercase font-bold">Gate</div>
+                            <div id="bp-gate" class="font-black text-black text-sm">--</div>
                         </div>
                         <div>
-                            <div class="text-[8px] text-neutral-500 uppercase">Terminal</div>
-                            <div id="bp-terminal" class="font-bold text-white">--</div>
+                            <div class="text-[8px] text-neutral-500 uppercase font-bold">Terminal</div>
+                            <div id="bp-terminal" class="font-black text-black text-sm">--</div>
                         </div>
                         <div>
-                            <div class="text-[8px] text-neutral-500 uppercase">Boarding</div>
-                            <div id="bp-time" class="font-bold text-white">--:--</div>
+                            <div class="text-[8px] text-neutral-500 uppercase font-bold">Boarding</div>
+                            <div id="bp-time" class="font-black text-black text-sm">--:--</div>
                         </div>
                         <div>
-                            <div class="text-[8px] text-neutral-500 uppercase">Seat</div>
-                            <div id="bp-seat" class="font-bold text-white">--</div>
+                            <div class="text-[8px] text-neutral-500 uppercase font-bold">Seat</div>
+                            <div id="bp-seat" class="font-black text-black text-sm">--</div>
                         </div>
                     </div>
 
                     <!-- QR Barcode -->
-                    <div class="border-t border-neutral-800 pt-4 flex flex-col items-center justify-center">
-                        <div id="qrcode-box" class="bg-white p-2 rounded"></div>
-                        <div id="bp-baggage-tag" class="text-[9px] text-neutral-400 mt-2 mono">TAG: 001-000000</div>
+                    <div class="border-t border-neutral-300/80 pt-4 flex flex-col items-center justify-center">
+                        <div id="qrcode-box" class="bg-white p-3 rounded-2xl border border-neutral-300 shadow-sm"></div>
+                        <div id="bp-baggage-tag" class="text-[10px] text-neutral-600 mt-2 mono font-bold">TAG: 001-000000</div>
                     </div>
                 </div>
             </div>
 
             <!-- Vouchers & IATA 753 Baggage Radar (6 Cols) -->
             <div class="md:col-span-6 space-y-4">
-                <div class="panel p-5 space-y-4 text-xs">
+                <div class="framer-white-card framer-theme-card p-6 rounded-3xl border border-neutral-300 text-black shadow-xl space-y-4 text-xs">
                     <div>
-                        <h3 class="font-bold text-white uppercase tracking-wider mono text-[11px]">DGCA CAR & Regulatory Entitlements</h3>
-                        <p class="text-neutral-400 text-[11px] mt-0.5">Automated statutory compensation package under DGCA CAR Section 3 & EU261.</p>
+                        <span class="text-[10px] text-neutral-500 uppercase tracking-widest mono font-bold">PASSENGER WELFARE</span>
+                        <h3 class="font-extrabold text-black uppercase tracking-wider mono text-xs mt-0.5">DGCA CAR & Regulatory Entitlements</h3>
+                        <p class="text-neutral-600 text-[11px] mt-0.5 leading-relaxed font-sans">Automated statutory compensation package under DGCA CAR Section 3 & EU261.</p>
                     </div>
 
                     <div class="space-y-2.5">
-                        <div class="panel-subtle p-3 rounded flex items-center justify-between">
+                        <div class="bg-white border border-neutral-300 p-3.5 rounded-2xl flex items-center justify-between shadow-sm">
                             <div>
-                                <div class="font-medium text-neutral-200">Terminal Meal & Refreshment Coupon</div>
+                                <div class="font-bold text-black">Terminal Meal & Refreshment Coupon</div>
                                 <div class="text-[10px] text-neutral-500">Valid at airside vendors (Mandatory on >2h delay)</div>
                             </div>
-                            <span id="vch-meal-code" class="mono text-white font-semibold">₹450 / $30.00</span>
+                            <span id="vch-meal-code" class="mono text-black font-black">₹450 / $30.00</span>
                         </div>
 
-                        <div class="panel-subtle p-3 rounded flex items-center justify-between">
+                        <div class="bg-white border border-neutral-300 p-3.5 rounded-2xl flex items-center justify-between shadow-sm">
                             <div>
-                                <div class="font-medium text-neutral-200">DGCA CAR Section 3 Statutory Compensation</div>
+                                <div class="font-bold text-black">DGCA CAR Section 3 Statutory Compensation</div>
                                 <div class="text-[10px] text-neutral-500">Block time distance compensation</div>
                             </div>
-                            <span id="vch-comp-amount" class="mono text-white font-bold">₹5,000.00 INR</span>
+                            <span id="vch-comp-amount" class="mono text-black font-black">₹5,000.00 INR</span>
                         </div>
 
                         <!-- Sabre / Aerocity E-Hotel & Meal Voucher Card -->
-                        <div id="hotel-voucher-card" class="panel-subtle p-3.5 rounded border border-neutral-700 space-y-2 text-[11px] mono">
-                            <div class="flex items-center justify-between border-b border-neutral-800 pb-1.5">
+                        <div id="hotel-voucher-card" class="bg-neutral-950 text-white border border-neutral-800 p-4 rounded-2xl space-y-2 text-[11px] mono shadow-lg">
+                            <div class="flex items-center justify-between border-b border-neutral-800 pb-2">
                                 <div class="flex items-center space-x-2">
-                                    <span class="px-1.5 py-0.5 rounded bg-white text-black font-bold text-[9px]">AEROCITY HOTEL</span>
+                                    <span class="px-2 py-0.5 rounded-full bg-white text-black font-bold text-[9px]">AEROCITY HOTEL</span>
                                     <span id="htl-name" class="font-bold text-white">Radisson Blu Aerocity Delhi</span>
                                 </div>
-                                <span id="htl-tier" class="text-neutral-300 text-[10px]">EXECUTIVE SUITE</span>
+                                <span id="htl-tier" class="text-neutral-300 text-[10px] font-bold">EXECUTIVE SUITE</span>
                             </div>
-                            <div class="text-neutral-400 text-[10px] space-y-0.5">
-                                <div><span class="text-neutral-500 uppercase">Address:</span> <span id="htl-address" class="text-neutral-300">National Highway 8, Aerocity, New Delhi</span></div>
-                                <div><span class="text-neutral-500 uppercase">Shuttle:</span> <span id="htl-shuttle" class="text-neutral-300">24/7 Aerocity Shuttle Bus from T3 Pillar 10</span></div>
-                                <div><span class="text-neutral-500 uppercase">Billing:</span> <span id="htl-bill" class="text-neutral-300">SABRE-DIRBILL-DEL-601</span></div>
+                            <div class="text-neutral-400 text-[10px] space-y-1">
+                                <div><span class="text-neutral-500 uppercase font-bold">Address:</span> <span id="htl-address" class="text-neutral-200">National Highway 8, Aerocity, New Delhi</span></div>
+                                <div><span class="text-neutral-500 uppercase font-bold">Shuttle:</span> <span id="htl-shuttle" class="text-neutral-200">24/7 Aerocity Shuttle Bus from T3 Pillar 10</span></div>
+                                <div><span class="text-neutral-500 uppercase font-bold">Billing:</span> <span id="htl-bill" class="text-neutral-200 font-mono">SABRE-DIRBILL-DEL-601</span></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- IATA Resolution 753 Baggage Tracking & RFID Checkpoints -->
-                <div class="panel p-5 space-y-3 text-xs">
-                    <div class="flex items-center justify-between border-b border-neutral-800 pb-2">
+                <div class="framer-white-card framer-theme-card p-6 rounded-3xl border border-neutral-300 text-black shadow-xl space-y-3 text-xs">
+                    <div class="flex items-center justify-between border-b border-neutral-300/80 pb-2">
                         <div>
-                            <h3 class="font-bold text-white uppercase tracking-wider mono text-[11px]">IATA Resolution 753 Baggage Tracking</h3>
-                            <p class="text-neutral-500 text-[10px] mono">Real-time ramp sorter custody transfer & RFID checkpoints.</p>
+                            <span class="text-[10px] text-neutral-500 uppercase tracking-widest mono font-bold">REAL-TIME TELEMETRY</span>
+                            <h3 class="font-extrabold text-black uppercase tracking-wider mono text-xs mt-0.5">IATA Resolution 753 Baggage Tracking</h3>
+                            <p class="text-neutral-600 text-[10px] mono">Real-time ramp sorter custody transfer & RFID checkpoints.</p>
                         </div>
-                        <span id="bag-status-badge" class="px-2 py-0.5 rounded text-[10px] bg-neutral-900 text-white border border-neutral-700 mono">EXPEDITED TRANSFER</span>
+                        <span id="bag-status-badge" class="px-2.5 py-0.5 rounded-full text-[10px] bg-black text-white font-bold mono shadow">EXPEDITED TRANSFER</span>
                     </div>
 
                     <div class="grid grid-cols-2 gap-2 text-[11px] mono">
-                        <div class="panel-subtle p-2 rounded">
-                            <div class="text-[9px] text-neutral-500 uppercase">IATA Barcode Tag</div>
-                            <div id="bag-tag-num" class="font-bold text-white">0014873230</div>
+                        <div class="bg-white border border-neutral-300 p-2.5 rounded-xl shadow-sm">
+                            <div class="text-[9px] text-neutral-500 uppercase font-bold">IATA Barcode Tag</div>
+                            <div id="bag-tag-num" class="font-black text-black">0014873230</div>
                         </div>
-                        <div class="panel-subtle p-2 rounded">
-                            <div class="text-[9px] text-neutral-500 uppercase">Sorter Bay Allocation</div>
-                            <div id="bag-sorter-bay" class="font-bold text-white">RAMP-BAY-Charlie-4</div>
+                        <div class="bg-white border border-neutral-300 p-2.5 rounded-xl shadow-sm">
+                            <div class="text-[9px] text-neutral-500 uppercase font-bold">Sorter Bay Allocation</div>
+                            <div id="bag-sorter-bay" class="font-black text-black">RAMP-BAY-Charlie-4</div>
                         </div>
                     </div>
 
                     <!-- RFID Checkpoint Log -->
                     <div id="bag-checkpoints-list" class="space-y-1.5 pt-1">
-                        <div class="panel-subtle p-2 rounded flex items-center justify-between text-[10px] border border-neutral-800">
+                        <div class="bg-white border border-neutral-300 p-2.5 rounded-xl flex items-center justify-between text-[10px] shadow-sm">
                             <div>
-                                <span class="text-white font-bold">1. CHECK-IN ACQUISITION</span>
-                                <div class="text-neutral-500 text-[9px]">Bag Drop Concourse Counter</div>
+                                <span class="text-black font-bold">1. CHECK-IN ACQUISITION</span>
+                                <div class="text-neutral-600 text-[9px]">Bag Drop Concourse Counter</div>
                             </div>
-                            <span class="text-neutral-400 font-mono">CONFIRMED</span>
+                            <span class="text-black font-mono font-bold">CONFIRMED</span>
                         </div>
                     </div>
                 </div>
@@ -882,23 +901,36 @@
 
     <!-- TAB 4: DISPATCH CONSOLE -->
     <main id="tab-content-dispatch" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-4">
-        <div class="panel p-5 space-y-4">
-            <h2 class="text-sm font-bold text-white uppercase tracking-wider mono">OCC Airline Dispatch Operations</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs mono">
-                <div class="panel-subtle p-4 rounded border border-neutral-800 space-y-2">
-                    <span class="text-white font-bold">NEW DELHI (DEL) FOG PROGRAM</span>
-                    <p class="text-neutral-400 text-[11px]">Simulates CAT IIIb winter fog ground stop at Indira Gandhi Airport. Compresses slots and protects mainline bank.</p>
-                    <button onclick="quickCancel('6E204')" class="w-full bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-white py-1.5 rounded font-bold">TRIGGER DEL FOG IRROPS</button>
+        <div class="framer-white-card framer-theme-card p-6 sm:p-10 rounded-3xl border border-neutral-300 text-black shadow-xl space-y-6">
+            <div class="space-y-1">
+                <span class="text-[10px] text-neutral-500 uppercase tracking-widest mono font-bold">OPERATIONS CONTROL CENTER</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-black font-albert tracking-tight">OCC Airline Dispatch Operations.</h2>
+                <p class="text-xs sm:text-sm text-neutral-700 leading-relaxed font-sans">Simulate proactive fleet disruptions, monsoon weather ground stops, and airborne diversions.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs mono">
+                <div class="bg-white p-6 rounded-2xl border border-neutral-300 space-y-3 flex flex-col justify-between shadow-sm">
+                    <div class="space-y-2">
+                        <span class="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">WINTER CAT IIIB</span>
+                        <h4 class="text-base font-extrabold text-black font-albert">NEW DELHI (DEL) FOG PROGRAM</h4>
+                        <p class="text-neutral-700 text-[11px] leading-relaxed font-sans">Simulates CAT IIIb winter fog ground stop at Indira Gandhi Airport. Compresses slots and protects mainline bank.</p>
+                    </div>
+                    <button onclick="quickCancel('6E204')" class="w-full bg-black hover:bg-neutral-800 text-white py-2.5 rounded-full font-bold transition shadow mt-3">TRIGGER DEL FOG IRROPS</button>
                 </div>
-                <div class="panel-subtle p-4 rounded border border-neutral-800 space-y-2">
-                    <span class="text-white font-bold">MUMBAI (BOM) SQUALL LINE</span>
-                    <p class="text-neutral-400 text-[11px]">Simulates heavy convective monsoon squall at CSMIA Mumbai. Triggers multi-flight divert and slot compression.</p>
-                    <button onclick="triggerSquallLineStorm()" class="w-full bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-white py-1.5 rounded font-bold">DISPATCH MONSOON STORM</button>
+                <div class="bg-neutral-950 p-6 rounded-2xl border border-neutral-800 text-white space-y-3 flex flex-col justify-between shadow-xl">
+                    <div class="space-y-2">
+                        <span class="text-[10px] text-neutral-400 uppercase tracking-widest font-bold">MONSOON CONVECTIVE</span>
+                        <h4 class="text-base font-extrabold text-white font-albert">MUMBAI (BOM) SQUALL LINE</h4>
+                        <p class="text-neutral-400 text-[11px] leading-relaxed font-sans">Simulates heavy convective monsoon squall at CSMIA Mumbai. Triggers multi-flight divert and slot compression.</p>
+                    </div>
+                    <button onclick="triggerSquallLineStorm()" class="w-full bg-white hover:bg-neutral-200 text-black py-2.5 rounded-full font-bold transition shadow mt-3">DISPATCH MONSOON STORM</button>
                 </div>
-                <div class="panel-subtle p-4 rounded border border-neutral-800 space-y-2">
-                    <span class="text-white font-bold">AIRBORNE DIVERSION (JAI/PNQ)</span>
-                    <p class="text-neutral-400 text-[11px]">Diverts flight to designated alternate with luxury charter intermodal motor coaches to destination hub.</p>
-                    <button onclick="triggerDivertSimulation()" class="w-full bg-white hover:bg-neutral-200 text-black py-1.5 rounded font-bold">DIVERT FLIGHT & COACH</button>
+                <div class="bg-white p-6 rounded-2xl border border-neutral-300 space-y-3 flex flex-col justify-between shadow-sm">
+                    <div class="space-y-2">
+                        <span class="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">INTERMODAL LOGISTICS</span>
+                        <h4 class="text-base font-extrabold text-black font-albert">AIRBORNE DIVERSION (JAI/PNQ)</h4>
+                        <p class="text-neutral-700 text-[11px] leading-relaxed font-sans">Diverts flight to designated alternate with luxury charter intermodal motor coaches to destination hub.</p>
+                    </div>
+                    <button onclick="triggerDivertSimulation()" class="w-full bg-black hover:bg-neutral-800 text-white py-2.5 rounded-full font-bold transition shadow mt-3">DIVERT FLIGHT & COACH</button>
                 </div>
             </div>
         </div>
@@ -906,43 +938,45 @@
 
     <!-- TAB 5: INCIDENT AUDIT & METRICS -->
     <main id="tab-content-analytics" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-4">
-        <div class="panel p-5 space-y-3">
-            <div class="flex items-center justify-between border-b border-neutral-900 pb-3">
+        <div class="framer-white-card framer-theme-card p-6 sm:p-10 rounded-3xl border border-neutral-300 text-black shadow-xl space-y-6">
+            <div class="flex flex-wrap items-center justify-between border-b border-neutral-300/80 pb-4 gap-3">
                 <div>
-                    <h3 class="font-bold text-white uppercase tracking-wider mono text-[12px]">DGCA CAR & IATA IRROPS Incident Post-Mortem Dossier</h3>
-                    <p class="text-neutral-500 text-[10px] mono">Regulatory audit export under DGCA CAR Section 3, FAA FAR Part 117, and EU 261/2004.</p>
+                    <span class="text-[10px] text-neutral-500 uppercase tracking-widest mono font-bold">REGULATORY AUDIT DOSSIER</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-black font-albert tracking-tight">DGCA CAR & IATA IRROPS Incident Post-Mortem.</h2>
+                    <p class="text-xs sm:text-sm text-neutral-700 mt-1 leading-relaxed font-sans">Regulatory audit export under DGCA CAR Section 3, FAA FAR Part 117, and EU 261/2004.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="downloadMarkdownAuditReport()" class="bg-white hover:bg-neutral-200 text-black px-3 py-1.5 rounded text-xs font-semibold mono transition">
-                        <i class="fa-solid fa-download mr-1"></i>EXPORT MARKDOWN
+                    <button onclick="downloadMarkdownAuditReport()" class="bg-black hover:bg-neutral-800 text-white px-5 py-2.5 rounded-full text-xs font-bold mono transition shadow flex items-center gap-1.5">
+                        <i class="fa-solid fa-download text-xs"></i><span>EXPORT MARKDOWN</span>
                     </button>
-                    <button onclick="loadIncidentAuditDossier()" class="bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 px-3 py-1.5 rounded text-xs font-semibold mono transition">
+                    <button onclick="loadIncidentAuditDossier()" class="bg-white hover:bg-neutral-100 text-black border border-neutral-300 px-5 py-2.5 rounded-full text-xs font-bold mono transition shadow-sm">
                         REFRESH
                     </button>
                 </div>
             </div>
-            <pre id="audit-dossier-preview" class="p-4 bg-black border border-neutral-900 rounded font-mono text-[11px] text-neutral-300 overflow-x-auto max-h-72 custom-scroll leading-relaxed whitespace-pre-wrap">Loading incident audit record...</pre>
+            <pre id="audit-dossier-preview" class="p-5 bg-neutral-950 border border-neutral-800 text-neutral-200 rounded-2xl font-mono text-[11px] overflow-x-auto max-h-80 custom-scroll leading-relaxed whitespace-pre-wrap shadow-inner">Loading incident audit record...</pre>
         </div>
     </main>
 
     <!-- TAB 6: FRAMER-STYLE HEADLESS CMS STUDIO -->
     <main id="tab-content-cms" class="tab-content hidden max-w-7xl mx-auto px-5 pb-10 w-full space-y-4">
-        <div class="panel p-5 space-y-4">
-            <div class="flex flex-wrap items-center justify-between border-b border-neutral-900 pb-4 gap-3">
+        <div class="framer-white-card framer-theme-card p-6 sm:p-10 rounded-3xl border border-neutral-300 text-black shadow-xl space-y-6">
+            <div class="flex flex-wrap items-center justify-between border-b border-neutral-300/80 pb-4 gap-3">
                 <div>
                     <div class="flex items-center space-x-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-white animate-pulse"></span>
-                        <h2 class="text-sm font-bold text-white uppercase tracking-wider mono">Framer-Style Headless CMS Studio</h2>
-                        <span class="px-1.5 py-0.5 rounded text-[9px] bg-neutral-900 border border-neutral-700 text-white mono">LIVE REST API</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-black animate-pulse"></span>
+                        <span class="text-[10px] text-neutral-500 uppercase tracking-widest mono font-bold">CONTENT INFRASTRUCTURE</span>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] bg-black text-white mono font-bold">LIVE REST API</span>
                     </div>
-                    <p class="text-xs text-neutral-400 mt-1">Schema-driven collections for Airport Destinations, Aircraft Fleet, Aviation Regulations, and Interline Alliances.</p>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-black font-albert tracking-tight mt-1">Framer-Style Headless CMS Studio.</h2>
+                    <p class="text-xs sm:text-sm text-neutral-700 mt-1 leading-relaxed font-sans">Schema-driven collections for Airport Destinations, Aircraft Fleet, Aviation Regulations, and Interline Alliances.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="promptCreateCMSItem()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-1.5 rounded text-xs font-semibold mono transition">
-                        <i class="fa-solid fa-plus mr-1"></i>ADD CMS RECORD
+                    <button onclick="promptCreateCMSItem()" class="bg-black hover:bg-neutral-800 text-white px-5 py-2.5 rounded-full text-xs font-bold mono transition shadow flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus text-xs"></i><span>ADD CMS RECORD</span>
                     </button>
-                    <button onclick="loadCMSStudio()" class="bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 px-3 py-1.5 rounded text-xs font-semibold mono transition">
-                        <i class="fa-solid fa-rotate mr-1"></i>SYNC
+                    <button onclick="loadCMSStudio()" class="bg-white hover:bg-neutral-100 text-black border border-neutral-300 px-5 py-2.5 rounded-full text-xs font-bold mono transition shadow-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate text-xs"></i><span>SYNC</span>
                     </button>
                 </div>
             </div>
@@ -953,14 +987,14 @@
             </div>
 
             <!-- Active Collection Schema Info -->
-            <div id="cms-schema-banner" class="panel-subtle p-3 rounded text-[11px] mono text-neutral-400 flex flex-wrap items-center justify-between gap-2 border border-neutral-800">
-                <span id="cms-schema-desc">Select a collection above to inspect schema.</span>
-                <span id="cms-schema-endpoint" class="text-white font-mono text-[10px]"></span>
+            <div id="cms-schema-banner" class="bg-white p-4 rounded-2xl text-[11px] mono text-black flex flex-wrap items-center justify-between gap-2 border border-neutral-300 shadow-sm">
+                <span id="cms-schema-desc" class="font-medium">Select a collection above to inspect schema.</span>
+                <span id="cms-schema-endpoint" class="text-black font-mono font-bold text-[10px] bg-black/5 px-2.5 py-1 rounded-full border border-neutral-300"></span>
             </div>
 
             <!-- CMS Items Grid -->
-            <div id="cms-items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                <div class="panel-subtle p-6 rounded text-center text-xs text-neutral-500 mono col-span-full">
+            <div id="cms-items-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="p-6 rounded-2xl bg-white border border-neutral-300 text-center text-xs text-neutral-500 mono col-span-full shadow-sm">
                     Loading CMS collections from /api/v1/cms/collections...
                 </div>
             </div>
@@ -968,109 +1002,111 @@
     </main>
 
     <!-- FRAMER "LET'S FLY" FAQ ACCORDION ("In case you missed anything.") -->
-    <section id="letsfly-faq" class="max-w-7xl mx-auto px-5 py-12 w-full space-y-6 border-t border-neutral-900">
-        <div class="text-center max-w-2xl mx-auto space-y-3">
-            <span class="text-neutral-500 uppercase tracking-widest text-[10px] mono font-bold">GOT A QUESTION? WE'RE HERE TO HELP</span>
-            <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight font-albert">In case you missed anything.</h2>
-            <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed">
-                Everything you need to know about our fleet, autonomous IRROPS graph solver, and passenger rights.
-            </p>
-            <div class="pt-1">
-                <button onclick="switchTab('portal'); document.getElementById('chat-input').focus();" class="inline-flex items-center space-x-2 px-5 py-2 rounded-full bg-white text-black font-bold text-xs mono hover:bg-neutral-200 transition shadow-lg">
-                    <i class="fa-solid fa-headset text-xs"></i>
-                    <span>Chat with us</span>
-                </button>
+    <section id="letsfly-faq" class="max-w-7xl mx-auto px-5 py-12 w-full space-y-6">
+        <div class="framer-white-card framer-theme-card p-8 sm:p-12 rounded-3xl border border-neutral-300 text-black shadow-2xl space-y-8">
+            <div class="text-center max-w-2xl mx-auto space-y-3">
+                <span class="text-neutral-500 uppercase tracking-widest text-[10px] mono font-bold">GOT A QUESTION? WE'RE HERE TO HELP</span>
+                <h2 class="text-3xl sm:text-5xl font-black text-black tracking-tight font-albert">In case you missed anything.</h2>
+                <p class="text-xs sm:text-sm text-neutral-700 leading-relaxed font-sans">
+                    Everything you need to know about our fleet, autonomous IRROPS graph solver, and passenger rights.
+                </p>
+                <div class="pt-1">
+                    <button onclick="switchTab('portal'); document.getElementById('chat-input').focus();" class="inline-flex items-center space-x-2 px-6 py-2.5 rounded-full bg-black text-white font-bold text-xs mono hover:bg-neutral-800 transition shadow-lg">
+                        <i class="fa-solid fa-headset text-xs"></i>
+                        <span>Chat with us</span>
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <div class="max-w-3xl mx-auto space-y-3 mono text-xs">
-            <!-- Q1 -->
-            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
-                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
-                    <span>What flight operations and charter services do you offer?</span>
-                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
-                </summary>
-                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
-                    We provide scheduled airline disruption management, on-demand luxury private jet charters, and real-time autonomous re-accommodation. Our platform connects directly with Indian metro hubs (DEL, BOM, BLR, CCU, GOI) and international corridors with sub-millisecond graph re-ticketing, baggage re-routing, and guaranteed DGCA CAR Section 3 statutory compensation.
-                </p>
-            </details>
+            <div class="max-w-3xl mx-auto space-y-3 mono text-xs">
+                <!-- Q1 -->
+                <details class="bg-white p-5 rounded-2xl group cursor-pointer border border-neutral-300 text-black shadow-sm transition hover:border-neutral-400">
+                    <summary class="font-extrabold text-black flex justify-between items-center list-none select-none text-[13px] font-sans">
+                        <span>What flight operations and charter services do you offer?</span>
+                        <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-700 mt-3 pt-3 border-t border-neutral-200 leading-relaxed text-[12px] font-sans">
+                        We provide scheduled airline disruption management, on-demand luxury private jet charters, and real-time autonomous re-accommodation. Our platform connects directly with Indian metro hubs (DEL, BOM, BLR, CCU, GOI) and international corridors with sub-millisecond graph re-ticketing, baggage re-routing, and guaranteed DGCA CAR Section 3 statutory compensation.
+                    </p>
+                </details>
 
-            <!-- Q2 -->
-            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
-                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
-                    <span>How does the autonomous disruption resolution process work?</span>
-                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
-                </summary>
-                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
-                    Our engine continuously ingests telemetry and ATC ground stop data. When convective weather, monsoons, or mechanical delays strike, our constrained NetworkX graph engine computes Pareto-optimal alternative routings in under 1.1ms, automatically issuing digital boarding passes, meal vouchers, and direct-billing hotel suites with zero human intervention.
-                </p>
-            </details>
+                <!-- Q2 -->
+                <details class="bg-white p-5 rounded-2xl group cursor-pointer border border-neutral-300 text-black shadow-sm transition hover:border-neutral-400">
+                    <summary class="font-extrabold text-black flex justify-between items-center list-none select-none text-[13px] font-sans">
+                        <span>How does the autonomous disruption resolution process work?</span>
+                        <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-700 mt-3 pt-3 border-t border-neutral-200 leading-relaxed text-[12px] font-sans">
+                        Our engine continuously ingests telemetry and ATC ground stop data. When convective weather, monsoons, or mechanical delays strike, our constrained NetworkX graph engine computes Pareto-optimal alternative routings in under 1.1ms, automatically issuing digital boarding passes, meal vouchers, and direct-billing hotel suites with zero human intervention.
+                    </p>
+                </details>
 
-            <!-- Q3 -->
-            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
-                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
-                    <span>What airlines and aviation sectors are supported?</span>
-                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
-                </summary>
-                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
-                    Our platform integrates with all leading Indian carriers (IndiGo, Air India, Akasa Air, Vistara) as well as global Star Alliance and SkyTeam partner carriers. We support commercial scheduled passenger operations, luxury corporate private jets, and intermodal ground coach diversions.
-                </p>
-            </details>
+                <!-- Q3 -->
+                <details class="bg-white p-5 rounded-2xl group cursor-pointer border border-neutral-300 text-black shadow-sm transition hover:border-neutral-400">
+                    <summary class="font-extrabold text-black flex justify-between items-center list-none select-none text-[13px] font-sans">
+                        <span>What airlines and aviation sectors are supported?</span>
+                        <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-700 mt-3 pt-3 border-t border-neutral-200 leading-relaxed text-[12px] font-sans">
+                        Our platform integrates with all leading Indian carriers (IndiGo, Air India, Akasa Air, Vistara) as well as global Star Alliance and SkyTeam partner carriers. We support commercial scheduled passenger operations, luxury corporate private jets, and intermodal ground coach diversions.
+                    </p>
+                </details>
 
-            <!-- Q4 -->
-            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
-                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
-                    <span>Can I monitor live flights and disruption simulations?</span>
-                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
-                </summary>
-                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
-                    Yes! Our interactive 3D WebGL Great-Circle Flight Radar showcases active sectors across the Indian subcontinent (DEL, BOM, BLR, CCU, GOI) and international corridors (JFK, LHR, DXB). You can also run live monsoon or squall line simulations to watch the autonomous solver in real time.
-                </p>
-            </details>
+                <!-- Q4 -->
+                <details class="bg-white p-5 rounded-2xl group cursor-pointer border border-neutral-300 text-black shadow-sm transition hover:border-neutral-400">
+                    <summary class="font-extrabold text-black flex justify-between items-center list-none select-none text-[13px] font-sans">
+                        <span>Can I monitor live flights and disruption simulations?</span>
+                        <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-700 mt-3 pt-3 border-t border-neutral-200 leading-relaxed text-[12px] font-sans">
+                        Yes! Our interactive 3D WebGL Great-Circle Flight Radar showcases active sectors across the Indian subcontinent (DEL, BOM, BLR, CCU, GOI) and international corridors (JFK, LHR, DXB). You can also run live monsoon or squall line simulations to watch the autonomous solver in real time.
+                    </p>
+                </details>
 
-            <!-- Q5 -->
-            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
-                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
-                    <span>What is your pricing and statutory compensation structure?</span>
-                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
-                </summary>
-                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
-                    We maintain one simple transparent fly rate with zero surge fees. When disruptions occur, passengers receive instant statutory compensation under DGCA CAR Section 3 (₹5,000 to ₹10,000), ₹450 airport meal vouchers, and automatic IATA Resolution 766 Op-Up cabin upgrades to Business Class J.
-                </p>
-            </details>
+                <!-- Q5 -->
+                <details class="bg-white p-5 rounded-2xl group cursor-pointer border border-neutral-300 text-black shadow-sm transition hover:border-neutral-400">
+                    <summary class="font-extrabold text-black flex justify-between items-center list-none select-none text-[13px] font-sans">
+                        <span>What is your pricing and statutory compensation structure?</span>
+                        <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-700 mt-3 pt-3 border-t border-neutral-200 leading-relaxed text-[12px] font-sans">
+                        We maintain one simple transparent fly rate with zero surge fees. When disruptions occur, passengers receive instant statutory compensation under DGCA CAR Section 3 (₹5,000 to ₹10,000), ₹450 airport meal vouchers, and automatic IATA Resolution 766 Op-Up cabin upgrades to Business Class J.
+                    </p>
+                </details>
 
-            <!-- Q6 -->
-            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
-                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
-                    <span>How fast is an affected passenger re-accommodated?</span>
-                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
-                </summary>
-                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
-                    Re-accommodation is instantaneous. Traditional call center re-ticketing takes 24 minutes per passenger. Our algorithmic solver resolves multi-hub flight disruptions for hundreds of passengers simultaneously in less than 2 milliseconds.
-                </p>
-            </details>
+                <!-- Q6 -->
+                <details class="bg-white p-5 rounded-2xl group cursor-pointer border border-neutral-300 text-black shadow-sm transition hover:border-neutral-400">
+                    <summary class="font-extrabold text-black flex justify-between items-center list-none select-none text-[13px] font-sans">
+                        <span>How fast is an affected passenger re-accommodated?</span>
+                        <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-700 mt-3 pt-3 border-t border-neutral-200 leading-relaxed text-[12px] font-sans">
+                        Re-accommodation is instantaneous. Traditional call center re-ticketing takes 24 minutes per passenger. Our algorithmic solver resolves multi-hub flight disruptions for hundreds of passengers simultaneously in less than 2 milliseconds.
+                    </p>
+                </details>
 
-            <!-- Q7 -->
-            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
-                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
-                    <span>What passenger welfare support is provided during ground stops?</span>
-                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
-                </summary>
-                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
-                    We provide comprehensive passenger welfare including direct-billing hotel vouchers at contracted airport suites (Radisson Blu Aerocity / Taj Santacruz), luxury motor coach transfers to alternate hubs, complimentary lounge access, and 24/7 bilingual AI concierge assistance.
-                </p>
-            </details>
+                <!-- Q7 -->
+                <details class="bg-white p-5 rounded-2xl group cursor-pointer border border-neutral-300 text-black shadow-sm transition hover:border-neutral-400">
+                    <summary class="font-extrabold text-black flex justify-between items-center list-none select-none text-[13px] font-sans">
+                        <span>What passenger welfare support is provided during ground stops?</span>
+                        <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-700 mt-3 pt-3 border-t border-neutral-200 leading-relaxed text-[12px] font-sans">
+                        We provide comprehensive passenger welfare including direct-billing hotel vouchers at contracted airport suites (Radisson Blu Aerocity / Taj Santacruz), luxury motor coach transfers to alternate hubs, complimentary lounge access, and 24/7 bilingual AI concierge assistance.
+                    </p>
+                </details>
 
-            <!-- Q8 -->
-            <details class="panel p-4 rounded-xl group cursor-pointer border border-neutral-800">
-                <summary class="font-bold text-white flex justify-between items-center list-none select-none text-[13px]">
-                    <span>How are passengers notified during flight irregularities?</span>
-                    <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
-                </summary>
-                <p class="text-neutral-400 mt-3 pt-3 border-t border-neutral-900 leading-relaxed text-[12px]">
-                    We believe multi-channel communication is key to a calm journey. We dispatch real-time flight updates, gate return notifications, and updated 2D barcode boarding passes via SMS, WhatsApp, Apple Wallet PKPass, and our interactive web concierge.
-                </p>
-            </details>
+                <!-- Q8 -->
+                <details class="bg-white p-5 rounded-2xl group cursor-pointer border border-neutral-300 text-black shadow-sm transition hover:border-neutral-400">
+                    <summary class="font-extrabold text-black flex justify-between items-center list-none select-none text-[13px] font-sans">
+                        <span>How are passengers notified during flight irregularities?</span>
+                        <i class="fa-solid fa-chevron-down text-neutral-500 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <p class="text-neutral-700 mt-3 pt-3 border-t border-neutral-200 leading-relaxed text-[12px] font-sans">
+                        We believe multi-channel communication is key to a calm journey. We dispatch real-time flight updates, gate return notifications, and updated 2D barcode boarding passes via SMS, WhatsApp, Apple Wallet PKPass, and our interactive web concierge.
+                    </p>
+                </details>
+            </div>
         </div>
     </section>
 
@@ -1524,27 +1560,27 @@
 
                 cachedFlights.forEach(f => {
                     const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-neutral-950 transition';
+                    tr.className = 'hover:bg-neutral-900 transition';
                     const isDisrupted = f.status !== 'SCHEDULED';
 
                     tr.innerHTML = `
-                        <td class="p-2 font-bold text-white">${f.flight_number}</td>
-                        <td class="p-2">${f.origin} &rarr; ${f.destination}</td>
-                        <td class="p-2 text-neutral-400">${f.departure_time.substring(11, 16)} UTC</td>
-                        <td class="p-2">
-                            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                                isDisrupted ? 'bg-neutral-900 text-white border border-white' : 'bg-neutral-900 text-neutral-400 border border-neutral-800'
+                        <td class="p-2.5 font-black text-white font-mono text-xs">${f.flight_number}</td>
+                        <td class="p-2.5 text-neutral-300 font-medium">${f.origin} &rarr; ${f.destination}</td>
+                        <td class="p-2.5 text-neutral-400 font-mono text-[11px]">${f.departure_time.substring(11, 16)} UTC</td>
+                        <td class="p-2.5">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono ${
+                                isDisrupted ? 'bg-white text-black' : 'bg-neutral-900 text-neutral-300 border border-neutral-700'
                             }">
                                 ${f.status}
                             </span>
                         </td>
-                        <td class="p-2">
-                            <button onclick="selectActivePnr('${f.sample_pnr || 'N/A'}')" class="underline hover:text-white font-bold">
+                        <td class="p-2.5">
+                            <button onclick="selectActivePnr('${f.sample_pnr || 'N/A'}')" class="underline hover:text-white font-bold text-white font-mono">
                                 ${f.sample_pnr || 'N/A'}
                             </button>
                         </td>
-                        <td class="p-2 text-right">
-                            <button onclick="quickCancel('${f.flight_number}')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 font-semibold text-[10px]">
+                        <td class="p-2.5 text-right">
+                            <button onclick="quickCancel('${f.flight_number}')" class="px-3 py-1 rounded-full bg-white hover:bg-neutral-200 text-black font-bold text-[10px] mono transition shadow-sm">
                                 DISRUPT
                             </button>
                         </td>
@@ -1895,37 +1931,37 @@
                     const isSelected = data.selected_option_id === opt.option_id;
 
                     const card = document.createElement('div');
-                    card.className = `panel p-4 rounded-xl border ${isSelected ? 'border-white ring-1 ring-white/30 bg-neutral-950' : 'border-neutral-800 hover:border-neutral-700'} space-y-3 text-xs transition`;
+                    card.className = `p-5 rounded-2xl border ${isSelected ? 'border-black ring-2 ring-black bg-[#f4f4f6]' : 'border-neutral-300 bg-white hover:border-neutral-400'} space-y-3 text-xs transition shadow-sm text-black`;
 
                     const legs = opt.segments.map(s => `${s.flight_number} (${s.origin} -> ${s.destination})`).join(' &rarr; ');
 
                     card.innerHTML = `
-                        <div class="flex items-center justify-between border-b border-neutral-900 pb-2">
+                        <div class="flex items-center justify-between border-b border-neutral-300/80 pb-2">
                             <div class="flex items-center space-x-2 mono">
-                                <span class="px-2.5 py-0.5 rounded-full bg-neutral-900 text-white font-bold text-[10px] border border-neutral-700 flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i>OPTION ${idx + 1}</span>
-                                <span class="font-bold text-white">${opt.route_type}</span>
-                                ${idx === 0 ? '<span class="px-2 py-0.5 rounded-full bg-white text-black text-[9px] font-black tracking-wide">RECOMMENDED</span>' : ''}
+                                <span class="px-3 py-1 rounded-full bg-black text-white font-bold text-[10px] flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i>OPTION ${idx + 1}</span>
+                                <span class="font-extrabold text-black font-sans text-sm">${opt.route_type}</span>
+                                ${idx === 0 ? '<span class="px-2.5 py-0.5 rounded-full bg-black text-white text-[9px] font-black tracking-wide">RECOMMENDED</span>' : ''}
                             </div>
-                            <span class="text-neutral-400 mono text-[11px] px-2 py-0.5 rounded bg-black/60 border border-neutral-800">+${opt.departure_delay_minutes}m departure delta</span>
+                            <span class="text-neutral-700 mono text-[11px] px-2.5 py-0.5 rounded-full bg-black/5 border border-neutral-300 font-bold">+${opt.departure_delay_minutes}m departure delta</span>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px] mono">
-                            <div class="p-2 rounded-lg bg-black/40 border border-neutral-900">
-                                <div class="text-[9px] text-neutral-500 uppercase flex items-center gap-1"><i class="fa-solid fa-route text-neutral-500 text-[8px]"></i> Routing</div>
-                                <div class="font-medium text-neutral-200 mt-0.5">${legs}</div>
+                            <div class="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
+                                <div class="text-[9px] text-neutral-500 uppercase font-bold flex items-center gap-1"><i class="fa-solid fa-route text-neutral-500 text-[8px]"></i> Routing</div>
+                                <div class="font-bold text-black mt-0.5">${legs}</div>
                             </div>
-                            <div class="p-2 rounded-lg bg-black/40 border border-neutral-900">
-                                <div class="text-[9px] text-neutral-500 uppercase flex items-center gap-1"><i class="fa-solid fa-clock text-neutral-500 text-[8px]"></i> Schedule</div>
-                                <div class="font-medium text-neutral-200 mt-0.5">${opt.departure_time.substring(11, 16)} &rarr; ${opt.arrival_time.substring(11, 16)} UTC</div>
+                            <div class="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
+                                <div class="text-[9px] text-neutral-500 uppercase font-bold flex items-center gap-1"><i class="fa-solid fa-clock text-neutral-500 text-[8px]"></i> Schedule</div>
+                                <div class="font-bold text-black mt-0.5">${opt.departure_time.substring(11, 16)} &rarr; ${opt.arrival_time.substring(11, 16)} UTC</div>
                             </div>
-                            <div class="p-2 rounded-lg bg-black/40 border border-neutral-900">
-                                <div class="text-[9px] text-neutral-500 uppercase flex items-center gap-1"><i class="fa-solid fa-suitcase text-neutral-500 text-[8px]"></i> Luggage & Time</div>
-                                <div class="font-medium text-neutral-200 mt-0.5">${durHours}h ${durMins}m • Auto-transferred</div>
+                            <div class="p-3 rounded-xl bg-neutral-50 border border-neutral-200">
+                                <div class="text-[9px] text-neutral-500 uppercase font-bold flex items-center gap-1"><i class="fa-solid fa-suitcase text-neutral-500 text-[8px]"></i> Luggage & Time</div>
+                                <div class="font-bold text-black mt-0.5">${durHours}h ${durMins}m • Auto-transferred</div>
                             </div>
                         </div>
                         <div class="flex justify-end pt-1">
                             ${isSelected 
-                                ? '<span class="text-white text-xs font-bold mono px-3 py-1.5 rounded-full bg-neutral-900 border border-neutral-700 flex items-center gap-1.5"><i class="fa-solid fa-check text-xs"></i> TICKETED AND CONFIRMED</span>'
-                                : `<button onclick="confirmPortalRebook('${data.pnr_id}', '${opt.option_id}')" class="bg-white hover:bg-neutral-200 text-black px-4 py-1.5 rounded-full text-xs font-bold transition shadow-sm mono flex items-center gap-1.5"><span>CONFIRM REBOOK</span> <i class="fa-solid fa-arrow-right text-[10px]"></i></button>`
+                                ? '<span class="text-black text-xs font-bold mono px-4 py-2 rounded-full bg-neutral-200 border border-neutral-400 flex items-center gap-1.5"><i class="fa-solid fa-check text-xs"></i> TICKETED AND CONFIRMED</span>'
+                                : `<button onclick="confirmPortalRebook('${data.pnr_id}', '${opt.option_id}')" class="bg-black hover:bg-neutral-800 text-white px-5 py-2 rounded-full text-xs font-bold transition shadow mono flex items-center gap-1.5"><span>CONFIRM REBOOK</span> <i class="fa-solid fa-arrow-right text-[10px]"></i></button>`
                             }
                         </div>
                     `;
@@ -2114,8 +2150,8 @@
                     cmsCollections.forEach(c => {
                         const btn = document.createElement('button');
                         btn.className = (c.slug === activeCMSCollection)
-                            ? 'px-3 py-1.5 rounded bg-white text-black font-bold border border-white transition flex items-center space-x-1.5'
-                            : 'px-3 py-1.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 transition flex items-center space-x-1.5';
+                            ? 'px-4 py-2 rounded-full bg-black text-white font-bold border border-black transition flex items-center space-x-1.5 shadow'
+                            : 'px-4 py-2 rounded-full bg-white hover:bg-neutral-100 text-black border border-neutral-300 transition flex items-center space-x-1.5 shadow-sm';
                         btn.innerHTML = `<i class="${c.icon || 'fa-solid fa-folder'} mr-1"></i><span>${c.name}</span>`;
                         btn.onclick = () => selectCMSCollection(c.slug);
                         pillsBox.appendChild(btn);
@@ -2138,8 +2174,8 @@
                     const c = cmsCollections[idx];
                     if (c) {
                         btn.className = (c.slug === slug)
-                            ? 'px-3 py-1.5 rounded bg-white text-black font-bold border border-white transition flex items-center space-x-1.5'
-                            : 'px-3 py-1.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700 transition flex items-center space-x-1.5';
+                            ? 'px-4 py-2 rounded-full bg-black text-white font-bold border border-black transition flex items-center space-x-1.5 shadow'
+                            : 'px-4 py-2 rounded-full bg-white hover:bg-neutral-100 text-black border border-neutral-300 transition flex items-center space-x-1.5 shadow-sm';
                     }
                 });
             }
@@ -2151,7 +2187,7 @@
 
             const container = document.getElementById('cms-items-container');
             if (!container) return;
-            container.innerHTML = `<div class="panel-subtle p-6 rounded text-center text-xs text-neutral-500 mono col-span-full">Fetching ${slug} records...</div>`;
+            container.innerHTML = `<div class="p-6 rounded-2xl bg-white border border-neutral-300 text-center text-xs text-neutral-500 mono col-span-full shadow-sm">Fetching ${slug} records...</div>`;
 
             try {
                 const res = await fetch(`/api/v1/cms/collections/${slug}/items`);
@@ -2159,34 +2195,34 @@
                 const items = await res.json();
 
                 if (items.length === 0) {
-                    container.innerHTML = `<div class="panel-subtle p-6 rounded text-center text-xs text-neutral-500 mono col-span-full">No items currently stored in this collection. Click 'ADD CMS RECORD' to create one.</div>`;
+                    container.innerHTML = `<div class="p-6 rounded-2xl bg-white border border-neutral-300 text-center text-xs text-neutral-500 mono col-span-full shadow-sm">No items currently stored in this collection. Click 'ADD CMS RECORD' to create one.</div>`;
                     return;
                 }
 
                 container.innerHTML = '';
                 items.forEach(it => {
                     const card = document.createElement('div');
-                    card.className = 'panel p-4 space-y-3 border border-neutral-800 hover:border-neutral-600 transition flex flex-col justify-between';
+                    card.className = 'bg-white p-5 rounded-2xl border border-neutral-300 text-black shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-3';
                     
-                    let fieldsHtml = '<div class="space-y-1 text-[11px] mono text-neutral-400">';
+                    let fieldsHtml = '<div class="space-y-1.5 text-[11px] mono text-neutral-700">';
                     for (const [k, v] of Object.entries(it.fields || {})) {
-                        fieldsHtml += `<div class="flex justify-between border-b border-neutral-900 py-0.5"><span class="text-neutral-500">${k}:</span><span class="text-white font-medium">${v}</span></div>`;
+                        fieldsHtml += `<div class="flex justify-between border-b border-neutral-200 py-1"><span class="text-neutral-500 font-bold">${k}:</span><span class="text-black font-semibold">${v}</span></div>`;
                     }
                     fieldsHtml += '</div>';
 
                     card.innerHTML = `
                         <div class="space-y-2">
                             <div class="flex items-center justify-between text-xs mono">
-                                <span class="px-1.5 py-0.5 rounded bg-neutral-900 text-neutral-300 border border-neutral-700 text-[10px]">${it.item_id}</span>
-                                <span class="text-[10px] text-neutral-500">/${it.slug}</span>
+                                <span class="px-2.5 py-0.5 rounded-full bg-black text-white font-bold text-[10px]">${it.item_id}</span>
+                                <span class="text-[10px] text-neutral-500 font-bold">/${it.slug}</span>
                             </div>
-                            <h3 class="font-bold text-sm text-white mono">${it.title}</h3>
+                            <h3 class="font-extrabold text-base text-black font-albert">${it.title}</h3>
                             ${fieldsHtml}
                         </div>
-                        <div class="pt-2 flex items-center justify-between border-t border-neutral-900 text-[10px] mono">
-                            <span class="text-neutral-600">${it.updated_at.substring(0, 10)}</span>
+                        <div class="pt-3 flex items-center justify-between border-t border-neutral-200 text-[10px] mono">
+                            <span class="text-neutral-500">${it.updated_at.substring(0, 10)}</span>
                             <div class="flex gap-2">
-                                <button onclick="deleteCMSItem('${slug}', '${it.item_id}')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white border border-neutral-700">DELETE</button>
+                                <button onclick="deleteCMSItem('${slug}', '${it.item_id}')" class="px-3 py-1 rounded-full bg-black hover:bg-neutral-800 text-white font-bold shadow-sm transition">DELETE</button>
                             </div>
                         </div>
                     `;
@@ -2282,17 +2318,17 @@
         let currentThemeMode = 'twotone';
         function toggleThemeMode(mode) {
             currentThemeMode = mode;
-            const heroCard = document.getElementById('hero-main-container');
+            const themeCards = document.querySelectorAll('.framer-theme-card');
             const heroTitle = document.getElementById('hero-title-main');
             const heroDesc = document.getElementById('hero-desc-main');
             const btnLight = document.getElementById('theme-btn-twotone');
             const btnDark = document.getElementById('theme-btn-stealth');
 
             if (mode === 'twotone') {
-                if (heroCard) {
-                    heroCard.classList.remove('bg-neutral-950', 'border-neutral-800');
-                    heroCard.classList.add('framer-white-card', 'border-neutral-300');
-                }
+                themeCards.forEach(card => {
+                    card.classList.remove('bg-neutral-950', 'border-neutral-800', 'text-white');
+                    card.classList.add('framer-white-card', 'border-neutral-300', 'text-black');
+                });
                 if (heroTitle) {
                     heroTitle.classList.remove('text-white');
                     heroTitle.classList.add('text-black');
@@ -2308,10 +2344,10 @@
                     btnDark.className = "px-2.5 py-0.5 rounded-full text-neutral-400 hover:text-white transition flex items-center gap-1";
                 }
             } else {
-                if (heroCard) {
-                    heroCard.classList.remove('framer-white-card', 'border-neutral-300');
-                    heroCard.classList.add('bg-neutral-950', 'border-neutral-800');
-                }
+                themeCards.forEach(card => {
+                    card.classList.remove('framer-white-card', 'border-neutral-300', 'text-black');
+                    card.classList.add('bg-neutral-950', 'border-neutral-800', 'text-white');
+                });
                 if (heroTitle) {
                     heroTitle.classList.remove('text-black');
                     heroTitle.classList.add('text-white');
