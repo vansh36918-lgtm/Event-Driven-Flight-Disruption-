@@ -192,15 +192,34 @@
                 <p class="text-xs text-neutral-600 font-sans">Instant commercial & private jet charter booking with integrated UPI, Card, and Sabre settlement.</p>
             </div>
 
-            <!-- Step 1: Flight Selection Summary -->
-            <div class="bg-neutral-100 p-4 rounded-2xl border border-neutral-300 space-y-2 text-xs mono">
-                <div class="flex items-center justify-between">
-                    <span class="font-bold text-neutral-600">SELECTED SECTOR:</span>
-                    <span id="booking-route-display" class="font-black text-black text-sm">DEL &rarr; BOM (New Delhi to Mumbai)</span>
+            <!-- Step 1: Pan-India State & City Sector Selector -->
+            <div class="bg-neutral-100 p-4 rounded-2xl border border-neutral-300 space-y-3 text-xs mono">
+                <div class="flex items-center justify-between border-b border-neutral-300 pb-2">
+                    <span class="font-bold text-neutral-700 text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-map-location-dot text-black"></i> SELECT STATE / CITY ROUTE
+                    </span>
+                    <span id="booking-badge-sector" class="px-2 py-0.5 rounded-full bg-black text-white text-[9px] font-bold">ALL STATES & METROS</span>
                 </div>
-                <div class="flex items-center justify-between text-[11px] text-neutral-700">
-                    <span>Flight: <strong id="booking-flt-num" class="text-black">6E204</strong> &bull; Scheduled 06:15 UTC</span>
-                    <span class="px-2 py-0.5 rounded-full bg-black text-white text-[9px] font-bold">CONFIRMED SEATS</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-neutral-600 text-[10px] uppercase font-bold mb-1">From (Origin State / City)</label>
+                        <select id="modal-origin-select" onchange="onModalSectorChanged()" class="w-full bg-white border border-neutral-300 rounded-xl px-2.5 py-2 text-black font-semibold text-xs focus:outline-none focus:border-black shadow-sm">
+                            <!-- Populated with all major Indian states and cities -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-neutral-600 text-[10px] uppercase font-bold mb-1">To (Destination State / City)</label>
+                        <select id="modal-dest-select" onchange="onModalSectorChanged()" class="w-full bg-white border border-neutral-300 rounded-xl px-2.5 py-2 text-black font-semibold text-xs focus:outline-none focus:border-black shadow-sm">
+                            <!-- Populated with all major Indian states and cities -->
+                        </select>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center justify-between text-[11px] text-neutral-700 pt-1 border-t border-neutral-200">
+                    <div class="flex items-center gap-2">
+                        <span>Flight: <strong id="booking-flt-num" class="text-black bg-neutral-200 px-2 py-0.5 rounded font-black">6E204</strong></span>
+                        <span id="booking-duration-display" class="text-neutral-500 font-medium">• 2h 10m Non-Stop</span>
+                    </div>
+                    <div id="booking-route-display" class="font-bold text-black text-xs">DEL &rarr; BOM (New Delhi to Mumbai)</div>
                 </div>
             </div>
 
@@ -211,17 +230,17 @@
                     <button type="button" onclick="selectBookingTier('ECONOMY', 6450)" id="tier-btn-ECONOMY" class="booking-tier-pill p-3 rounded-2xl border-2 border-black bg-white text-black font-bold text-left transition shadow-sm">
                         <div class="text-[10px] text-neutral-500">COMMERCIAL</div>
                         <div class="font-black text-sm">Economy</div>
-                        <div class="text-xs mt-1">₹6,450 <span class="text-[9px] text-neutral-500">/ $78</span></div>
+                        <div id="tier-price-ECONOMY" class="text-xs mt-1">₹6,450 <span class="text-[9px] text-neutral-500">/ $78</span></div>
                     </button>
                     <button type="button" onclick="selectBookingTier('BUSINESS', 18900)" id="tier-btn-BUSINESS" class="booking-tier-pill p-3 rounded-2xl border border-neutral-300 bg-neutral-50 text-neutral-700 font-medium text-left hover:border-black transition">
                         <div class="text-[10px] text-neutral-500">EXECUTIVE</div>
                         <div class="font-black text-sm text-black">Business J</div>
-                        <div class="text-xs mt-1 text-black font-bold">₹18,900 <span class="text-[9px] text-neutral-500">/ $228</span></div>
+                        <div id="tier-price-BUSINESS" class="text-xs mt-1 text-black font-bold">₹18,900 <span class="text-[9px] text-neutral-500">/ $228</span></div>
                     </button>
                     <button type="button" onclick="selectBookingTier('CHARTER', 245000)" id="tier-btn-CHARTER" class="booking-tier-pill p-3 rounded-2xl border border-neutral-300 bg-neutral-50 text-neutral-700 font-medium text-left hover:border-black transition">
                         <div class="text-[10px] text-neutral-500">FLAGSHIP</div>
                         <div class="font-black text-sm text-black">Private Jet</div>
-                        <div class="text-xs mt-1 text-black font-bold">₹2,45,000 <span class="text-[9px] text-neutral-500">/ $2,950</span></div>
+                        <div id="tier-price-CHARTER" class="text-xs mt-1 text-black font-bold">₹2,45,000 <span class="text-[9px] text-neutral-500">/ $2,950</span></div>
                     </button>
                 </div>
             </div>
@@ -554,31 +573,86 @@
                     <!-- Origin & Destination Inputs -->
                     <div class="space-y-3 text-xs mono">
                         <div>
-                            <label class="block text-neutral-400 text-[10px] uppercase font-bold mb-1">From (Origin Hub)</label>
+                            <label class="block text-neutral-400 text-[10px] uppercase font-bold mb-1">From (Origin State / Hub)</label>
                             <select id="hero-origin-select" class="w-full bg-black border border-neutral-700 rounded-xl px-3 py-2 text-white font-medium focus:outline-none focus:border-white">
-                                <option value="DEL" selected>DEL - Indira Gandhi International (New Delhi)</option>
-                                <option value="BOM">BOM - Chhatrapati Shivaji Maharaj (Mumbai)</option>
-                                <option value="BLR">BLR - Kempegowda International (Bengaluru)</option>
-                                <option value="HYD">HYD - Rajiv Gandhi International (Hyderabad)</option>
-                                <option value="MAA">MAA - Chennai International</option>
-                                <option value="CCU">CCU - Netaji Subhash Chandra Bose (Kolkata)</option>
-                                <option value="GOI">GOI - Goa Dabolim / MOPA</option>
-                                <option value="JFK">JFK - New York John F. Kennedy</option>
-                                <option value="ORD">ORD - Chicago O'Hare</option>
+                                <optgroup label="⭐ Major Indian States & Metros">
+                                    <option value="DEL" selected>DEL - New Delhi (Delhi NCR)</option>
+                                    <option value="BOM">BOM - Mumbai (Maharashtra)</option>
+                                    <option value="BLR">BLR - Bengaluru (Karnataka)</option>
+                                    <option value="HYD">HYD - Hyderabad (Telangana)</option>
+                                    <option value="MAA">MAA - Chennai (Tamil Nadu)</option>
+                                    <option value="CCU">CCU - Kolkata (West Bengal)</option>
+                                    <option value="AMD">AMD - Ahmedabad (Gujarat)</option>
+                                    <option value="GOI">GOI - Goa Dabolim / MOPA (Goa)</option>
+                                    <option value="PNQ">PNQ - Pune (Maharashtra)</option>
+                                </optgroup>
+                                <optgroup label="🏛️ North & Central India">
+                                    <option value="JAI">JAI - Jaipur (Rajasthan)</option>
+                                    <option value="LKO">LKO - Lucknow (Uttar Pradesh)</option>
+                                    <option value="IXC">IXC - Chandigarh (Punjab / Haryana)</option>
+                                    <option value="SXR">SXR - Srinagar (Jammu & Kashmir)</option>
+                                    <option value="VNS">VNS - Varanasi (Uttar Pradesh)</option>
+                                    <option value="PAT">PAT - Patna (Bihar)</option>
+                                    <option value="IDR">IDR - Indore (Madhya Pradesh)</option>
+                                    <option value="ATQ">ATQ - Amritsar (Punjab)</option>
+                                </optgroup>
+                                <optgroup label="🌴 South & East / North East India">
+                                    <option value="COK">COK - Kochi / Cochin (Kerala)</option>
+                                    <option value="TRV">TRV - Thiruvananthapuram (Kerala)</option>
+                                    <option value="BBI">BBI - Bhubaneswar (Odisha)</option>
+                                    <option value="GAU">GAU - Guwahati (Assam / North East)</option>
+                                    <option value="IXB">IXB - Bagdogra / Siliguri (West Bengal)</option>
+                                </optgroup>
+                                <optgroup label="🌐 Global Connectors">
+                                    <option value="DXB">DXB - Dubai International (UAE)</option>
+                                    <option value="SIN">SIN - Singapore Changi</option>
+                                    <option value="BKK">BKK - Bangkok Suvarnabhumi</option>
+                                    <option value="LHR">LHR - London Heathrow (UK)</option>
+                                    <option value="JFK">JFK - New York JFK (USA)</option>
+                                    <option value="ORD">ORD - Chicago O'Hare (USA)</option>
+                                </optgroup>
                             </select>
                         </div>
 
                         <div>
-                            <label class="block text-neutral-400 text-[10px] uppercase font-bold mb-1">To (Destination)</label>
+                            <label class="block text-neutral-400 text-[10px] uppercase font-bold mb-1">To (Destination State / Hub)</label>
                             <select id="hero-dest-select" class="w-full bg-black border border-neutral-700 rounded-xl px-3 py-2 text-white font-medium focus:outline-none focus:border-white">
-                                <option value="BOM" selected>BOM - Chhatrapati Shivaji Maharaj (Mumbai)</option>
-                                <option value="DEL">DEL - Indira Gandhi International (New Delhi)</option>
-                                <option value="BLR">BLR - Kempegowda International (Bengaluru)</option>
-                                <option value="HYD">HYD - Rajiv Gandhi International (Hyderabad)</option>
-                                <option value="GOI">GOI - Goa Dabolim / MOPA</option>
-                                <option value="DXB">DXB - Dubai International (Connecting)</option>
-                                <option value="LHR">LHR - London Heathrow (Connecting)</option>
-                                <option value="JFK">JFK - New York JFK</option>
+                                <optgroup label="⭐ Major Indian States & Metros">
+                                    <option value="BOM" selected>BOM - Mumbai (Maharashtra)</option>
+                                    <option value="DEL">DEL - New Delhi (Delhi NCR)</option>
+                                    <option value="BLR">BLR - Bengaluru (Karnataka)</option>
+                                    <option value="HYD">HYD - Hyderabad (Telangana)</option>
+                                    <option value="MAA">MAA - Chennai (Tamil Nadu)</option>
+                                    <option value="CCU">CCU - Kolkata (West Bengal)</option>
+                                    <option value="AMD">AMD - Ahmedabad (Gujarat)</option>
+                                    <option value="GOI">GOI - Goa Dabolim / MOPA (Goa)</option>
+                                    <option value="PNQ">PNQ - Pune (Maharashtra)</option>
+                                </optgroup>
+                                <optgroup label="🏛️ North & Central India">
+                                    <option value="JAI">JAI - Jaipur (Rajasthan)</option>
+                                    <option value="LKO">LKO - Lucknow (Uttar Pradesh)</option>
+                                    <option value="IXC">IXC - Chandigarh (Punjab / Haryana)</option>
+                                    <option value="SXR">SXR - Srinagar (Jammu & Kashmir)</option>
+                                    <option value="VNS">VNS - Varanasi (Uttar Pradesh)</option>
+                                    <option value="PAT">PAT - Patna (Bihar)</option>
+                                    <option value="IDR">IDR - Indore (Madhya Pradesh)</option>
+                                    <option value="ATQ">ATQ - Amritsar (Punjab)</option>
+                                </optgroup>
+                                <optgroup label="🌴 South & East / North East India">
+                                    <option value="COK">COK - Kochi / Cochin (Kerala)</option>
+                                    <option value="TRV">TRV - Thiruvananthapuram (Kerala)</option>
+                                    <option value="BBI">BBI - Bhubaneswar (Odisha)</option>
+                                    <option value="GAU">GAU - Guwahati (Assam / North East)</option>
+                                    <option value="IXB">IXB - Bagdogra / Siliguri (West Bengal)</option>
+                                </optgroup>
+                                <optgroup label="🌐 Global Connectors">
+                                    <option value="DXB">DXB - Dubai International (UAE)</option>
+                                    <option value="SIN">SIN - Singapore Changi</option>
+                                    <option value="BKK">BKK - Bangkok Suvarnabhumi</option>
+                                    <option value="LHR">LHR - London Heathrow (UK)</option>
+                                    <option value="JFK">JFK - New York JFK (USA)</option>
+                                    <option value="ORD">ORD - Chicago O'Hare (USA)</option>
+                                </optgroup>
                             </select>
                         </div>
 
@@ -600,12 +674,20 @@
 
                         <!-- Quick Indian Sector Pills with Active Highlights -->
                         <div class="pt-1">
-                            <div class="text-[9px] text-neutral-500 uppercase mb-1">Quick Select Flight:</div>
-                            <div class="flex flex-wrap gap-1.5 text-[10px]">
-                                <button type="button" id="quick-flt-6E204" onclick="setQuickFlight('6E204', 'DEL', 'BOM')" class="px-2.5 py-1 rounded-full bg-white text-black font-bold border border-white transition flex items-center gap-1.5 shadow-sm"><i class="fa-solid fa-plane-departure text-[9px]"></i> 6E204 (DEL-BOM)</button>
-                                <button type="button" id="quick-flt-AI803" onclick="setQuickFlight('AI803', 'DEL', 'BOM')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> AI803 (DEL-BOM)</button>
-                                <button type="button" id="quick-flt-QP1102" onclick="setQuickFlight('QP1102', 'DEL', 'BOM')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> QP1102 (DEL-BOM)</button>
-                                <button type="button" id="quick-flt-6E712" onclick="setQuickFlight('6E712', 'DEL', 'BLR')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> 6E712 (DEL-BLR)</button>
+                            <div class="text-[9px] text-neutral-500 uppercase mb-1">Quick Select Indian Sectors:</div>
+                            <div class="flex flex-wrap gap-1 text-[10px]">
+                                <button type="button" id="quick-flt-6E204" onclick="setQuickFlight('6E204', 'DEL', 'BOM')" class="quick-flt-btn px-2 py-0.5 rounded-full bg-white text-black font-bold border border-white transition flex items-center gap-1 shadow-sm"><i class="fa-solid fa-plane-departure text-[8px]"></i> DEL-BOM</button>
+                                <button type="button" id="quick-flt-6E712" onclick="setQuickFlight('6E712', 'DEL', 'BLR')" class="quick-flt-btn px-2 py-0.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1"><i class="fa-solid fa-plane-departure text-[8px]"></i> DEL-BLR</button>
+                                <button type="button" id="quick-flt-6E331" onclick="setQuickFlight('6E331', 'BOM', 'GOI')" class="quick-flt-btn px-2 py-0.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1"><i class="fa-solid fa-plane-departure text-[8px]"></i> BOM-GOI</button>
+                                <button type="button" id="quick-flt-6E401" onclick="setQuickFlight('6E401', 'DEL', 'HYD')" class="quick-flt-btn px-2 py-0.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1"><i class="fa-solid fa-plane-departure text-[8px]"></i> DEL-HYD</button>
+                                <button type="button" id="quick-flt-6E209" onclick="setQuickFlight('6E209', 'DEL', 'MAA')" class="quick-flt-btn px-2 py-0.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1"><i class="fa-solid fa-plane-departure text-[8px]"></i> DEL-MAA</button>
+                                <button type="button" id="quick-flt-6E214" onclick="setQuickFlight('6E214', 'DEL', 'CCU')" class="quick-flt-btn px-2 py-0.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1"><i class="fa-solid fa-plane-departure text-[8px]"></i> DEL-CCU</button>
+                                <button type="button" id="quick-flt-6E125" onclick="setQuickFlight('6E125', 'DEL', 'AMD')" class="quick-flt-btn px-2 py-0.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1"><i class="fa-solid fa-plane-departure text-[8px]"></i> DEL-AMD</button>
+                                <button type="button" id="quick-flt-6E745" onclick="setQuickFlight('6E745', 'DEL', 'JAI')" class="quick-flt-btn px-2 py-0.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1"><i class="fa-solid fa-plane-departure text-[8px]"></i> DEL-JAI</button>
+                                <button type="button" id="quick-flt-6E2021" onclick="setQuickFlight('6E2021', 'DEL', 'SXR')" class="quick-flt-btn px-2 py-0.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1"><i class="fa-solid fa-plane-departure text-[8px]"></i> DEL-SXR</button>
+                                <button type="button" id="quick-flt-6E2101" onclick="setQuickFlight('6E2101', 'DEL', 'COK')" class="quick-flt-btn px-2 py-0.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1"><i class="fa-solid fa-plane-departure text-[8px]"></i> DEL-COK</button>
+                                <button type="button" id="quick-flt-6E2012" onclick="setQuickFlight('6E2012', 'DEL', 'LKO')" class="quick-flt-btn px-2 py-0.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1"><i class="fa-solid fa-plane-departure text-[8px]"></i> DEL-LKO</button>
+                                <button type="button" id="quick-flt-6E903" onclick="setQuickFlight('6E903', 'BOM', 'DXB')" class="quick-flt-btn px-2 py-0.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1"><i class="fa-solid fa-plane-departure text-[8px]"></i> BOM-DXB</button>
                             </div>
                         </div>
 
@@ -1847,20 +1929,20 @@
         }
 
         function setQuickFlight(flt, orig, dest) {
-            document.getElementById('hero-pnr-input').value = flt;
-            document.getElementById('hero-origin-select').value = orig;
-            document.getElementById('hero-dest-select').value = dest;
+            const pnrInput = document.getElementById('hero-pnr-input');
+            const origSelect = document.getElementById('hero-origin-select');
+            const destSelect = document.getElementById('hero-dest-select');
+            if (pnrInput) pnrInput.value = flt;
+            if (origSelect) origSelect.value = orig;
+            if (destSelect) destSelect.value = dest;
             const selFlt = document.getElementById('select-flight');
             if (selFlt) selFlt.value = flt;
 
-            ['6E204', 'AI803', 'QP1102', '6E712'].forEach(f => {
-                const btn = document.getElementById(`quick-flt-${f}`);
-                if (btn) {
-                    if (f === flt) {
-                        btn.className = "px-2.5 py-1 rounded-full bg-white text-black font-bold border border-white transition flex items-center gap-1.5 shadow-sm";
-                    } else {
-                        btn.className = "px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5";
-                    }
+            document.querySelectorAll('.quick-flt-btn').forEach(btn => {
+                if (btn.id === `quick-flt-${flt}`) {
+                    btn.className = "quick-flt-btn px-2 py-0.5 rounded-full bg-white text-black font-bold border border-white transition flex items-center gap-1 shadow-sm";
+                } else {
+                    btn.className = "quick-flt-btn px-2 py-0.5 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1";
                 }
             });
         }
@@ -1896,17 +1978,65 @@
         // Flight Booking & Integrated Payment Gateway Checkout System
         // ============================================================
         const AIRPORT_CITIES = {
-            'DEL': 'New Delhi',
-            'BOM': 'Mumbai',
-            'BLR': 'Bengaluru',
-            'HYD': 'Hyderabad',
-            'MAA': 'Chennai',
-            'CCU': 'Kolkata',
-            'GOI': 'Goa',
-            'JFK': 'New York',
-            'ORD': 'Chicago',
-            'DXB': 'Dubai',
-            'LHR': 'London'
+            'DEL': 'New Delhi, Delhi NCR',
+            'BOM': 'Mumbai, Maharashtra',
+            'BLR': 'Bengaluru, Karnataka',
+            'HYD': 'Hyderabad, Telangana',
+            'MAA': 'Chennai, Tamil Nadu',
+            'CCU': 'Kolkata, West Bengal',
+            'GOI': 'Goa (Dabolim / MOPA), Goa',
+            'AMD': 'Ahmedabad, Gujarat',
+            'PNQ': 'Pune, Maharashtra',
+            'JAI': 'Jaipur, Rajasthan',
+            'COK': 'Kochi, Kerala',
+            'LKO': 'Lucknow, Uttar Pradesh',
+            'IXC': 'Chandigarh, Punjab/Haryana',
+            'GAU': 'Guwahati, Assam',
+            'SXR': 'Srinagar, Jammu & Kashmir',
+            'BBI': 'Bhubaneswar, Odisha',
+            'VNS': 'Varanasi, Uttar Pradesh',
+            'PAT': 'Patna, Bihar',
+            'IDR': 'Indore, Madhya Pradesh',
+            'ATQ': 'Amritsar, Punjab',
+            'TRV': 'Thiruvananthapuram, Kerala',
+            'IXB': 'Bagdogra / Siliguri, West Bengal',
+            'DXB': 'Dubai, UAE',
+            'SIN': 'Singapore Changi',
+            'BKK': 'Bangkok Suvarnabhumi, Thailand',
+            'LHR': 'London Heathrow, UK',
+            'JFK': 'New York JFK, USA',
+            'ORD': 'Chicago O\'Hare, USA'
+        };
+
+        const AIRPORT_COORDS = {
+            "DEL": [28.5562, 77.1000],
+            "BOM": [19.0896, 72.8656],
+            "BLR": [13.1986, 77.7066],
+            "HYD": [17.2403, 78.4294],
+            "MAA": [12.9941, 80.1709],
+            "CCU": [22.6547, 88.4467],
+            "AMD": [23.0772, 72.6347],
+            "GOI": [15.3808, 73.8314],
+            "PNQ": [18.5822, 73.9197],
+            "JAI": [26.8242, 75.8122],
+            "COK": [10.1520, 76.3920],
+            "LKO": [26.7606, 80.8893],
+            "IXC": [30.6735, 76.7885],
+            "GAU": [26.1061, 91.5859],
+            "SXR": [33.9871, 74.7741],
+            "BBI": [20.2444, 85.8178],
+            "VNS": [25.4524, 82.8593],
+            "PAT": [25.5913, 85.0880],
+            "IDR": [22.7218, 75.8011],
+            "ATQ": [31.7096, 74.7973],
+            "TRV": [8.4821, 76.9200],
+            "IXB": [26.6812, 88.3286],
+            "DXB": [25.2532, 55.3657],
+            "SIN": [1.3644, 103.9915],
+            "BKK": [13.6900, 100.7501],
+            "LHR": [51.4700, -0.4543],
+            "JFK": [40.6413, -73.7781],
+            "ORD": [41.9742, -87.9073]
         };
 
         let currentBookingTier = 'ECONOMY';
@@ -1915,6 +2045,165 @@
         let bookingFlightNumber = '6E204';
         let bookingOrigin = 'DEL';
         let bookingDestination = 'BOM';
+
+        function calculateSectorDistanceKm(orig, dest) {
+            const c1 = AIRPORT_COORDS[orig] || [28.5562, 77.1000];
+            const c2 = AIRPORT_COORDS[dest] || [19.0896, 72.8656];
+            const R = 6371;
+            const dLat = (c2[0] - c1[0]) * Math.PI / 180;
+            const dLon = (c2[1] - c1[1]) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(c1[0] * Math.PI / 180) * Math.cos(c2[0] * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return Math.max(120, Math.round(R * c));
+        }
+
+        function getSectorFares(orig, dest) {
+            const isIntlLong = ['LHR', 'JFK', 'ORD'].includes(orig) || ['LHR', 'JFK', 'ORD'].includes(dest);
+            const isIntlShort = ['DXB', 'SIN', 'BKK'].includes(orig) || ['DXB', 'SIN', 'BKK'].includes(dest);
+            const dist = calculateSectorDistanceKm(orig, dest);
+
+            if (isIntlLong) {
+                const hrs = Math.max(7, Math.floor(dist / 820));
+                const mins = Math.round((dist % 820) / 14);
+                return {
+                    distance: dist,
+                    duration: `${hrs}h ${mins}m`,
+                    rates: { 'ECONOMY': 48500, 'BUSINESS': 142000, 'CHARTER': 850000 }
+                };
+            }
+            if (isIntlShort) {
+                const hrs = Math.max(3, Math.floor(dist / 720));
+                const mins = Math.round((dist % 720) / 12);
+                return {
+                    distance: dist,
+                    duration: `${hrs}h ${mins}m`,
+                    rates: { 'ECONOMY': 18500, 'BUSINESS': 54000, 'CHARTER': 650000 }
+                };
+            }
+
+            if (dist <= 550) {
+                return {
+                    distance: dist,
+                    duration: `1h 05m`,
+                    rates: { 'ECONOMY': 3850, 'BUSINESS': 11900, 'CHARTER': 165000 }
+                };
+            } else if (dist <= 1500) {
+                const hrs = Math.max(1, Math.floor(dist / 650));
+                const mins = Math.max(15, Math.round((dist % 650) / 11));
+                return {
+                    distance: dist,
+                    duration: `${hrs}h ${mins}m`,
+                    rates: { 'ECONOMY': 6450, 'BUSINESS': 18900, 'CHARTER': 245000 }
+                };
+            } else {
+                const hrs = Math.floor(dist / 680);
+                const mins = Math.max(10, Math.round((dist % 680) / 12));
+                return {
+                    distance: dist,
+                    duration: `${hrs}h ${mins}m`,
+                    rates: { 'ECONOMY': 8950, 'BUSINESS': 24500, 'CHARTER': 315000 }
+                };
+            }
+        }
+
+        function populateModalSectors() {
+            const heroOrig = document.getElementById('hero-origin-select');
+            const modalOrig = document.getElementById('modal-origin-select');
+            const modalDest = document.getElementById('modal-dest-select');
+            if (heroOrig && modalOrig && modalDest) {
+                if (modalOrig.options.length === 0) {
+                    modalOrig.innerHTML = heroOrig.innerHTML;
+                }
+                if (modalDest.options.length === 0) {
+                    modalDest.innerHTML = heroOrig.innerHTML;
+                }
+            }
+        }
+
+        function onModalSectorChanged() {
+            const modalOrig = document.getElementById('modal-origin-select');
+            const modalDest = document.getElementById('modal-dest-select');
+            if (!modalOrig || !modalDest) return;
+
+            let orig = modalOrig.value;
+            let dest = modalDest.value;
+
+            if (orig === dest) {
+                dest = (orig === 'DEL') ? 'BOM' : 'DEL';
+                modalDest.value = dest;
+            }
+
+            bookingOrigin = orig;
+            bookingDestination = dest;
+
+            // Sync with hero inputs
+            const heroOrig = document.getElementById('hero-origin-select');
+            const heroDest = document.getElementById('hero-dest-select');
+            if (heroOrig) heroOrig.value = orig;
+            if (heroDest) heroDest.value = dest;
+
+            // Resolve or generate flight number
+            if (cachedFlights && cachedFlights.length > 0) {
+                const match = cachedFlights.find(f => f.origin === orig && f.destination === dest);
+                if (match) {
+                    bookingFlightNumber = match.flight_number;
+                } else {
+                    const rnd = 200 + ((orig.charCodeAt(0) * 13 + dest.charCodeAt(0) * 7) % 790);
+                    bookingFlightNumber = `6E${rnd}`;
+                }
+            } else {
+                bookingFlightNumber = `6E${200 + (orig.charCodeAt(0) % 500)}`;
+            }
+
+            const heroPnr = document.getElementById('hero-pnr-input');
+            if (heroPnr) heroPnr.value = bookingFlightNumber;
+
+            updateSectorDisplayAndPricing();
+        }
+
+        function updateSectorDisplayAndPricing() {
+            const routeEl = document.getElementById('booking-route-display');
+            const fltEl = document.getElementById('booking-flt-num');
+            const durEl = document.getElementById('booking-duration-display');
+
+            const origCity = AIRPORT_CITIES[bookingOrigin] || bookingOrigin;
+            const destCity = AIRPORT_CITIES[bookingDestination] || bookingDestination;
+            const fareInfo = getSectorFares(bookingOrigin, bookingDestination);
+
+            if (routeEl) {
+                routeEl.innerHTML = `${bookingOrigin} &rarr; ${bookingDestination} (${origCity.split(',')[0]} to ${destCity.split(',')[0]})`;
+            }
+            if (fltEl) fltEl.innerText = bookingFlightNumber;
+            if (durEl) durEl.innerText = `• ${fareInfo.duration} Non-Stop (${fareInfo.distance} km)`;
+
+            // Update tier prices
+            const ecoPrice = fareInfo.rates['ECONOMY'];
+            const bizPrice = fareInfo.rates['BUSINESS'];
+            const chaPrice = fareInfo.rates['CHARTER'];
+
+            const ecoPriceEl = document.getElementById('tier-price-ECONOMY');
+            const bizPriceEl = document.getElementById('tier-price-BUSINESS');
+            const chaPriceEl = document.getElementById('tier-price-CHARTER');
+
+            if (ecoPriceEl) ecoPriceEl.innerHTML = `₹${ecoPrice.toLocaleString('en-IN')} <span class="text-[9px] text-neutral-500">/ $${Math.round(ecoPrice/83)}</span>`;
+            if (bizPriceEl) bizPriceEl.innerHTML = `₹${bizPrice.toLocaleString('en-IN')} <span class="text-[9px] text-neutral-500">/ $${Math.round(bizPrice/83)}</span>`;
+            if (chaPriceEl) chaPriceEl.innerHTML = `₹${chaPrice.toLocaleString('en-IN')} <span class="text-[9px] text-neutral-500">/ $${Math.round(chaPrice/83)}</span>`;
+
+            // Update onclick handlers with new sector fares
+            const btnEco = document.getElementById('tier-btn-ECONOMY');
+            const btnBiz = document.getElementById('tier-btn-BUSINESS');
+            const btnCha = document.getElementById('tier-btn-CHARTER');
+
+            if (btnEco) btnEco.onclick = () => selectBookingTier('ECONOMY', ecoPrice);
+            if (btnBiz) btnBiz.onclick = () => selectBookingTier('BUSINESS', bizPrice);
+            if (btnCha) btnCha.onclick = () => selectBookingTier('CHARTER', chaPrice);
+
+            // Re-apply current tier with updated rate
+            const activeRate = fareInfo.rates[currentBookingTier] || ecoPrice;
+            selectBookingTier(currentBookingTier, activeRate);
+        }
 
         function openBookingFromHero() {
             const orig = document.getElementById('hero-origin-select')?.value || 'DEL';
@@ -1936,19 +2225,17 @@
             bookingOrigin = orig || document.getElementById('hero-origin-select')?.value || 'DEL';
             bookingDestination = dest || document.getElementById('hero-dest-select')?.value || 'BOM';
 
-            const routeEl = document.getElementById('booking-route-display');
-            const fltEl = document.getElementById('booking-flt-num');
-            const modalEl = document.getElementById('booking-checkout-modal');
+            populateModalSectors();
 
-            const origCity = AIRPORT_CITIES[bookingOrigin] || bookingOrigin;
-            const destCity = AIRPORT_CITIES[bookingDestination] || bookingDestination;
+            const modalOrig = document.getElementById('modal-origin-select');
+            const modalDest = document.getElementById('modal-dest-select');
+            if (modalOrig) modalOrig.value = bookingOrigin;
+            if (modalDest) modalDest.value = bookingDestination;
 
-            if (routeEl) routeEl.innerHTML = `${bookingOrigin} &rarr; ${bookingDestination} (${origCity} to ${destCity})`;
-            if (fltEl) fltEl.innerText = bookingFlightNumber;
-
-            selectBookingTier('ECONOMY', 6450);
+            updateSectorDisplayAndPricing();
             selectPaymentMethod('UPI');
 
+            const modalEl = document.getElementById('booking-checkout-modal');
             if (modalEl) {
                 modalEl.classList.remove('hidden');
             }

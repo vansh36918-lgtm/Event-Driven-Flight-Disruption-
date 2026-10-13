@@ -87,20 +87,115 @@ class GDSService:
                     self.flights[flight_num] = flight
                     self.flight_to_pnrs[flight_num] = []
 
-        # Seed Indian Domestic & International Corridor (IndiGo 6E, Air India AI, Akasa QP, Vistara UK)
+        # Seed Pan-India Domestic & International Corridor (IndiGo 6E, Air India AI, Akasa QP, Vistara UK)
         indian_routes = [
+            # Delhi <-> Mumbai (Maharashtra)
             ("6E204", "6E", "DEL", "BOM", 0, 130, "A321neo"),
             ("AI803", "AI", "DEL", "BOM", 1, 125, "B787-8"),
             ("UK995", "UK", "DEL", "BOM", 2, 130, "A320neo"),
             ("QP1102", "QP", "DEL", "BOM", 3, 135, "B737 MAX"),
             ("6E505", "6E", "BOM", "DEL", 0, 130, "A320neo"),
             ("AI804", "AI", "BOM", "DEL", 2, 125, "B787-8"),
+            # Delhi <-> Bengaluru (Karnataka)
             ("6E712", "6E", "DEL", "BLR", 0, 170, "A321neo"),
             ("AI506", "AI", "DEL", "BLR", 2, 165, "A320neo"),
             ("QP1420", "QP", "BLR", "DEL", 1, 175, "B737 MAX"),
+            ("6E719", "6E", "BLR", "DEL", 3, 170, "A321neo"),
+            # Delhi <-> Hyderabad (Telangana)
+            ("6E401", "6E", "DEL", "HYD", 1, 135, "A320neo"),
+            ("AI542", "AI", "DEL", "HYD", 2, 130, "A320neo"),
+            ("6E406", "6E", "HYD", "DEL", 3, 135, "A320neo"),
+            # Delhi <-> Chennai (Tamil Nadu)
+            ("6E209", "6E", "DEL", "MAA", 0, 175, "A321neo"),
+            ("AI440", "AI", "DEL", "MAA", 2, 170, "A320neo"),
+            ("6E212", "6E", "MAA", "DEL", 1, 175, "A321neo"),
+            # Delhi <-> Kolkata (West Bengal)
+            ("6E214", "6E", "DEL", "CCU", 1, 130, "A320neo"),
+            ("AI701", "AI", "DEL", "CCU", 2, 125, "A320neo"),
+            ("6E217", "6E", "CCU", "DEL", 3, 130, "A320neo"),
+            # Delhi <-> Ahmedabad (Gujarat)
+            ("6E125", "6E", "DEL", "AMD", 0, 95, "A320neo"),
+            ("AI017", "AI", "DEL", "AMD", 2, 90, "A320neo"),
+            ("6E128", "6E", "AMD", "DEL", 1, 95, "A320neo"),
+            # Delhi <-> Goa (Goa)
+            ("6E611", "6E", "DEL", "GOI", 1, 155, "A321neo"),
+            ("AI885", "AI", "DEL", "GOI", 3, 150, "A320neo"),
+            ("6E614", "6E", "GOI", "DEL", 2, 155, "A321neo"),
+            # Delhi <-> Jaipur (Rajasthan)
+            ("6E745", "6E", "DEL", "JAI", 0, 55, "ATR-72"),
+            ("AI491", "AI", "DEL", "JAI", 2, 50, "A320neo"),
+            ("6E748", "6E", "JAI", "DEL", 1, 55, "ATR-72"),
+            # Delhi <-> Lucknow (Uttar Pradesh)
+            ("6E2012", "6E", "DEL", "LKO", 0, 65, "A320neo"),
+            ("AI431", "AI", "DEL", "LKO", 2, 60, "A320neo"),
+            ("6E2015", "6E", "LKO", "DEL", 1, 65, "A320neo"),
+            # Delhi <-> Chandigarh (Punjab/Haryana)
+            ("6E2112", "6E", "DEL", "IXC", 0, 55, "ATR-72"),
+            ("AI463", "AI", "DEL", "IXC", 2, 50, "A320neo"),
+            # Delhi <-> Srinagar (Jammu & Kashmir)
+            ("6E2021", "6E", "DEL", "SXR", 1, 95, "A320neo"),
+            ("AI825", "AI", "DEL", "SXR", 2, 90, "A320neo"),
+            ("UK611", "UK", "DEL", "SXR", 3, 95, "A320neo"),
+            # Delhi <-> Kochi (Kerala)
+            ("6E2101", "6E", "DEL", "COK", 0, 195, "A321neo"),
+            ("AI512", "AI", "DEL", "COK", 2, 190, "A320neo"),
+            # Delhi <-> Guwahati (Assam / North East)
+            ("6E6351", "6E", "DEL", "GAU", 1, 145, "A320neo"),
+            ("AI729", "AI", "DEL", "GAU", 2, 140, "A320neo"),
+            # Delhi <-> Patna (Bihar)
+            ("6E2191", "6E", "DEL", "PAT", 0, 100, "A320neo"),
+            ("AI409", "AI", "DEL", "PAT", 2, 95, "A320neo"),
+            # Delhi <-> Varanasi (Uttar Pradesh)
+            ("6E2201", "6E", "DEL", "VNS", 1, 85, "A320neo"),
+            ("AI405", "AI", "DEL", "VNS", 3, 80, "A320neo"),
+            # Delhi <-> Bhubaneswar (Odisha)
+            ("6E2071", "6E", "DEL", "BBI", 1, 125, "A320neo"),
+            ("AI477", "AI", "DEL", "BBI", 2, 120, "A320neo"),
+            # Delhi <-> Indore (Madhya Pradesh)
+            ("6E2431", "6E", "DEL", "IDR", 0, 85, "A320neo"),
+            ("AI635", "AI", "DEL", "IDR", 2, 80, "A320neo"),
+            # Delhi <-> Amritsar (Punjab)
+            ("6E2145", "6E", "DEL", "ATQ", 1, 65, "A320neo"),
+            ("AI453", "AI", "DEL", "ATQ", 2, 60, "A320neo"),
+            # Mumbai <-> Bengaluru
+            ("6E455", "6E", "BOM", "BLR", 0, 100, "A320neo"),
+            ("AI609", "AI", "BOM", "BLR", 2, 95, "A320neo"),
+            ("QP1312", "QP", "BOM", "BLR", 3, 100, "B737 MAX"),
+            # Mumbai <-> Goa
             ("6E331", "6E", "BOM", "GOI", 0, 75, "A320neo"),
             ("AI685", "AI", "BOM", "GOI", 2, 70, "A320neo"),
+            ("QP1512", "QP", "BOM", "GOI", 1, 75, "B737 MAX"),
+            ("6E334", "6E", "GOI", "BOM", 3, 75, "A320neo"),
+            # Mumbai <-> Hyderabad
+            ("6E533", "6E", "BOM", "HYD", 1, 85, "A320neo"),
+            ("AI617", "AI", "BOM", "HYD", 2, 80, "A320neo"),
+            # Mumbai <-> Chennai
+            ("6E671", "6E", "BOM", "MAA", 0, 115, "A320neo"),
+            ("AI671", "AI", "BOM", "MAA", 2, 110, "A320neo"),
+            # Mumbai <-> Kolkata
+            ("6E822", "6E", "BOM", "CCU", 1, 150, "A320neo"),
+            ("AI773", "AI", "BOM", "CCU", 3, 145, "A320neo"),
+            # Mumbai <-> Ahmedabad
+            ("6E5311", "6E", "BOM", "AMD", 0, 70, "A320neo"),
+            ("AI019", "AI", "BOM", "AMD", 2, 65, "A320neo"),
+            # Mumbai <-> Kochi
+            ("6E5101", "6E", "BOM", "COK", 1, 115, "A320neo"),
+            ("AI681", "AI", "BOM", "COK", 3, 110, "A320neo"),
+            # Mumbai <-> Jaipur
+            ("6E5211", "6E", "BOM", "JAI", 0, 105, "A320neo"),
+            ("AI611", "AI", "BOM", "JAI", 2, 100, "A320neo"),
+            # Bengaluru <-> Hyderabad & Chennai & Goa & Kochi
+            ("6E419", "6E", "BLR", "HYD", 0, 65, "A320neo"),
+            ("6E391", "6E", "BLR", "MAA", 1, 55, "A320neo"),
+            ("6E711", "6E", "BLR", "GOI", 2, 70, "A320neo"),
+            ("6E411", "6E", "BLR", "COK", 1, 60, "A320neo"),
+            # Kolkata <-> Guwahati & Bagdogra
+            ("6E281", "6E", "CCU", "GAU", 0, 65, "A320neo"),
+            ("6E291", "6E", "CCU", "IXB", 1, 60, "A320neo"),
+            # International Connectors
             ("6E903", "6E", "BOM", "DXB", 1, 210, "A321neo"),
+            ("6E1451", "6E", "DEL", "DXB", 2, 235, "A321neo"),
+            ("6E1011", "6E", "DEL", "SIN", 0, 335, "A321neo"),
             ("AI101", "AI", "DEL", "JFK", 0, 920, "B777-300ER"),
             ("AI161", "AI", "DEL", "LHR", 1, 570, "B787-8"),
         ]

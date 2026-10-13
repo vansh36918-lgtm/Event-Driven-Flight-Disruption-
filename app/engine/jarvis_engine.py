@@ -236,16 +236,73 @@ class JarvisVoiceEngine:
         # 7. BOOKING & PAYMENT GATEWAY INTENT
         booking_keywords = ["book flight", "book a flight", "book new", "booking", "payment", "gateway", "pay", "buy ticket", "reserve flight", "checkout", "how to book"]
         if any(w in cmd_lower for w in booking_keywords):
-            # Only redirect to PNR lookup if an actual registered PNR locator is specified
             registered_pnrs = [p for p in re.findall(r'\b([A-Za-z0-9]{6})\b', cmd) if p.upper() in gds_service.pnrs]
             if not registered_pnrs:
-                speech = "Opening Let's Fly Global Flight Booking and Payment Gateway Checkout. Select your cabin class and complete payment instantly via UPI, QR code, or Credit Card."
+                # Detect cities across all Indian states and international hubs
+                city_hub_map = {
+                    "mumbai": "BOM", "bombay": "BOM",
+                    "delhi": "DEL", "new delhi": "DEL",
+                    "bengaluru": "BLR", "bangalore": "BLR",
+                    "hyderabad": "HYD",
+                    "chennai": "MAA", "madras": "MAA",
+                    "kolkata": "CCU", "calcutta": "CCU",
+                    "goa": "GOI", "dabolim": "GOI", "mopa": "GOI",
+                    "ahmedabad": "AMD",
+                    "pune": "PNQ",
+                    "jaipur": "JAI",
+                    "kochi": "COK", "cochin": "COK",
+                    "lucknow": "LKO",
+                    "chandigarh": "IXC",
+                    "srinagar": "SXR",
+                    "guwahati": "GAU",
+                    "patna": "PAT",
+                    "varanasi": "VNS",
+                    "bhubaneswar": "BBI",
+                    "indore": "IDR",
+                    "amritsar": "ATQ",
+                    "thiruvananthapuram": "TRV", "trivandrum": "TRV",
+                    "bagdogra": "IXB", "siliguri": "IXB",
+                    "dubai": "DXB",
+                    "singapore": "SIN",
+                    "bangkok": "BKK",
+                    "london": "LHR",
+                    "new york": "JFK",
+                    "chicago": "ORD"
+                }
+
+                target_dest = "BOM"
+                target_orig = "DEL"
+
+                for city, code in city_hub_map.items():
+                    if f"to {city}" in cmd_lower:
+                        target_dest = code
+                    elif f"from {city}" in cmd_lower:
+                        target_orig = code
+                    elif city in cmd_lower and target_dest == "BOM":
+                        target_dest = code
+
+                if target_orig == target_dest:
+                    target_orig = "DEL" if target_dest != "DEL" else "BOM"
+
+                matching = [f for f in gds_service.flights.values() if f.origin == target_orig and f.destination == target_dest]
+                flt_no = matching[0].flight_number if matching else "6E204"
+
+                speech = (
+                    f"Opening Let's Fly Global Flight Booking for route {target_orig} to {target_dest}. "
+                    f"Flight {flt_no} scheduled with real-time seat inventory. Complete payment instantly via UPI, QR code, or Credit Card."
+                )
                 return VoiceCommandResponse(
                     command=cmd,
                     intent="OPEN_BOOKING_CHECKOUT",
                     action="SHOW_PAYMENT_GATEWAY",
+                    target=flt_no,
                     speech_response=speech,
-                    ui_action={"type": "OPEN_BOOKING_MODAL"}
+                    ui_action={
+                        "type": "OPEN_BOOKING_MODAL",
+                        "flight_number": flt_no,
+                        "origin": target_orig,
+                        "destination": target_dest
+                    }
                 )
 
         # 8. PNR SEARCH & LOOKUP
