@@ -1,0 +1,11 @@
+.git
+.github
+__pycache__
+*.pyc
+*.pyo
+template.zip
+template_extracted/
+autonomous_loop.log
+*.log
+.vscode
+.idea

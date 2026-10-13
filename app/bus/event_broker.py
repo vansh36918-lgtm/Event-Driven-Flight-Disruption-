@@ -25,6 +25,12 @@ class EventBroker:
 
     def connect(self):
         """Attempts RabbitMQ connection, falling back gracefully to local async queue."""
+        import os
+        if os.environ.get("VERCEL") or os.environ.get("SKIP_RABBITMQ", "").lower() in ("true", "1"):
+            self.is_rabbitmq_connected = False
+            logger.info("Running on high-performance native AsyncIO Event Queue (Serverless mode).")
+            return
+
         try:
             parameters = pika.ConnectionParameters(
                 host=self.rabbitmq_host,
