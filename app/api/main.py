@@ -5,6 +5,7 @@ and AI Passenger Concierge chat interactions.
 """
 import os
 import time
+import json
 import asyncio
 from contextlib import asynccontextmanager
 from typing import List, Optional
@@ -636,4 +637,23 @@ async def delete_cms_item(slug: str, item_id: str):
     if not success:
         raise HTTPException(status_code=404, detail=f"CMS item '{item_id}' not found in '{slug}'.")
     return {"status": "DELETED", "collection": slug, "item_id": item_id}
+
+
+@app.get("/api/v1/loop/status")
+async def get_loop_status():
+    """Returns the continuous soak loop runner telemetry status."""
+    status_file = "loop_status.json"
+    if os.path.exists(status_file):
+        try:
+            with open(status_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            return {"status": "READ_ERROR", "detail": str(e)}
+    return {
+        "status": "IDLE",
+        "cycle": 0,
+        "elapsed_seconds": 0,
+        "platform_health": "STANDBY"
+    }
+
 

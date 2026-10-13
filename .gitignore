@@ -10,3 +10,5 @@ venv/
 Thumbs.db
 template.zip
 template_extracted/
+*.log
+loop_status.json
