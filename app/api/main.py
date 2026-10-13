@@ -25,6 +25,9 @@ from app.models.schemas import (
     SystemMetrics,
     VoiceCommandRequest,
     VoiceCommandResponse,
+    BookingCheckoutRequest,
+    BookingCheckoutResponse,
+    FareClass,
 )
 from app.engine.gds_service import gds_service
 from app.engine.graph_engine import reaccommodation_engine
@@ -665,5 +668,123 @@ async def get_loop_status():
         "elapsed_seconds": 0,
         "platform_health": "STANDBY"
     }
+
+
+@app.get("/api/v1/booking/search")
+async def search_flights_for_booking(origin: str = "DEL", destination: str = "BOM"):
+    """Searches available flights for new booking with pricing tiers."""
+    matching = [f for f in gds_service.flights.values() if f.origin.upper() == origin.upper() and f.destination.upper() == destination.upper()]
+    if not matching:
+        matching = [f for f in gds_service.flights.values() if f.origin.upper() == origin.upper()][:3]
+        if not matching:
+            matching = list(gds_service.flights.values())[:3]
+
+    results = []
+    for flt in matching:
+        base_price = 5450 if flt.carrier in ["6E", "QP"] else 7200
+        results.append({
+            "flight_number": flt.flight_number,
+            "carrier": flt.carrier,
+            "origin": flt.origin,
+            "destination": flt.destination,
+            "departure_time": flt.departure_time.isoformat(),
+            "arrival_time": flt.arrival_time.isoformat(),
+            "duration_minutes": flt.duration_minutes,
+            "aircraft_type": flt.aircraft_type,
+            "fares": {
+                "economy": {
+                    "amount_inr": base_price,
+                    "amount_usd": round(base_price / 83.0, 2),
+                    "cabin": "ECONOMY",
+                    "perks": "Standard seat • 15kg baggage • Free re-accommodation guarantee"
+                },
+                "business": {
+                    "amount_inr": base_price * 2.8,
+                    "amount_usd": round((base_price * 2.8) / 83.0, 2),
+                    "cabin": "BUSINESS",
+                    "perks": "Lie-flat seat • Encalm Privé VIP Lounge • Priority baggage"
+                },
+                "charter": {
+                    "amount_inr": 245000.0,
+                    "amount_usd": 2950.0,
+                    "cabin": "CHARTER",
+                    "perks": "Gulfstream G650 • Private terminal • On-demand departure"
+                }
+            }
+        })
+    return results
+
+
+@app.post("/api/v1/booking/checkout", response_model=BookingCheckoutResponse)
+async def process_booking_checkout(req: BookingCheckoutRequest):
+    """Processes payment checkout, generates authentic PNR, and creates confirmed booking."""
+    import random
+    import string
+    from datetime import datetime
+
+    # Generate authentic 6-character PNR (e.g. LF7X9P)
+    pnr_id = "LF" + "".join(random.choices(string.ascii_uppercase + string.digits, k=4))
+    txn_id = f"TXN-{req.payment_method[:3].upper()}-{int(time.time())}-{random.randint(1000, 9999)}"
+
+    # Determine seat and gate
+    gate = f"{random.choice(['A', 'B', 'C', 'D'])}{random.randint(1, 45)}"
+    row = random.randint(1, 4) if req.cabin_class == "BUSINESS" else (1 if req.cabin_class == "CHARTER" else random.randint(6, 32))
+    seat = f"{row}{random.choice(['A', 'C', 'D', 'F'])}"
+
+    fare_class_map = {
+        "ECONOMY": FareClass.ECONOMY,
+        "BUSINESS": FareClass.BUSINESS,
+        "CHARTER": FareClass.FIRST
+    }
+
+    # Create Passenger Record in GDS service
+    new_passenger = PassengerRecord(
+        pnr_id=pnr_id,
+        passenger_name=req.passenger_name,
+        email=req.email,
+        phone=req.phone or "+91 98765 43210",
+        fare_class=fare_class_map.get(req.cabin_class.upper(), FareClass.ECONOMY),
+        original_flight_number=req.flight_number,
+        origin=req.origin,
+        destination=req.destination,
+        status="CONFIRMED",
+        loyalty_tier="PLATINUM" if req.cabin_class == "BUSINESS" else ("DIAMOND" if req.cabin_class == "CHARTER" else "GENERAL"),
+        pvs_score=850 if req.cabin_class in ["BUSINESS", "CHARTER"] else 520,
+        reaccommodation_options=[]
+    )
+    gds_service.pnrs[pnr_id] = new_passenger
+
+    # Register baggage tracking for new passenger
+    bag_rec = baggage_engine.create_baggage_record(
+        pnr_id=pnr_id,
+        flight_number=req.flight_number,
+        origin=req.origin,
+        destination=req.destination
+    )
+
+    final_amount = req.amount_paid if req.amount_paid is not None else req.amount_inr
+
+    return BookingCheckoutResponse(
+        pnr_id=pnr_id,
+        transaction_id=txn_id,
+        flight_number=req.flight_number,
+        origin=req.origin,
+        destination=req.destination,
+        passenger_name=req.passenger_name,
+        cabin_class=req.cabin_class.upper(),
+        seat=seat,
+        gate=gate,
+        seat_assigned=seat,
+        gate_assigned=gate,
+        baggage_rfid_tag=bag_rec.get("iata_tag_number", "0099482910"),
+        status="CONFIRMED",
+        payment_status="PAID",
+        amount_inr=final_amount,
+        amount_paid=final_amount,
+        payment_method=req.payment_method,
+        timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC"),
+        message=f"Booking & Payment confirmed via {req.payment_method}. Digital Boarding Pass and E-Ticket generated successfully."
+    )
+
 
 

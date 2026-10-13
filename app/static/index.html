@@ -175,6 +175,178 @@
         </div>
     </div>
 
+    <!-- Global Flight Booking & Payment Gateway Checkout Modal -->
+    <div id="booking-checkout-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+        <div class="framer-white-card framer-theme-card w-full max-w-2xl p-6 sm:p-8 rounded-3xl border border-neutral-300 text-black shadow-2xl space-y-5 my-8 max-h-[90vh] overflow-y-auto custom-scroll relative">
+            <button onclick="closeBookingCheckoutModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-neutral-200 hover:bg-neutral-300 text-black flex items-center justify-center font-bold text-xs transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Header -->
+            <div class="border-b border-neutral-300/80 pb-3">
+                <div class="flex items-center space-x-2 text-[10px] mono text-neutral-500 font-bold uppercase tracking-wider">
+                    <span class="w-2 h-2 rounded-full bg-black"></span>
+                    <span>LET'S FLY LUXURY & AFFORDABLE CHECKOUT • DGCA VERIFIED</span>
+                </div>
+                <h3 class="text-2xl font-black text-black font-albert tracking-tight mt-0.5">Flight Booking & Payment Gateway</h3>
+                <p class="text-xs text-neutral-600 font-sans">Instant commercial & private jet charter booking with integrated UPI, Card, and Sabre settlement.</p>
+            </div>
+
+            <!-- Step 1: Flight Selection Summary -->
+            <div class="bg-neutral-100 p-4 rounded-2xl border border-neutral-300 space-y-2 text-xs mono">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-neutral-600">SELECTED SECTOR:</span>
+                    <span id="booking-route-display" class="font-black text-black text-sm">DEL &rarr; BOM (New Delhi to Mumbai)</span>
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-neutral-700">
+                    <span>Flight: <strong id="booking-flt-num" class="text-black">6E204</strong> &bull; Scheduled 06:15 UTC</span>
+                    <span class="px-2 py-0.5 rounded-full bg-black text-white text-[9px] font-bold">CONFIRMED SEATS</span>
+                </div>
+            </div>
+
+            <!-- Cabin Tier Selector -->
+            <div>
+                <label class="block text-[10px] mono text-neutral-500 uppercase font-bold mb-1.5">Select Cabin Class</label>
+                <div class="grid grid-cols-3 gap-2 text-xs mono">
+                    <button type="button" onclick="selectBookingTier('ECONOMY', 6450)" id="tier-btn-ECONOMY" class="booking-tier-pill p-3 rounded-2xl border-2 border-black bg-white text-black font-bold text-left transition shadow-sm">
+                        <div class="text-[10px] text-neutral-500">COMMERCIAL</div>
+                        <div class="font-black text-sm">Economy</div>
+                        <div class="text-xs mt-1">₹6,450 <span class="text-[9px] text-neutral-500">/ $78</span></div>
+                    </button>
+                    <button type="button" onclick="selectBookingTier('BUSINESS', 18900)" id="tier-btn-BUSINESS" class="booking-tier-pill p-3 rounded-2xl border border-neutral-300 bg-neutral-50 text-neutral-700 font-medium text-left hover:border-black transition">
+                        <div class="text-[10px] text-neutral-500">EXECUTIVE</div>
+                        <div class="font-black text-sm text-black">Business J</div>
+                        <div class="text-xs mt-1 text-black font-bold">₹18,900 <span class="text-[9px] text-neutral-500">/ $228</span></div>
+                    </button>
+                    <button type="button" onclick="selectBookingTier('CHARTER', 245000)" id="tier-btn-CHARTER" class="booking-tier-pill p-3 rounded-2xl border border-neutral-300 bg-neutral-50 text-neutral-700 font-medium text-left hover:border-black transition">
+                        <div class="text-[10px] text-neutral-500">FLAGSHIP</div>
+                        <div class="font-black text-sm text-black">Private Jet</div>
+                        <div class="text-xs mt-1 text-black font-bold">₹2,45,000 <span class="text-[9px] text-neutral-500">/ $2,950</span></div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Passenger Details -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs mono">
+                <div>
+                    <label class="block text-[10px] text-neutral-600 uppercase font-bold mb-1">Passenger Full Name</label>
+                    <input id="booking-pax-name" type="text" value="Vansh Sharma" placeholder="e.g. Alex Reddy" class="w-full bg-white border border-neutral-300 rounded-xl px-3 py-2 text-black font-semibold focus:outline-none focus:border-black shadow-sm">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-neutral-600 uppercase font-bold mb-1">Email Address</label>
+                    <input id="booking-pax-email" type="email" value="passenger@letsfly.aero" placeholder="passenger@domain.com" class="w-full bg-white border border-neutral-300 rounded-xl px-3 py-2 text-black font-semibold focus:outline-none focus:border-black shadow-sm">
+                </div>
+            </div>
+
+            <!-- Integrated Payment Gateway Selection -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <label class="text-[10px] mono text-neutral-500 uppercase font-bold">Select Payment Gateway</label>
+                    <span class="text-[9px] mono text-emerald-600 font-bold flex items-center gap-1"><i class="fa-solid fa-lock text-[8px]"></i> 256-BIT SSL ENCRYPTED</span>
+                </div>
+                
+                <!-- Payment Method Pills -->
+                <div class="flex flex-wrap gap-2 text-xs mono">
+                    <button type="button" onclick="selectPaymentMethod('UPI')" id="pay-method-UPI" class="pay-method-pill px-4 py-2 rounded-xl bg-black text-white font-bold transition flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-qrcode text-xs"></i><span>UPI / QR CODE</span>
+                    </button>
+                    <button type="button" onclick="selectPaymentMethod('CARD')" id="pay-method-CARD" class="pay-method-pill px-4 py-2 rounded-xl bg-white text-black border border-neutral-300 hover:border-black font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-credit-card text-xs"></i><span>CREDIT / DEBIT CARD</span>
+                    </button>
+                    <button type="button" onclick="selectPaymentMethod('NETBANKING')" id="pay-method-NETBANKING" class="pay-method-pill px-4 py-2 rounded-xl bg-white text-black border border-neutral-300 hover:border-black font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-building-columns text-xs"></i><span>NET BANKING</span>
+                    </button>
+                    <button type="button" onclick="selectPaymentMethod('SABRE_CORP')" id="pay-method-SABRE_CORP" class="pay-method-pill px-4 py-2 rounded-xl bg-white text-black border border-neutral-300 hover:border-black font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-briefcase text-xs"></i><span>SABRE CORPORATE BILL</span>
+                    </button>
+                </div>
+
+                <!-- UPI View Container -->
+                <div id="pay-view-UPI" class="p-4 rounded-2xl bg-neutral-50 border border-neutral-300 space-y-3">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="space-y-1 text-xs mono">
+                            <div class="font-bold text-black flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Scan QR Code with any UPI App
+                            </div>
+                            <div class="text-[11px] text-neutral-600">Supports Google Pay, PhonePe, Paytm, BHIM, and Cred.</div>
+                            <div class="text-[10px] text-neutral-500 pt-1">UPI ID: <strong class="text-black">letsfly.booking@icici</strong></div>
+                        </div>
+                        <div class="p-2 rounded-xl bg-white border border-neutral-300 shadow-sm flex flex-col items-center">
+                            <div id="booking-upi-qrcode" class="w-28 h-28 flex items-center justify-center bg-white"></div>
+                            <span class="text-[8px] mono text-neutral-500 mt-1 uppercase font-bold">Dynamic IRROPS QR</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card View Container -->
+                <div id="pay-view-CARD" class="hidden p-4 rounded-2xl bg-neutral-50 border border-neutral-300 space-y-3 text-xs mono">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="sm:col-span-2">
+                            <label class="block text-[10px] text-neutral-500 uppercase font-bold mb-1">Card Number</label>
+                            <input type="text" placeholder="4532 8921 4402 8821" value="4532 8921 4402 8821" class="w-full bg-white border border-neutral-300 rounded-xl px-3 py-2 text-black font-mono focus:outline-none focus:border-black shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-neutral-500 uppercase font-bold mb-1">Expiry Date</label>
+                            <input type="text" placeholder="MM/YY" value="12/28" class="w-full bg-white border border-neutral-300 rounded-xl px-3 py-2 text-black font-mono focus:outline-none focus:border-black shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-neutral-500 uppercase font-bold mb-1">CVV / CVC</label>
+                            <input type="password" placeholder="•••" value="892" class="w-full bg-white border border-neutral-300 rounded-xl px-3 py-2 text-black font-mono focus:outline-none focus:border-black shadow-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Net Banking View Container -->
+                <div id="pay-view-NETBANKING" class="hidden p-4 rounded-2xl bg-neutral-50 border border-neutral-300 space-y-2 text-xs mono">
+                    <div class="text-[10px] text-neutral-600 font-bold uppercase">Popular Indian Banking Gateways:</div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <button type="button" class="p-2 rounded-xl bg-white border border-neutral-300 text-black font-bold text-center hover:border-black shadow-sm">HDFC Bank</button>
+                        <button type="button" class="p-2 rounded-xl bg-white border border-neutral-300 text-black font-bold text-center hover:border-black shadow-sm">ICICI Bank</button>
+                        <button type="button" class="p-2 rounded-xl bg-white border border-neutral-300 text-black font-bold text-center hover:border-black shadow-sm">State Bank (SBI)</button>
+                        <button type="button" class="p-2 rounded-xl bg-white border border-neutral-300 text-black font-bold text-center hover:border-black shadow-sm">Axis Bank</button>
+                    </div>
+                </div>
+
+                <!-- Sabre Corporate Direct Billing Container -->
+                <div id="pay-view-SABRE_CORP" class="hidden p-4 rounded-2xl bg-neutral-50 border border-neutral-300 space-y-2 text-xs mono">
+                    <div class="text-[10px] text-neutral-600 font-bold uppercase">Corporate Sabre Direct Billing (SABRE-DIRBILL):</div>
+                    <div class="p-2.5 rounded-xl bg-black text-white text-[11px] space-y-1">
+                        <div>Account Plaque: <strong class="text-emerald-400">CORP-AIRLINE-99214</strong></div>
+                        <div class="text-neutral-400 text-[10px]">Pre-approved corporate disruption & executive charter billing code.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fare Summary & Total -->
+            <div class="pt-3 border-t border-neutral-300/80 space-y-1.5 text-xs mono">
+                <div class="flex justify-between text-neutral-600">
+                    <span>Base Airline Fare:</span>
+                    <span id="fare-base-amount" class="text-black font-semibold">₹5,800</span>
+                </div>
+                <div class="flex justify-between text-neutral-600">
+                    <span>Fuel Surcharge & Airport Fees:</span>
+                    <span id="fare-tax-amount" class="text-black font-semibold">₹650</span>
+                </div>
+                <div class="flex justify-between text-emerald-700 font-semibold text-[11px]">
+                    <span>DGCA CAR-3 Passenger Protection Guarantee:</span>
+                    <span>FREE (₹0)</span>
+                </div>
+                <div class="flex justify-between items-center pt-2 border-t border-neutral-300 text-sm font-black text-black">
+                    <span>Total Payable:</span>
+                    <span id="fare-total-display" class="text-xl">₹6,450</span>
+                </div>
+            </div>
+
+            <!-- Submit Button & Spinner -->
+            <div class="pt-2">
+                <button id="btn-submit-payment" onclick="executePaymentCheckout()" class="w-full bg-black hover:bg-neutral-800 text-white py-3.5 rounded-full font-bold mono text-xs uppercase tracking-wider transition shadow-xl flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-lock text-xs"></i>
+                    <span id="btn-pay-text">PAY ₹6,450 & CONFIRM BOOKING</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Top Navigation Bar (Framer Let's Fly High-Contrast Monochromatic Theme) -->
     <header class="border-b border-neutral-800/80 bg-black/90 backdrop-blur-xl sticky top-0 z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
@@ -195,6 +367,7 @@
             <!-- Centered Floating Capsule Navigation Bar (Framer Let's Fly Pill Style) -->
             <nav class="hidden xl:flex items-center p-1 rounded-full bg-neutral-950/90 border border-neutral-800 text-xs mono shadow-inner space-x-1">
                 <button onclick="scrollToSection('letsfly-hero')" id="topnav-hero" class="topnav-pill px-3 py-1 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-[11px]">INTRO</button>
+                <button onclick="openBookingCheckoutModal()" id="topnav-book" class="topnav-pill px-3 py-1 rounded-full text-emerald-400 hover:text-white hover:bg-neutral-900 transition-all text-[11px] font-bold"><i class="fa-solid fa-credit-card mr-1"></i>BOOK FLIGHT</button>
                 <button onclick="scrollToSection('letsfly-bento')" id="topnav-features" class="topnav-pill px-3 py-1 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-[11px]">FEATURES</button>
                 <button onclick="switchTab('ops')" id="topnav-ops" class="topnav-pill px-3 py-1 rounded-full bg-white text-black font-bold shadow transition-all text-[11px]">3D RADAR</button>
                 <button onclick="switchTab('portal')" id="topnav-portal" class="topnav-pill px-3 py-1 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-[11px]">PASSENGERS</button>
@@ -263,6 +436,9 @@
         <div id="mobile-nav-drawer" class="hidden xl:hidden bg-neutral-950/98 backdrop-blur-2xl border-t border-neutral-800/80 px-5 py-4 space-y-3 transition-all">
             <div class="text-[10px] mono text-neutral-500 uppercase tracking-widest font-bold">Workspace Navigation & Modules</div>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs mono">
+                <button onclick="openBookingCheckoutModal(); toggleMobileNav();" class="p-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-emerald-500/60 text-emerald-400 flex items-center gap-2 font-bold">
+                    <i class="fa-solid fa-credit-card text-emerald-400 text-xs"></i><span>Book Flight</span>
+                </button>
                 <button onclick="switchTabAndCloseMobile('ops')" class="p-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-white flex items-center gap-2">
                     <i class="fa-solid fa-radar text-white text-xs"></i><span>3D Radar</span>
                 </button>
@@ -433,10 +609,17 @@
                             </div>
                         </div>
 
-                        <!-- Action Button -->
-                        <button onclick="handleHeroSearch()" class="w-full bg-white hover:bg-neutral-200 text-black py-3 rounded-full font-bold text-xs uppercase tracking-wider transition shadow-lg mt-2 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-magnifying-glass text-xs"></i><span>SEARCH FLIGHTS & RESOLVE DISRUPTION</span>
-                        </button>
+                        <!-- Dual Booking & Disruption Action Buttons -->
+                        <div class="space-y-2 mt-2">
+                            <button type="button" onclick="openBookingFromHero()" class="w-full bg-white hover:bg-neutral-200 text-black py-3 rounded-full font-bold text-xs uppercase tracking-wider transition shadow-xl flex items-center justify-center gap-2 group">
+                                <i class="fa-solid fa-credit-card text-xs transition-transform group-hover:scale-110"></i>
+                                <span>BOOK FLIGHT • INSTANT PAYMENT GATEWAY</span>
+                            </button>
+                            <button type="button" onclick="handleHeroSearch()" class="w-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white py-2.5 rounded-full font-bold text-xs uppercase tracking-wider border border-neutral-700 transition shadow flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-shield-halved text-xs text-neutral-400"></i>
+                                <span>SEARCH & RESOLVE DISRUPTION (CAR-3 CONCIERGE)</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
         </div>
@@ -1430,6 +1613,7 @@
             <div>
                 <div class="text-[9px] text-neutral-500 uppercase tracking-wider mb-1.5 font-bold">Quick Voice Triggers:</div>
                 <div class="flex flex-wrap gap-1 text-[10px]">
+                    <button onclick="executeJarvisDirect('Book flight from Delhi to Mumbai')" class="px-2 py-0.5 rounded bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500 text-emerald-300 hover:text-white transition font-bold shadow-sm">💳 "Book Flight"</button>
                     <button onclick="executeJarvisDirect('Disrupt flight 6E204 with monsoonal squall line')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-white transition">🎙️ "Disrupt 6E204"</button>
                     <button onclick="executeJarvisDirect('Trigger monsoon squall line storm')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-white transition">🎙️ "Monsoon Storm"</button>
                     <button onclick="executeJarvisDirect('Divert flight 6E204 to Jaipur')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-white transition">🎙️ "Divert Flight"</button>
@@ -1706,6 +1890,262 @@
                     }
                 }
             }
+        }
+
+        // ============================================================
+        // Flight Booking & Integrated Payment Gateway Checkout System
+        // ============================================================
+        const AIRPORT_CITIES = {
+            'DEL': 'New Delhi',
+            'BOM': 'Mumbai',
+            'BLR': 'Bengaluru',
+            'HYD': 'Hyderabad',
+            'MAA': 'Chennai',
+            'CCU': 'Kolkata',
+            'GOI': 'Goa',
+            'JFK': 'New York',
+            'ORD': 'Chicago',
+            'DXB': 'Dubai',
+            'LHR': 'London'
+        };
+
+        let currentBookingTier = 'ECONOMY';
+        let currentBookingAmount = 6450;
+        let currentPaymentMethod = 'UPI';
+        let bookingFlightNumber = '6E204';
+        let bookingOrigin = 'DEL';
+        let bookingDestination = 'BOM';
+
+        function openBookingFromHero() {
+            const orig = document.getElementById('hero-origin-select')?.value || 'DEL';
+            const dest = document.getElementById('hero-dest-select')?.value || 'BOM';
+            let flt = document.getElementById('hero-pnr-input')?.value.trim().toUpperCase();
+            if (!flt || flt.length < 3) {
+                if (cachedFlights && cachedFlights.length > 0) {
+                    const m = cachedFlights.find(f => f.origin === orig && f.destination === dest);
+                    flt = m ? m.flight_number : '6E204';
+                } else {
+                    flt = '6E204';
+                }
+            }
+            openBookingCheckoutModal(flt, orig, dest);
+        }
+
+        function openBookingCheckoutModal(flt, orig, dest) {
+            bookingFlightNumber = flt || document.getElementById('hero-pnr-input')?.value.trim().toUpperCase() || '6E204';
+            bookingOrigin = orig || document.getElementById('hero-origin-select')?.value || 'DEL';
+            bookingDestination = dest || document.getElementById('hero-dest-select')?.value || 'BOM';
+
+            const routeEl = document.getElementById('booking-route-display');
+            const fltEl = document.getElementById('booking-flt-num');
+            const modalEl = document.getElementById('booking-checkout-modal');
+
+            const origCity = AIRPORT_CITIES[bookingOrigin] || bookingOrigin;
+            const destCity = AIRPORT_CITIES[bookingDestination] || bookingDestination;
+
+            if (routeEl) routeEl.innerHTML = `${bookingOrigin} &rarr; ${bookingDestination} (${origCity} to ${destCity})`;
+            if (fltEl) fltEl.innerText = bookingFlightNumber;
+
+            selectBookingTier('ECONOMY', 6450);
+            selectPaymentMethod('UPI');
+
+            if (modalEl) {
+                modalEl.classList.remove('hidden');
+            }
+        }
+
+        function closeBookingCheckoutModal() {
+            const modalEl = document.getElementById('booking-checkout-modal');
+            if (modalEl) {
+                modalEl.classList.add('hidden');
+            }
+        }
+
+        function selectBookingTier(tier, amount) {
+            currentBookingTier = tier;
+            currentBookingAmount = amount;
+
+            ['ECONOMY', 'BUSINESS', 'CHARTER'].forEach(t => {
+                const btn = document.getElementById(`tier-btn-${t}`);
+                if (!btn) return;
+                if (t === tier) {
+                    btn.className = "booking-tier-pill p-3 rounded-2xl border-2 border-black bg-white text-black font-bold text-left transition shadow-md scale-[1.02]";
+                } else {
+                    btn.className = "booking-tier-pill p-3 rounded-2xl border border-neutral-300 bg-neutral-50 text-neutral-700 font-medium text-left hover:border-black transition";
+                }
+            });
+
+            const baseAmount = Math.round(amount * 0.90);
+            const taxAmount = amount - baseAmount;
+
+            const baseEl = document.getElementById('fare-base-amount');
+            const taxEl = document.getElementById('fare-tax-amount');
+            const totalEl = document.getElementById('fare-total-display');
+            const payText = document.getElementById('btn-pay-text');
+
+            if (baseEl) baseEl.innerText = `₹${baseAmount.toLocaleString('en-IN')}`;
+            if (taxEl) taxEl.innerText = `₹${taxAmount.toLocaleString('en-IN')}`;
+            if (totalEl) totalEl.innerText = `₹${amount.toLocaleString('en-IN')}`;
+            if (payText) payText.innerText = `PAY ₹${amount.toLocaleString('en-IN')} & CONFIRM BOOKING`;
+
+            renderBookingUpiQr(amount);
+        }
+
+        function selectPaymentMethod(method) {
+            currentPaymentMethod = method;
+
+            ['UPI', 'CARD', 'NETBANKING', 'SABRE_CORP'].forEach(m => {
+                const pill = document.getElementById(`pay-method-${m}`);
+                const view = document.getElementById(`pay-view-${m}`);
+                if (pill) {
+                    if (m === method) {
+                        pill.className = "pay-method-pill px-4 py-2 rounded-xl bg-black text-white font-bold transition flex items-center gap-1.5 shadow";
+                    } else {
+                        pill.className = "pay-method-pill px-4 py-2 rounded-xl bg-white text-black border border-neutral-300 hover:border-black font-bold transition flex items-center gap-1.5";
+                    }
+                }
+                if (view) {
+                    if (m === method) {
+                        view.classList.remove('hidden');
+                    } else {
+                        view.classList.add('hidden');
+                    }
+                }
+            });
+
+            if (method === 'UPI') {
+                renderBookingUpiQr(currentBookingAmount);
+            }
+        }
+
+        function renderBookingUpiQr(amount) {
+            const qrContainer = document.getElementById('booking-upi-qrcode');
+            if (!qrContainer) return;
+            qrContainer.innerHTML = '';
+            try {
+                if (typeof QRCode !== 'undefined') {
+                    const upiUrl = `upi://pay?pa=letsfly.booking@icici&pn=LetsFly%20Aviation&am=${amount}&cu=INR&tn=PNR_Booking_${bookingFlightNumber}`;
+                    new QRCode(qrContainer, {
+                        text: upiUrl,
+                        width: 104,
+                        height: 104,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                }
+            } catch (e) {
+                console.warn("QR code render error:", e);
+            }
+        }
+
+        async function executePaymentCheckout() {
+            const payBtn = document.getElementById('btn-submit-payment');
+            const payText = document.getElementById('btn-pay-text');
+            const nameInput = document.getElementById('booking-pax-name');
+            const emailInput = document.getElementById('booking-pax-email');
+
+            const name = nameInput ? nameInput.value.trim() : 'Passenger';
+            const email = emailInput ? emailInput.value.trim() : 'passenger@letsfly.aero';
+
+            if (!name) {
+                alert("Please enter passenger full name.");
+                nameInput?.focus();
+                return;
+            }
+
+            if (payBtn) payBtn.disabled = true;
+            if (payText) payText.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> AUTHORIZING ${currentPaymentMethod} TRANSACTION...`;
+
+            try {
+                const payload = {
+                    passenger_name: name,
+                    email: email,
+                    flight_number: bookingFlightNumber,
+                    origin: bookingOrigin,
+                    destination: bookingDestination,
+                    cabin_class: currentBookingTier,
+                    payment_method: currentPaymentMethod,
+                    amount_paid: currentBookingAmount
+                };
+
+                const res = await fetch('/api/v1/booking/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.detail || "Payment transaction processing failed.");
+                }
+
+                const data = await res.json();
+
+                // Close checkout modal
+                closeBookingCheckoutModal();
+
+                // Play celebratory success chime
+                playJarvisChime('success');
+
+                // JARVIS Voice Vocal Announcement
+                speakJarvis(`Payment received for ${name}. Confirmed seat ${data.seat_assigned} on flight ${data.flight_number} under PNR ${data.pnr_id}. Boarding pass and RFID baggage tracker are now live.`);
+
+                // Show visual confirmation toast
+                showBookingSuccessToast(data);
+
+                // Set new PNR across state
+                activePnr = data.pnr_id;
+                const portalInput = document.getElementById('portal-pnr-input');
+                if (portalInput) portalInput.value = data.pnr_id;
+                const mainAiPnr = document.getElementById('main-ai-pnr');
+                if (mainAiPnr) mainAiPnr.value = data.pnr_id;
+
+                // Seamlessly switch to Boarding Pass tab and load pass
+                switchTab('boarding');
+                await loadBoardingPass(data.pnr_id);
+
+                // Refresh flight list and system metrics
+                await loadFlights();
+                await loadMetrics();
+
+            } catch (err) {
+                alert("Checkout Transaction Error: " + err.message);
+            } finally {
+                if (payBtn) payBtn.disabled = false;
+                if (payText) payText.innerHTML = `<i class="fa-solid fa-lock text-xs mr-1"></i> PAY ₹${currentBookingAmount.toLocaleString('en-IN')} & CONFIRM BOOKING`;
+            }
+        }
+
+        function showBookingSuccessToast(data) {
+            const toast = document.createElement('div');
+            toast.className = "fixed top-6 right-6 z-50 bg-black/95 text-white border border-emerald-500 rounded-2xl p-4 shadow-2xl backdrop-blur-xl max-w-md mono transition-all duration-300 transform translate-y-0";
+            toast.innerHTML = `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <div class="space-y-1 text-xs">
+                        <div class="font-bold text-white uppercase tracking-wider text-sm flex items-center gap-1.5">
+                            <span>Payment Confirmed</span>
+                            <span class="px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-300 text-[10px]">₹${data.amount_paid.toLocaleString('en-IN')}</span>
+                        </div>
+                        <div class="text-neutral-300">PNR: <strong class="text-white underline">${data.pnr_id}</strong> &bull; Flight: <strong>${data.flight_number}</strong></div>
+                        <div class="text-[10px] text-neutral-400">Seat ${data.seat_assigned} (${data.cabin_class}) &bull; Gate ${data.gate_assigned} &bull; RFID Tag: ${data.baggage_rfid_tag}</div>
+                        <div class="text-[9px] text-emerald-400 pt-0.5">TXN: ${data.transaction_id} &bull; Digital Boarding Pass Ready</div>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-neutral-500 hover:text-white text-xs ml-2">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 400);
+                }
+            }, 8000);
         }
 
         // Coordinate conversion from lat/lng to 3D Cartesian
@@ -3113,35 +3553,61 @@
         function initJarvisVoice() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (SpeechRecognition) {
-                jarvisRecognition = new SpeechRecognition();
-                jarvisRecognition.continuous = false;
-                jarvisRecognition.interimResults = false;
-                jarvisRecognition.lang = 'en-US';
+                try {
+                    jarvisRecognition = new SpeechRecognition();
+                    jarvisRecognition.continuous = false;
+                    jarvisRecognition.interimResults = false;
+                    jarvisRecognition.lang = 'en-US';
 
-                jarvisRecognition.onstart = () => {
-                    isJarvisListening = true;
-                    updateJarvisUIState('listening');
-                    playJarvisChime('start');
-                };
+                    jarvisRecognition.onstart = () => {
+                        isJarvisListening = true;
+                        updateJarvisUIState('listening');
+                        playJarvisChime('start');
+                    };
 
-                jarvisRecognition.onresult = (event) => {
-                    const transcript = event.results[0][0].transcript;
-                    isJarvisListening = false;
-                    updateJarvisUIState('processing');
-                    sendJarvisCommand(transcript);
-                };
+                    jarvisRecognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        isJarvisListening = false;
+                        updateJarvisUIState('processing');
+                        sendJarvisCommand(transcript);
+                    };
 
-                jarvisRecognition.onerror = (event) => {
-                    isJarvisListening = false;
-                    updateJarvisUIState('idle');
-                    const statusText = document.getElementById('jarvis-status-text');
-                    if (statusText) statusText.innerText = `VOICE NOTICE: ${event.error.toUpperCase()}`;
-                };
+                    jarvisRecognition.onerror = (event) => {
+                        isJarvisListening = false;
+                        updateJarvisUIState('idle');
+                        const statusText = document.getElementById('jarvis-status-text');
+                        const logBox = document.getElementById('jarvis-log-box');
 
-                jarvisRecognition.onend = () => {
-                    isJarvisListening = false;
-                    updateJarvisUIState('idle');
-                };
+                        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                            if (statusText) statusText.innerText = "MIC BLOCKED • ALLOW IN BROWSER OR USE TRIGGERS";
+                            if (logBox) {
+                                logBox.innerHTML += `
+                                    <div class="text-amber-400 bg-amber-950/40 p-2.5 rounded-xl border border-amber-800 text-[10px] space-y-1">
+                                        <div class="font-bold flex items-center gap-1.5 text-amber-300">
+                                            <i class="fa-solid fa-triangle-exclamation"></i> Browser Microphone Permission Needed
+                                        </div>
+                                        <div class="text-neutral-300 leading-relaxed">
+                                            Your browser has microphone access blocked. Click the lock/camera icon in your address bar to Allow microphone, or simply click any <strong>Quick Voice Trigger</strong> button or type in the box below!
+                                        </div>
+                                    </div>
+                                `;
+                                logBox.scrollTop = logBox.scrollHeight;
+                            }
+                        } else if (event.error === 'no-speech') {
+                            if (statusText) statusText.innerText = "NO AUDIO DETECTED • CLICK MIC TO SPEAK";
+                        } else {
+                            if (statusText) statusText.innerText = `VOICE STATUS: ${event.error.toUpperCase()}`;
+                        }
+                    };
+
+                    jarvisRecognition.onend = () => {
+                        isJarvisListening = false;
+                        updateJarvisUIState('idle');
+                    };
+                } catch (e) {
+                    console.warn("SpeechRecognition init error:", e);
+                    jarvisRecognition = null;
+                }
             }
         }
 
@@ -3158,7 +3624,11 @@
             if (!jarvisRecognition) {
                 const logBox = document.getElementById('jarvis-log-box');
                 if (logBox) {
-                    logBox.innerHTML += `<div class="text-neutral-400"><span class="text-white font-bold">[JARVIS]:</span> Web Speech API is not enabled in this browser. Please type your command below.</div>`;
+                    logBox.innerHTML += `
+                        <div class="text-amber-400 bg-amber-950/40 p-2 rounded border border-amber-800 text-[10px]">
+                            <span class="text-white font-bold">[JARVIS]:</span> Web Speech API is not supported in this browser. Please use the Quick Voice Triggers or type your command below.
+                        </div>
+                    `;
                     logBox.scrollTop = logBox.scrollHeight;
                 }
                 document.getElementById('jarvis-text-input')?.focus();
@@ -3166,12 +3636,22 @@
             }
 
             if (isJarvisListening) {
-                jarvisRecognition.stop();
+                try {
+                    jarvisRecognition.stop();
+                } catch (e) {}
+                isJarvisListening = false;
+                updateJarvisUIState('idle');
             } else {
                 try {
                     jarvisRecognition.start();
                 } catch (e) {
-                    console.warn("Recognition start error", e);
+                    console.warn("Recognition start error:", e);
+                    try {
+                        jarvisRecognition.abort();
+                        setTimeout(() => {
+                            try { jarvisRecognition.start(); } catch (err2) {}
+                        }, 120);
+                    } catch (err) {}
                 }
             }
         }
@@ -3300,6 +3780,8 @@
                             fetchLoopTelemetry(true);
                         } else if (act.type === 'DOWNLOAD_AUDIT') {
                             downloadMarkdownAuditReport();
+                        } else if (act.type === 'OPEN_BOOKING_MODAL') {
+                            openBookingCheckoutModal(act.flight_number, act.origin, act.destination);
                         }
                     }
                 } else {

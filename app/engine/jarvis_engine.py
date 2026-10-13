@@ -233,10 +233,25 @@ class JarvisVoiceEngine:
                     ui_action={"type": "SWITCH_TAB", "tab_id": tab_id}
                 )
 
-        # 7. PNR SEARCH & LOOKUP
-        pnr_match = re.search(r'\b([a-z0-9]{6})\b', cmd_lower)
-        if ("pnr" in cmd_lower or "booking" in cmd_lower or "passenger" in cmd_lower) and pnr_match:
-            candidate_pnr = pnr_match.group(1).upper()
+        # 7. BOOKING & PAYMENT GATEWAY INTENT
+        booking_keywords = ["book flight", "book a flight", "book new", "booking", "payment", "gateway", "pay", "buy ticket", "reserve flight", "checkout", "how to book"]
+        if any(w in cmd_lower for w in booking_keywords):
+            # Only redirect to PNR lookup if an actual registered PNR locator is specified
+            registered_pnrs = [p for p in re.findall(r'\b([A-Za-z0-9]{6})\b', cmd) if p.upper() in gds_service.pnrs]
+            if not registered_pnrs:
+                speech = "Opening Let's Fly Global Flight Booking and Payment Gateway Checkout. Select your cabin class and complete payment instantly via UPI, QR code, or Credit Card."
+                return VoiceCommandResponse(
+                    command=cmd,
+                    intent="OPEN_BOOKING_CHECKOUT",
+                    action="SHOW_PAYMENT_GATEWAY",
+                    speech_response=speech,
+                    ui_action={"type": "OPEN_BOOKING_MODAL"}
+                )
+
+        # 8. PNR SEARCH & LOOKUP
+        pnr_tokens = [p for p in re.findall(r'\b([A-Za-z0-9]{6})\b', cmd) if p.upper() in gds_service.pnrs]
+        if pnr_tokens or (("pnr" in cmd_lower or "passenger" in cmd_lower) and re.search(r'\b([A-Za-z0-9]{6})\b', cmd)):
+            candidate_pnr = (pnr_tokens[0] if pnr_tokens else re.search(r'\b([A-Za-z0-9]{6})\b', cmd).group(1)).upper()
             pnr_rec = gds_service.get_pnr(candidate_pnr)
             if pnr_rec:
                 speech = (

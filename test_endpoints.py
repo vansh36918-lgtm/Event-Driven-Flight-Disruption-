@@ -50,6 +50,33 @@ def test():
     loop = json.loads(req.read().decode('utf-8'))
     print(f"[OK] Soak Loop Telemetry: Cycle={loop['cycle']}, Latency={loop['solve_latency_ms']}ms, Health={loop['platform_health']}")
 
+    # 10. Booking Search API
+    req = urllib.request.urlopen("http://localhost:8000/api/v1/booking/search?origin=DEL&destination=BOM")
+    bsearch = json.loads(req.read().decode('utf-8'))
+    count = len(bsearch) if isinstance(bsearch, list) else len(bsearch.get('available_flights', []))
+    print(f"[OK] Booking Search API: Found {count} flights for DEL -> BOM")
+
+    # 11. Booking Checkout & Payment Gateway API
+    checkout_payload = json.dumps({
+        "passenger_name": "Vansh Sharma",
+        "email": "vansh@letsfly.aero",
+        "flight_number": "6E204",
+        "origin": "DEL",
+        "destination": "BOM",
+        "cabin_class": "BUSINESS",
+        "payment_method": "UPI",
+        "amount_paid": 18900
+    }).encode('utf-8')
+    req = urllib.request.Request("http://localhost:8000/api/v1/booking/checkout", data=checkout_payload, headers={"Content-Type": "application/json"})
+    checkout_res = json.loads(urllib.request.urlopen(req).read().decode('utf-8'))
+    print(f"[OK] Booking Checkout & Payment: PNR={checkout_res['pnr_id']}, TXN={checkout_res['transaction_id']}, Seat={checkout_res['seat_assigned']}, Status={checkout_res['status']}")
+
+    # 12. JARVIS Voice Booking Command Intent
+    jb_payload = json.dumps({"command": "Book flight from Delhi to Mumbai"}).encode('utf-8')
+    req = urllib.request.Request("http://localhost:8000/api/v1/jarvis/voice-command", data=jb_payload, headers={"Content-Type": "application/json"})
+    jb_res = json.loads(urllib.request.urlopen(req).read().decode('utf-8'))
+    print(f"[OK] JARVIS Voice Booking: Intent={jb_res['intent']}, Action={jb_res['action']}, UI Action={jb_res.get('ui_action', {}).get('type')}")
+
     print("\n>>> ALL LIVE HTTP ENDPOINTS TESTED AND 100% OPERATIONAL! <<<")
 
 if __name__ == "__main__":

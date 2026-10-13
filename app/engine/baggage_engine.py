@@ -138,6 +138,51 @@ class IATABaggageEngine:
             "updated_at_utc": now.strftime("%Y-%m-%d %H:%M:%S UTC"),
         }
 
+    def create_baggage_record(
+        self,
+        pnr_id: str,
+        flight_number: str,
+        origin: str,
+        destination: str,
+    ) -> Dict[str, Any]:
+        """Creates initial confirmed IATA 753 baggage record for a new booking."""
+        now = datetime.utcnow()
+        carrier = flight_number[:2]
+        tag_number = self.generate_initial_tag(carrier, pnr_id)
+        sorter_bay = f"RAMP-BAY-{random.choice(['Alpha', 'Bravo', 'Charlie', 'Delta'])}-{random.randint(1, 12)}"
+        makeup_carousel = f"CAROUSEL-{random.randint(1, 8)}{random.choice(['A', 'B'])}"
+
+        checkpoints = [
+            {
+                "checkpoint": "CHECKIN_ACQUISITION",
+                "location": f"{origin} Terminal Ticketing Hall",
+                "timestamp_utc": now.strftime("%H:%M:%S UTC"),
+                "scanner_type": "OPTICAL_BARCODE_DESK",
+                "custody": f"{carrier} Ground Services",
+                "status": "TAG_GENERATED_CONFIRMED",
+            }
+        ]
+
+        record = {
+            "pnr_id": pnr_id,
+            "iata_tag_number": tag_number,
+            "resolution_standard": "IATA Resolution 753 Compliant",
+            "original_flight": flight_number,
+            "reaccommodated_flight": None,
+            "origin": origin,
+            "destination": destination,
+            "interline_transfer": False,
+            "interline_carrier": None,
+            "makeup_carousel": makeup_carousel,
+            "bhs_sorter_bay": sorter_bay,
+            "custody_status": "ON_SCHEDULE_IN_TRANSIT",
+            "rfid_scan_history": checkpoints,
+            "sita_bagmessage": f"BSM/{tag_number}/{flight_number}/{origin}{destination}/ISSUED",
+            "updated_at_utc": now.strftime("%Y-%m-%d %H:%M:%S UTC"),
+        }
+        self.baggage_registry[pnr_id.upper()] = record
+        return record
+
 
 # Singleton instance
 baggage_engine = IATABaggageEngine()

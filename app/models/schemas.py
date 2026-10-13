@@ -149,3 +149,39 @@ class VoiceCommandResponse(BaseModel):
     status: str = "SUCCESS"
 
 
+class BookingCheckoutRequest(BaseModel):
+    flight_number: str
+    origin: str
+    destination: str
+    passenger_name: str
+    email: str
+    phone: Optional[str] = "+91 98765 43210"
+    cabin_class: str = "ECONOMY"  # ECONOMY, BUSINESS, CHARTER
+    payment_method: str = "UPI"  # UPI, CREDIT_CARD, NET_BANKING, SABRE_CORP
+    amount_inr: float = 6450.0
+    amount_paid: Optional[float] = None
+
+
+class BookingCheckoutResponse(BaseModel):
+    pnr_id: str
+    transaction_id: str
+    flight_number: str
+    origin: str
+    destination: str
+    passenger_name: str
+    cabin_class: str
+    seat: str
+    gate: str
+    seat_assigned: Optional[str] = None
+    gate_assigned: Optional[str] = None
+    baggage_rfid_tag: Optional[str] = None
+    status: str = "CONFIRMED"
+    payment_status: str = "PAID"
+    amount_inr: float
+    amount_paid: Optional[float] = None
+    payment_method: str
+    timestamp: str
+    message: str
+
+
+
