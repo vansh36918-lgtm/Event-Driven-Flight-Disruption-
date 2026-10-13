@@ -153,12 +153,16 @@ async def simulate_disruption(payload: DisruptionWebhookPayload):
     await reaccommodation_worker.handle_disruption_event(payload.model_dump(mode="json"))
 
     affected = gds_service.get_pnrs_for_flight(payload.flight_number)
+    sample_pnr = affected[0].pnr_id if affected else "BF6JB7"
     return {
         "status": "PROCESSED",
         "flight_number": payload.flight_number,
         "disruption_type": payload.disruption_type,
         "affected_pnrs": len(affected),
+        "affected_pnr_count": len(affected),
+        "sample_pnr": sample_pnr,
         "solve_time_ms": reaccommodation_worker.last_solve_time_ms,
+        "solve_latency_ms": reaccommodation_worker.last_solve_time_ms,
         "message": f"Autonomous Re-Accommodation pipeline executed for flight {payload.flight_number}.",
     }
 
