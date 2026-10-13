@@ -9,6 +9,8 @@ import string
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional
 from app.models.schemas import PassengerRecord, FlightSegment
+from app.engine.baggage_engine import baggage_engine
+
 
 
 # Geodesic coordinates for hub distance calculations
@@ -123,9 +125,10 @@ class CompensationEngine:
             "sequence_number": seq_num,
             "fare_class": pnr.fare_class.value,
             "qr_data": qr_payload,
-            "baggage_tags": [f"001-{random.randint(100000, 999999)}"],
+            "baggage_tags": [baggage_engine.get_baggage_record(pnr.pnr_id).get("iata_tag_number", f"001-{random.randint(100000, 999999)}")],
             "issued_at": datetime.utcnow().isoformat(),
         }
+
 
 
 # Singleton instance

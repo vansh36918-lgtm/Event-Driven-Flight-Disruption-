@@ -195,6 +195,16 @@ async def test_event_pipeline_and_ai():
     assert "TOTAL PLATFORM NET ROI" in md_dossier
     print(f"  [OK] IATA Res 766 Op-Up ({pnr_upgraded.upgraded_cabin}) & Printable Audit Dossier verified!")
 
+    # 14. IATA Resolution 753 Baggage Tracking & RFID Auto-Reroute Verification
+    from app.engine.baggage_engine import baggage_engine
+    bag_rec = baggage_engine.get_baggage_record(pnr_final.pnr_id)
+    assert bag_rec is not None, "Expected baggage tracking record!"
+    assert len(bag_rec["iata_tag_number"]) == 10, f"Expected 10-digit IATA barcode, got {bag_rec['iata_tag_number']}"
+    assert len(bag_rec["rfid_scan_history"]) >= 4, "Expected all 4 mandatory IATA 753 custody checkpoints!"
+    assert "BSM/" in bag_rec["sita_bagmessage"]
+    print(f"  [OK] IATA Res 753 Baggage Tracking & RFID Auto-Reroute verified (Tag: {bag_rec['iata_tag_number']}, Bay: {bag_rec['bhs_sorter_bay']})!")
+
+
 
 
 

@@ -27,6 +27,7 @@ from app.engine.ndc_service import ndc_service
 from app.engine.slot_engine import slot_engine
 from app.engine.alliance_engine import alliance_engine
 from app.engine.audit_engine import audit_engine
+from app.engine.baggage_engine import baggage_engine
 from app.bus.event_broker import event_broker
 from app.worker.reaccommodation_worker import reaccommodation_worker
 from app.ai.assistant import ai_assistant
@@ -191,7 +192,21 @@ async def get_passenger_boarding_pass(pnr_id: str):
     return compensation_engine.generate_boarding_pass(pnr, flight)
 
 
+@app.get("/api/v1/pnr/{pnr_id}/baggage")
+async def get_pnr_baggage_telemetry(pnr_id: str):
+    """
+    Returns real-time IATA Resolution 753 baggage tracking telemetry,
+    RFID custody checkpoints, and BHS expedited transfer status.
+    """
+    pnr = gds_service.get_pnr(pnr_id)
+    if not pnr:
+        raise HTTPException(status_code=404, detail=f"PNR '{pnr_id}' not found.")
+
+    return baggage_engine.get_baggage_record(pnr.pnr_id)
+
+
 @app.get("/api/v1/pnr/{pnr_id}/ndc-order")
+
 async def get_iata_ndc_order(pnr_id: str):
     """
     Generates standard IATA NDC 21.3 OrderChangeNotifRQ payload for global airline distribution systems.

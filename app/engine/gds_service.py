@@ -15,6 +15,8 @@ from app.models.schemas import (
     DisruptionWebhookPayload,
     DisruptionType,
 )
+from app.engine.baggage_engine import baggage_engine
+
 
 
 class GDSService:
@@ -167,7 +169,18 @@ class GDSService:
                 pnr.upgraded_cabin = "BUSINESS (CLASS J)"
                 pnr.upgrade_reason = "IATA RES 766 HIGH-PVS PRIORITY MITIGATION"
 
+        # IATA Resolution 753 Automated Baggage Reroute Order
+        new_flight_num = pnr.original_flight_number
+        if pnr.reaccommodation_options:
+            chosen = next((o for o in pnr.reaccommodation_options if o.get("option_id") == option_id), pnr.reaccommodation_options[0])
+            segments = chosen.get("segments", [])
+            if segments:
+                new_flight_num = segments[0].get("flight_number", new_flight_num)
+
+        baggage_engine.auto_reroute_baggage(pnr.pnr_id, pnr.original_flight_number, new_flight_num, pnr.origin, pnr.destination)
+
         return pnr
+
 
 
     def record_disruption(self, payload: DisruptionWebhookPayload):

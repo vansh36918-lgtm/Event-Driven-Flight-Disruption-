@@ -393,7 +393,34 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- IATA Resolution 753 Baggage Tracking & RFID Checkpoints -->
+                <div class="panel p-5 space-y-3 text-xs">
+                    <div class="flex items-center justify-between border-b border-[#1e2433] pb-2">
+                        <div>
+                            <h3 class="font-semibold text-white">IATA Resolution 753 Baggage Tracking</h3>
+                            <p class="text-slate-500 text-[10px]">Real-time ramp sorter custody transfer & RFID checkpoints.</p>
+                        </div>
+                        <span id="bag-status-badge" class="px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-900 mono">EXPEDITED TRANSFER</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-[11px] mono">
+                        <div class="panel-subtle p-2 rounded">
+                            <div class="text-[9px] text-slate-500 uppercase">IATA Barcode Tag</div>
+                            <div id="bag-tag-num" class="font-bold text-cyan-400 mt-0.5">001-000000</div>
+                        </div>
+                        <div class="panel-subtle p-2 rounded">
+                            <div class="text-[9px] text-slate-500 uppercase">BHS Sorter Bay</div>
+                            <div id="bag-sorter-bay" class="font-bold text-amber-400 mt-0.5">RAMP-BAY-Alpha-1</div>
+                        </div>
+                    </div>
+
+                    <div id="bag-checkpoints-list" class="space-y-1.5 pt-1 text-[11px] mono">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
             </div>
+
         </div>
     </main>
 
@@ -887,6 +914,7 @@
                     });
 
                     loadCompensationVouchers(pnr);
+                    loadBaggageTracking(pnr);
                 }
             } catch (e) {
                 console.error(e);
@@ -906,6 +934,47 @@
                 console.error(e);
             }
         }
+
+        async function loadBaggageTracking(pnr) {
+            try {
+                const res = await fetch(`/api/v1/pnr/${pnr}/baggage`);
+                if (res.ok) {
+                    const b = await res.json();
+                    document.getElementById('bag-tag-num').innerText = b.iata_tag_number;
+                    document.getElementById('bag-sorter-bay').innerText = b.bhs_sorter_bay;
+                    const badge = document.getElementById('bag-status-badge');
+                    if (badge) {
+                        badge.innerText = b.custody_status.replace(/_/g, ' ');
+                        badge.className = b.interline_transfer
+                            ? 'px-2 py-0.5 rounded text-[10px] bg-purple-950 text-purple-400 border border-purple-900 mono'
+                            : 'px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-900 mono';
+                    }
+
+                    const list = document.getElementById('bag-checkpoints-list');
+                    if (list && b.rfid_scan_history) {
+                        list.innerHTML = '';
+                        b.rfid_scan_history.forEach(cp => {
+                            const item = document.createElement('div');
+                            item.className = 'panel-subtle p-2 rounded flex items-center justify-between text-[10px] border border-[#1e2433]';
+                            item.innerHTML = `
+                                <div>
+                                    <span class="text-blue-400 font-bold">${cp.checkpoint}</span>
+                                    <div class="text-slate-400 text-[9px]">${cp.location}</div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-slate-300 font-mono">${cp.timestamp_utc}</span>
+                                    <div class="text-[9px] text-emerald-400">${cp.status}</div>
+                                </div>
+                            `;
+                            list.appendChild(item);
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error("Baggage load err:", e);
+            }
+        }
+
 
         function switchToBoardingPassView() {
             switchTab('boarding');
