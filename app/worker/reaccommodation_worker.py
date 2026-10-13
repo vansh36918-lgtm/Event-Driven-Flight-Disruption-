@@ -12,6 +12,7 @@ from app.engine.graph_engine import reaccommodation_engine
 from app.engine.crew_engine import crew_engine
 from app.engine.fleet_engine import fleet_engine
 from app.engine.slot_engine import slot_engine
+from app.engine.hotel_engine import hotel_engine
 from app.models.schemas import FlightStatus
 
 logger = logging.getLogger("Worker")
@@ -83,6 +84,15 @@ class ReaccommodationWorker:
                 f"ALERT: Cascading FAA Part 117 duty timeout on downstream flight {alert['cascading_flight_number']} "
                 f"from antecedent {flight_num}."
             )
+            # Automated reserve crew deadhead dispatch to rescue downstream rotation
+            dispatch = crew_engine.execute_deadhead_recovery(alert["cascading_flight_number"], hub=dest)
+            if dispatch:
+                alert["recovery_dispatch"] = dispatch.dict()
+                logger.info(
+                    f"Crew OCC dispatched reserve crew for {alert['cascading_flight_number']}: "
+                    f"{dispatch.assigned_captain} & {dispatch.assigned_first_officer} ({dispatch.deadhead_routing})"
+                )
+
             self.crew_alerts.insert(0, alert)
             if len(self.crew_alerts) > 20:
                 self.crew_alerts.pop()
@@ -105,6 +115,18 @@ class ReaccommodationWorker:
             self.slot_swaps.insert(0, slot_swap)
             if len(self.slot_swaps) > 20:
                 self.slot_swaps.pop()
+
+        # 5. Automated CRS/Sabre Emergency Hotel & Meal Voucher issuance for overnight cancellations
+        if disruption_type == "CANCELLATION" or delay_est >= 360:
+            for pnr in affected_pnrs[:15]:
+                hotel_engine.issue_hotel_voucher(
+                    pnr_id=pnr.pnr_id,
+                    passenger_name=pnr.passenger_name,
+                    disrupted_flight_num=flight_num,
+                    hub_airport=origin,
+                    cabin_class=pnr.fare_class.value if hasattr(pnr.fare_class, "value") else str(pnr.fare_class),
+                    pvs_score=pnr.pvs_score,
+                )
 
         elapsed_ms = (time.perf_counter() - start_time) * 1000
         self.last_solve_time_ms = round(elapsed_ms, 2)

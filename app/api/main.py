@@ -28,6 +28,8 @@ from app.engine.slot_engine import slot_engine
 from app.engine.alliance_engine import alliance_engine
 from app.engine.audit_engine import audit_engine
 from app.engine.baggage_engine import baggage_engine
+from app.engine.crew_engine import crew_engine
+from app.engine.hotel_engine import hotel_engine
 from app.bus.event_broker import event_broker
 from app.worker.reaccommodation_worker import reaccommodation_worker
 from app.ai.assistant import ai_assistant
@@ -205,6 +207,38 @@ async def get_pnr_baggage_telemetry(pnr_id: str):
     return baggage_engine.get_baggage_record(pnr.pnr_id)
 
 
+@app.get("/api/v1/pnr/{pnr_id}/hotel-voucher")
+async def get_pnr_hotel_voucher(pnr_id: str):
+    """
+    Returns CRS/Sabre electronic hotel and meal stipend voucher
+    mandated under EU261 Article 9 / US DOT for overnight delay or prolonged cancellation.
+    """
+    pnr = gds_service.get_pnr(pnr_id)
+    if not pnr:
+        raise HTTPException(status_code=404, detail=f"PNR '{pnr_id}' not found.")
+
+    voucher = hotel_engine.get_voucher_by_pnr(pnr.pnr_id)
+    if not voucher:
+        # Generate on-demand if PNR is disrupted or delayed
+        voucher = hotel_engine.issue_hotel_voucher(
+            pnr_id=pnr.pnr_id,
+            passenger_name=pnr.passenger_name,
+            disrupted_flight_num=pnr.original_flight_number,
+            hub_airport=pnr.origin,
+            cabin_class=pnr.fare_class.value if hasattr(pnr.fare_class, "value") else str(pnr.fare_class),
+            pvs_score=pnr.pvs_score,
+            force=True,
+        )
+
+    return voucher
+
+
+@app.get("/api/v1/hotel/properties")
+async def get_contracted_hotels(hub: Optional[str] = None):
+    """Returns contracted airport hotels and real-time room availability across hubs."""
+    return hotel_engine.get_hotel_properties(hub)
+
+
 @app.get("/api/v1/pnr/{pnr_id}/ndc-order")
 
 async def get_iata_ndc_order(pnr_id: str):
@@ -275,12 +309,38 @@ async def get_airline_alliances():
 
 
 @app.get("/api/v1/crew/alerts")
-
 async def get_crew_pairing_alerts():
     """
     Returns live FAA FAR Part 117 / Part 121 crew duty timeouts and cascading rotation breaches.
     """
     return reaccommodation_worker.crew_alerts
+
+
+@app.get("/api/v1/crew/reserves")
+async def get_reserve_crew_pool(hub: Optional[str] = None):
+    """
+    Returns standby reserve pilot and cabin crew rosters across hubs with FAR Part 117 legality status.
+    """
+    return crew_engine.get_reserve_pool(hub)
+
+
+@app.get("/api/v1/crew/dispatches")
+async def get_crew_recovery_dispatches():
+    """
+    Returns executed reserve crew deadhead dispatches protecting downstream flight rotations.
+    """
+    return crew_engine.get_recovery_dispatches()
+
+
+@app.post("/api/v1/crew/deadhead-recovery")
+async def trigger_crew_deadhead_recovery(flight_number: str, hub: Optional[str] = None):
+    """
+    Manually or autonomously triggers reserve crew deadhead dispatch to rescue a stranded downstream flight.
+    """
+    dispatch = crew_engine.execute_deadhead_recovery(flight_number, hub)
+    if not dispatch:
+        raise HTTPException(status_code=400, detail=f"No legal reserve crew available for flight {flight_number}.")
+    return dispatch
 
 
 @app.get("/api/v1/fleet/tail-swaps")

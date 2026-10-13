@@ -204,14 +204,38 @@ async def test_event_pipeline_and_ai():
     assert "BSM/" in bag_rec["sita_bagmessage"]
     print(f"  [OK] IATA Res 753 Baggage Tracking & RFID Auto-Reroute verified (Tag: {bag_rec['iata_tag_number']}, Bay: {bag_rec['bhs_sorter_bay']})!")
 
+    # 15. Reserve Crew Deadhead Recovery & CRS E-Hotel Voucher Verification
+    from app.engine.crew_engine import crew_engine
+    from app.engine.hotel_engine import hotel_engine
 
+    # Test Reserve Crew Deadhead Recovery
+    reserves = crew_engine.get_reserve_pool("ORD")
+    assert len(reserves) >= 2, "Expected standby reserve crew at ORD hub!"
+    crew_dispatch = crew_engine.execute_deadhead_recovery("B6101", hub="ORD")
+    assert crew_dispatch is not None, "Expected crew recovery dispatch for B6101!"
+    assert crew_dispatch.duty_legality == "FAA_PART_117_CERTIFIED_LEGAL"
+    assert "Capt." in crew_dispatch.assigned_captain
+    assert "F/O" in crew_dispatch.assigned_first_officer
+    assert len(crew_engine.get_recovery_dispatches()) >= 1
 
-
-
-
-
-
-
+    # Test CRS / Sabre E-Hotel and Meal Voucher Generation
+    hotel_vch = hotel_engine.issue_hotel_voucher(
+        pnr_id=pnr_final.pnr_id,
+        passenger_name=pnr_final.passenger_name,
+        disrupted_flight_num=pnr_final.original_flight_number,
+        hub_airport="ORD",
+        cabin_class="BUSINESS",
+        pvs_score=pnr_final.pvs_score,
+        force=True,
+    )
+    assert hotel_vch is not None, "Expected hotel voucher for disrupted passenger!"
+    assert hotel_vch.room_tier == "EXECUTIVE_SUITE"  # Upgraded / high PVS
+    assert hotel_vch.meal_stipend_usd == 95.0
+    assert "SABRE-DIRBILL-" in hotel_vch.corporate_direct_bill
+    assert "VOUCHER:" in hotel_vch.qr_payload
+    retrieved_vch = hotel_engine.get_voucher_by_pnr(pnr_final.pnr_id)
+    assert retrieved_vch is not None and retrieved_vch.voucher_id == hotel_vch.voucher_id
+    print(f"  [OK] Reserve Crew Deadhead ({crew_dispatch.assigned_captain} & {crew_dispatch.assigned_first_officer}) & CRS E-Hotel Voucher ({hotel_vch.voucher_id} at {hotel_vch.hotel_name}) verified!")
 
 
 if __name__ == "__main__":

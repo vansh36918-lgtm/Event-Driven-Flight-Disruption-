@@ -1,16 +1,16 @@
 # CURRENT_TASK.md — Active Sprint Focus
 
-- **Current Goal**: Phase 18: Multi-Leg Crew Deadhead Recovery & CRS E-Hotel Voucher Integration.
+- **Current Goal**: Phase 19: Airborne In-Flight Diversion & Alternate Hub Ground Intermodal Engine.
 - **Verification Status**:
-  - Phase 17 completed: Monochromatic minimalist black-and-white theme & 3D Three.js interactive flight vector globe live on `http://localhost:8000`.
-  - `python test_system.py`: 14/14 test suites passing.
-  - Active background daemon `task-866` running `python run.py`.
-  - Active 10-hour scheduler `task-669` waking agent continuously.
+  - Phase 18 completed: Multi-Leg Crew Deadhead Recovery & CRS E-Hotel Voucher Integration.
+  - `python test_system.py`: All 15 test suites passed with 0 regressions.
+  - Live server running on `http://localhost:8000` (`task-1039`).
+  - Active 10-hour scheduler `task-669` continuously maintaining autonomous execution.
+  - Contracted hotel properties and standby reserve crew rosters live at ORD, JFK, ATL, DFW, LAX.
 - **Next Steps**:
-  - Implement `app/engine/hotel_engine.py` for automated CRS/Sabre electronic hotel & meal vouchers for overnight IRROPS delays (>6h or 22:00-06:00).
-  - Implement Crew Deadhead Recovery in `app/engine/crew_engine.py` to re-position reserve crew members on non-disrupted flights to rescue downstream rotations.
-  - Expose API endpoints in `app/main.py`.
-  - Update `test_system.py` with test suite 15.
+  - Implement `app/engine/divert_engine.py` for airborne diversions, designated fuel alternates (e.g. MKE/IND for ORD, PHL/EWR for JFK), and intermodal ground coach dispatch.
+  - Wire airborne divert simulation into worker and API endpoints.
+  - Add test suite 16 to `test_system.py`.
 
 
 

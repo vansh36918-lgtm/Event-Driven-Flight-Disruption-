@@ -103,11 +103,20 @@
 - [x] Local bundling of `three.min.js` and `OrbitControls.js` in `app/static/js/` ensuring 100% offline air-gapped capability.
 - [x] All 14 verification test suites passed with 0 regressions.
 
-## Phase 18: Multi-Leg Crew Deadhead Recovery & E-Hotel Voucher Integration [IN PROGRESS]
-- [ ] Automated FAR Part 117 crew deadhead re-assignment when downstream flight rotations risk cancellation.
-- [ ] CRS / Sabre e-hotel voucher issuance and inventory engine for overnight delays (>6 hours or past 22:00 local).
-- [ ] Dedicated REST endpoints: `POST /api/v1/crew/deadhead-recovery` and `GET /api/v1/pnr/{pnr_id}/hotel-voucher`.
-- [ ] Verification suite 15 in `test_system.py`.
+## Phase 18: Multi-Leg Crew Deadhead Recovery & E-Hotel Voucher Integration [COMPLETED]
+- [x] Automated FAR Part 117 crew deadhead re-assignment when downstream flight rotations risk cascading timeout cancellation (`app/engine/crew_engine.py`).
+- [x] Standby reserve captain and first officer roster with Part 117 legal rest certification (`/api/v1/crew/reserves`).
+- [x] CRS / Sabre electronic hotel & meal voucher engine (`app/engine/hotel_engine.py`) with contracted properties at ORD, JFK, ATL, DFW, LAX.
+- [x] Automatic lodging and per-diem stipend assignment ($65.00 std / $95.00 executive) linked to passenger PNR and direct corporate billing codes (`SABRE-DIRBILL-`).
+- [x] REST endpoints: `GET /api/v1/pnr/{pnr_id}/hotel-voucher`, `GET /api/v1/hotel/properties`, `POST /api/v1/crew/deadhead-recovery`, and `GET /api/v1/crew/dispatches`.
+- [x] UI integration: Interactive Sabre Voucher card and OCC Reserve Crew Dispatch monitoring.
+- [x] Verification suite 15 in `test_system.py` passing with 100% success rate.
+
+## Phase 19: Airborne In-Flight Diversion & Alternate Hub Ground Intermodal Engine [IN PROGRESS]
+- [ ] En-route airborne diversion optimizer (`app/engine/divert_engine.py`) modeling destination zero-visibility/severe squall line diversions to designated alternate airports (e.g. ORD -> MKE/IND).
+- [ ] Automated intermodal onward dispatch (ground luxury coach transfer vs morning feeder re-flight) with passenger luggage re-tagging.
+- [ ] 3D WebGL Great-Circle Divert Arcs in `index.html` showing mid-air trajectory deviation.
+- [ ] Automated verification in `test_system.py` step 16.
 
 
 

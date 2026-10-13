@@ -16,6 +16,7 @@ from app.models.schemas import (
     DisruptionType,
 )
 from app.engine.baggage_engine import baggage_engine
+from app.engine.hotel_engine import hotel_engine
 
 
 
@@ -178,6 +179,27 @@ class GDSService:
                 new_flight_num = segments[0].get("flight_number", new_flight_num)
 
         baggage_engine.auto_reroute_baggage(pnr.pnr_id, pnr.original_flight_number, new_flight_num, pnr.origin, pnr.destination)
+
+        # Automated CRS/Sabre Hotel Voucher Check (EU261 Article 9 & US DOT overnight mandate)
+        dep_time = None
+        if pnr.reaccommodation_options:
+            chosen = next((o for o in pnr.reaccommodation_options if o.get("option_id") == option_id), pnr.reaccommodation_options[0])
+            segments = chosen.get("segments", [])
+            if segments:
+                dep_time = segments[0].get("departure_time")
+
+        orig_flt = self.flights.get(pnr.original_flight_number)
+        orig_sched = orig_flt.departure_time.isoformat() if (orig_flt and hasattr(orig_flt, "departure_time") and orig_flt.departure_time) else ""
+        if hotel_engine.is_overnight_delay(orig_sched, dep_time):
+            hotel_engine.issue_hotel_voucher(
+                pnr_id=pnr.pnr_id,
+                passenger_name=pnr.passenger_name,
+                disrupted_flight_num=pnr.original_flight_number,
+                hub_airport=pnr.origin,
+                cabin_class=pnr.fare_class.value if hasattr(pnr.fare_class, "value") else str(pnr.fare_class),
+                pvs_score=pnr.pvs_score,
+                reaccommodated_flight_num=new_flight_num,
+            )
 
         return pnr
 

@@ -412,6 +412,22 @@
                             </div>
                             <span id="vch-comp-amount" class="mono text-white font-bold">$250.00 USD</span>
                         </div>
+
+                        <!-- Sabre / CRS E-Hotel & Meal Voucher Card -->
+                        <div id="hotel-voucher-card" class="hidden panel-subtle p-3.5 rounded border border-neutral-700 space-y-2 text-[11px] mono">
+                            <div class="flex items-center justify-between border-b border-neutral-800 pb-1.5">
+                                <div class="flex items-center space-x-2">
+                                    <span class="px-1.5 py-0.5 rounded bg-white text-black font-bold text-[9px]">SABRE VOUCHER</span>
+                                    <span id="htl-name" class="font-bold text-white">--</span>
+                                </div>
+                                <span id="htl-tier" class="text-neutral-300 text-[10px]">--</span>
+                            </div>
+                            <div class="text-neutral-400 text-[10px] space-y-0.5">
+                                <div><span class="text-neutral-500 uppercase">Address:</span> <span id="htl-address" class="text-neutral-300">--</span></div>
+                                <div><span class="text-neutral-500 uppercase">Shuttle:</span> <span id="htl-shuttle" class="text-neutral-300">--</span></div>
+                                <div><span class="text-neutral-500 uppercase">Billing:</span> <span id="htl-bill" class="text-neutral-300">--</span></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1014,18 +1030,33 @@
                     fetch('/api/v1/atc/ground-delay-programs'),
                     fetch('/api/v1/atc/slot-swaps'),
                     fetch('/api/v1/fleet/tail-swaps'),
-                    fetch('/api/v1/crew/alerts')
+                    fetch('/api/v1/crew/alerts'),
+                    fetch('/api/v1/crew/dispatches')
                 ]);
                 if (gdpRes.ok && slotRes.ok && tailRes.ok && crewRes.ok) {
                     const gdps = await gdpRes.json();
                     const slots = await slotRes.json();
                     const tails = await tailRes.json();
                     const crews = await crewRes.json();
+                    const dispatches = dispatchRes && dispatchRes.ok ? await dispatchRes.json() : [];
 
                     const atcBox = document.getElementById('atc-fleet-box');
                     if (!atcBox) return;
 
                     let html = '';
+                    if (dispatches && dispatches.length > 0) {
+                        const d = dispatches[dispatches.length - 1];
+                        html += `
+                            <div class="panel-subtle p-2.5 rounded border border-neutral-700 text-[11px] space-y-1 mono">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-white">RESERVE CREW DISPATCH</span>
+                                    <span class="text-[10px] text-neutral-300 font-bold">${d.flight_number}</span>
+                                </div>
+                                <div class="text-neutral-300 text-[10px]">${d.assigned_captain} &bull; ${d.assigned_first_officer}</div>
+                                <div class="text-neutral-500 text-[9px]">${d.deadhead_routing} &bull; ${d.duty_legality}</div>
+                            </div>
+                        `;
+                    }
                     if (gdps && gdps.length > 0) {
                         const g = gdps[0];
                         html += `
@@ -1250,8 +1281,26 @@
                     document.getElementById('vch-comp-amount').innerText = `$${c.cash_compensation_usd}.00 USD`;
                     document.getElementById('vch-hotel-status').innerText = c.vouchers.hotel_provided ? `Voucher: ${c.vouchers.hotel_voucher_code}` : 'Included on >6h delay';
                 }
+
+                // Fetch CRS/Sabre hotel voucher details
+                const hotelRes = await fetch(`/api/v1/pnr/${pnr}/hotel-voucher`);
+                if (hotelRes.ok) {
+                    const h = await hotelRes.json();
+                    if (h && h.voucher_id) {
+                        document.getElementById('vch-hotel-status').innerText = `${h.voucher_id} (CONFIRMED)`;
+                        const card = document.getElementById('hotel-voucher-card');
+                        if (card) {
+                            card.classList.remove('hidden');
+                            document.getElementById('htl-name').innerText = h.hotel_name;
+                            document.getElementById('htl-tier').innerText = `${h.room_tier.replace(/_/g, ' ')} • $${h.meal_stipend_usd} Dining`;
+                            document.getElementById('htl-address').innerText = h.hotel_address;
+                            document.getElementById('htl-shuttle').innerText = h.shuttle_instructions;
+                            document.getElementById('htl-bill').innerText = `${h.corporate_direct_bill} (${h.check_in_date} to ${h.check_out_date})`;
+                        }
+                    }
+                }
             } catch (e) {
-                console.error(e);
+                console.error("Voucher load error:", e);
             }
         }
 
