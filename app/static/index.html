@@ -821,12 +821,18 @@
 
     <!-- FRAMER "LET'S FLY" FAQ ACCORDION ("In case you missed anything.") -->
     <section id="letsfly-faq" class="max-w-7xl mx-auto px-5 py-12 w-full space-y-6 border-t border-neutral-900">
-        <div class="text-center max-w-2xl mx-auto space-y-2">
+        <div class="text-center max-w-2xl mx-auto space-y-3">
             <span class="text-neutral-500 uppercase tracking-widest text-[10px] mono font-bold">GOT A QUESTION? WE'RE HERE TO HELP</span>
             <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight font-albert">In case you missed anything.</h2>
             <p class="text-xs sm:text-sm text-neutral-400 leading-relaxed">
                 Everything you need to know about our fleet, autonomous IRROPS graph solver, and passenger rights.
             </p>
+            <div class="pt-1">
+                <button onclick="switchTab('portal'); document.getElementById('chat-input').focus();" class="inline-flex items-center space-x-2 px-5 py-2 rounded-full bg-white text-black font-bold text-xs mono hover:bg-neutral-200 transition shadow-lg">
+                    <i class="fa-solid fa-headset text-xs"></i>
+                    <span>Chat with us</span>
+                </button>
+            </div>
         </div>
 
         <div class="max-w-3xl mx-auto space-y-3 mono text-xs">
@@ -922,11 +928,19 @@
 
     <!-- Let's Fly Minimalist Footer -->
     <footer class="mt-auto border-t border-neutral-900 bg-black py-8 px-5 text-neutral-400 mono text-xs">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-5">
             <div class="flex items-center space-x-3">
                 <span class="font-black text-white text-base font-albert">Let’sFly</span>
                 <span class="text-neutral-600">•</span>
                 <span class="text-neutral-500 text-[11px]">46.7712° N, 23.6236° E • New Delhi (DEL) • Mumbai (BOM)</span>
+            </div>
+            <!-- Framer Let's Fly Corridors -->
+            <div class="flex items-center space-x-2 text-[10px] mono">
+                <span class="px-2 py-0.5 rounded bg-neutral-950 border border-neutral-800 text-neutral-400">Africa</span>
+                <span class="px-2 py-0.5 rounded bg-neutral-950 border border-neutral-800 text-neutral-400">USA</span>
+                <span class="px-2 py-0.5 rounded bg-neutral-950 border border-neutral-800 text-neutral-400">Egypt</span>
+                <span class="px-2 py-0.5 rounded bg-neutral-950 border border-neutral-800 text-neutral-400">Japan</span>
+                <span class="px-2 py-0.5 rounded bg-white text-black font-bold">India</span>
             </div>
             <div class="flex items-center space-x-6 text-[11px]">
                 <a href="#letsfly-hero" class="hover:text-white transition">Intro</a>

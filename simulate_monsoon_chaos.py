@@ -164,16 +164,17 @@ async def run_monsoon_chaos_simulation():
             comp_res = await client.get(f"{BASE_URL}/api/v1/pnr/{pnr_sample}/compensation")
             if comp_res.status_code == 200:
                 c_data = comp_res.json()
+                vouch = c_data.get('vouchers') or {}
                 print(f" [OK] Passenger PNR: {pnr_sample} ({c_data.get('passenger_name')})")
-                print(f"      Statutory Compensation: {c_data.get('entitled_amount_display')} ({c_data.get('regulatory_rule')})")
-                print(f"      Complimentary Meals: {c_data.get('meal_voucher_display')}")
-                print(f"      Lodging Voucher: {c_data.get('hotel_voucher')}")
+                print(f"      Statutory Compensation: Rs. {c_data.get('dgca_compensation_inr')} / ${c_data.get('cash_compensation_usd')} USD ({c_data.get('regulation')})")
+                print(f"      Complimentary Meals: Rs. {vouch.get('meal_amount_inr')} voucher [{vouch.get('meal_voucher_code')}]")
+                print(f"      Lounge Access: {'GRANTED' if vouch.get('lounge_access_granted') else 'N/A'}")
 
             hotel_res = await client.get(f"{BASE_URL}/api/v1/pnr/{pnr_sample}/hotel-voucher")
             if hotel_res.status_code == 200:
                 h_data = hotel_res.json()
-                print(f" [OK] Direct Billing Hotel: {h_data.get('hotel_name')} ({h_data.get('room_type')})")
-                print(f"      Billing Code: {h_data.get('direct_billing_code')} | Shuttle: {h_data.get('shuttle_service')}")
+                print(f" [OK] Direct Billing Hotel: {h_data.get('hotel_name')} ({h_data.get('room_tier')})")
+                print(f"      Billing Code: {h_data.get('corporate_direct_bill')} | Shuttle: {h_data.get('shuttle_instructions')}")
 
         # 7. Verify Framer-Style Headless CMS Engine
         print("\n--- VERIFYING FRAMER-STYLE HEADLESS CMS ENGINE ---")
