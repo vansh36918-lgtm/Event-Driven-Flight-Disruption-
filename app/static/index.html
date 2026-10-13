@@ -175,71 +175,122 @@
         </div>
     </div>
 
-    <!-- Top Navigation Bar (Framer Let's Fly Theme) -->
-    <header class="border-b border-neutral-800 bg-black sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('ops')">
-                <div class="w-8 h-8 bg-white text-black font-bold flex items-center justify-center rounded-full shadow">
+    <!-- Top Navigation Bar (Framer Let's Fly High-Contrast Monochromatic Theme) -->
+    <header class="border-b border-neutral-800/80 bg-black/90 backdrop-blur-xl sticky top-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+            <!-- Brand Logo & Aviation Badge -->
+            <div class="flex items-center space-x-2.5 cursor-pointer group flex-shrink-0" onclick="switchTab('ops')">
+                <div class="w-8 h-8 bg-white text-black font-extrabold flex items-center justify-center rounded-full shadow-md transition-transform group-hover:scale-105">
                     <i class="fa-solid fa-plane-up text-sm"></i>
                 </div>
-                <div>
-                    <div class="flex items-center space-x-2">
+                <div class="hidden sm:block">
+                    <div class="flex items-center space-x-1.5">
                         <span class="font-extrabold text-base tracking-tight text-white font-albert">Let’sFly</span>
-                        <span class="px-1.5 py-0.5 rounded text-[9px] bg-neutral-900 border border-neutral-700 text-white font-mono">DGCA CAR-3</span>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] bg-white/10 border border-white/20 text-white font-mono font-bold">CAR-3</span>
                     </div>
-                    <div class="text-[10px] text-neutral-500 mono">Luxury & Affordable Autonomous Aviation</div>
+                    <div class="text-[10px] text-neutral-400 mono leading-none">Luxury Autonomous Aviation</div>
                 </div>
             </div>
 
-            <!-- Navigation Links -->
-            <nav class="hidden md:flex items-center space-x-6 text-xs mono">
-                <a href="#letsfly-hero" class="text-white hover:text-neutral-300 font-medium transition">INTRO</a>
-                <a href="#letsfly-bento" class="text-neutral-400 hover:text-white font-medium transition">FEATURES</a>
-                <button onclick="switchTab('ops')" class="text-neutral-400 hover:text-white font-medium transition">FLIGHTS & 3D RADAR</button>
-                <button onclick="switchTab('portal')" class="text-neutral-400 hover:text-white font-medium transition">PASSENGER PORTAL</button>
-                <button onclick="switchTab('boarding')" class="text-neutral-400 hover:text-white font-medium transition">HOTELS & BAGGAGE</button>
-                <button onclick="switchTab('dispatch')" class="text-neutral-400 hover:text-white font-medium transition">DISPATCH OCC</button>
-                <button onclick="switchTab('analytics')" class="text-neutral-400 hover:text-white font-medium transition">CAR-3 AUDIT</button>
-                <button onclick="switchTab('cms')" class="text-neutral-400 hover:text-white font-medium transition">FRAMER CMS</button>
-                <a href="#letsfly-faq" class="text-neutral-400 hover:text-white font-medium transition">FAQ</a>
+            <!-- Centered Floating Capsule Navigation Bar (Framer Let's Fly Pill Style) -->
+            <nav class="hidden xl:flex items-center p-1 rounded-full bg-neutral-950/90 border border-neutral-800 text-xs mono shadow-inner space-x-1">
+                <button onclick="scrollToSection('letsfly-hero')" id="topnav-hero" class="topnav-pill px-3 py-1 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-[11px]">INTRO</button>
+                <button onclick="scrollToSection('letsfly-bento')" id="topnav-features" class="topnav-pill px-3 py-1 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-[11px]">FEATURES</button>
+                <button onclick="switchTab('ops')" id="topnav-ops" class="topnav-pill px-3 py-1 rounded-full bg-white text-black font-bold shadow transition-all text-[11px]">3D RADAR</button>
+                <button onclick="switchTab('portal')" id="topnav-portal" class="topnav-pill px-3 py-1 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-[11px]">PASSENGERS</button>
+                <button onclick="switchTab('boarding')" id="topnav-boarding" class="topnav-pill px-3 py-1 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-[11px]">HOTELS</button>
+                <button onclick="switchTab('dispatch')" id="topnav-dispatch" class="topnav-pill px-3 py-1 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-[11px]">OCC</button>
+                <button onclick="switchTab('analytics')" id="topnav-analytics" class="topnav-pill px-3 py-1 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-[11px]">AUDIT</button>
+                <button onclick="switchTab('cms')" id="topnav-cms" class="topnav-pill px-3 py-1 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-[11px]">CMS</button>
             </nav>
 
-            <!-- Language Switcher & Theme Mode & OCC Log In -->
-            <div class="flex items-center space-x-2.5 text-xs">
+            <!-- Right-Side Controls Group (Consistent Capsule & Pill UI) -->
+            <div class="flex items-center space-x-2 text-xs flex-shrink-0">
                 <!-- Interview Showcase Auto-Demo Button -->
-                <button onclick="startInterviewDemoTour()" id="btn-interview-demo" class="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white text-black hover:bg-neutral-200 transition font-bold mono text-xs shadow-md" title="Start 25-Second Autonomous Guided Demo">
+                <button onclick="startInterviewDemoTour()" id="btn-interview-demo" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-white text-black hover:bg-neutral-200 transition font-bold mono text-xs shadow-md" title="Start 25-Second Autonomous Guided Demo">
                     <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
-                    <span>▶️ AUTO DEMO</span>
+                    <span class="hidden sm:inline">▶️ AUTO DEMO</span>
+                    <span class="sm:hidden">▶️ DEMO</span>
                 </button>
-                <!-- Live Autonomous Soak Loop Status Pill -->
-                <div id="loop-telemetry-pill" onclick="fetchLoopTelemetry(true)" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-full border border-neutral-800 bg-neutral-950 mono text-[10px] cursor-pointer hover:border-neutral-500 transition shadow" title="Click to view live 10-Hour Soak & Self-Healing Loop status">
+
+                <!-- Live Autonomous Soak Loop Telemetry Pill -->
+                <div id="loop-telemetry-pill" onclick="fetchLoopTelemetry(true)" class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 mono text-[10px] cursor-pointer hover:border-neutral-500 transition shadow" title="Click to view live 10-Hour Soak & Self-Healing Loop status">
                     <span id="loop-indicator-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-neutral-400 font-bold hidden sm:inline">SOAK LOOP:</span>
+                    <span class="text-neutral-400 font-bold hidden md:inline">SOAK LOOP:</span>
                     <span id="loop-cycle-text" class="text-white font-bold">STANDBY</span>
-                    <span id="loop-latency-text" class="text-neutral-400 hidden lg:inline">• 0.0ms</span>
+                    <span id="loop-latency-text" class="text-neutral-400 hidden 2xl:inline">• 0.0ms</span>
                 </div>
-                <!-- Framer Style Theme Switcher (White / Black) -->
+
+                <!-- Framer Style White / Black Theme Switcher -->
                 <div class="flex items-center p-0.5 rounded-full bg-neutral-900 border border-neutral-800 mono text-[10px]">
-                    <button id="theme-btn-twotone" onclick="toggleThemeMode('twotone')" class="px-2.5 py-0.5 rounded-full bg-white text-black font-bold transition flex items-center gap-1 shadow">
-                        <span>⚪ WHITE</span>
+                    <button id="theme-btn-twotone" onclick="toggleThemeMode('twotone')" class="px-2.5 py-0.5 rounded-full bg-white text-black font-bold transition flex items-center gap-1 shadow" title="Two-Tone White Alabaster Theme">
+                        <span>⚪</span> <span class="hidden sm:inline">WHITE</span>
                     </button>
-                    <button id="theme-btn-stealth" onclick="toggleThemeMode('stealth')" class="px-2.5 py-0.5 rounded-full text-neutral-400 hover:text-white transition flex items-center gap-1">
-                        <span>⚫ BLACK</span>
+                    <button id="theme-btn-stealth" onclick="toggleThemeMode('stealth')" class="px-2.5 py-0.5 rounded-full text-neutral-400 hover:text-white transition flex items-center gap-1" title="Stealth Obsidian Black Theme">
+                        <span>⚫</span> <span class="hidden sm:inline">BLACK</span>
                     </button>
                 </div>
-                <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded border border-neutral-800 bg-neutral-950 mono text-[11px]">
-                    <i class="fa-solid fa-globe text-neutral-500"></i>
-                    <select id="lang-selector" onchange="switchLanguage(this.value)" class="bg-transparent text-white focus:outline-none cursor-pointer">
-                        <option value="en" class="bg-black text-white">ENG (India)</option>
-                        <option value="hi" class="bg-black text-white">HIN (हिन्दी)</option>
+
+                <!-- Sleek Rounded-Full Language Selector -->
+                <div class="hidden sm:flex items-center space-x-1 px-2.5 py-1.5 rounded-full border border-neutral-800 bg-neutral-950 mono text-[11px]">
+                    <i class="fa-solid fa-globe text-neutral-400 text-xs"></i>
+                    <select id="lang-selector" onchange="switchLanguage(this.value)" class="bg-transparent text-white focus:outline-none cursor-pointer text-[11px] pr-1">
+                        <option value="en" class="bg-black text-white">ENG</option>
+                        <option value="hi" class="bg-black text-white">HIN</option>
                     </select>
                 </div>
-                <div id="utc-clock" class="hidden sm:block text-neutral-400 mono text-[11px] px-2.5 py-1 rounded bg-neutral-950 border border-neutral-800">
-                    --:--:-- UTC
+
+                <!-- UTC Clock Pill -->
+                <div id="utc-clock" class="hidden 2xl:flex items-center gap-1.5 text-neutral-400 mono text-[11px] px-3 py-1.5 rounded-full bg-neutral-950 border border-neutral-800">
+                    <i class="fa-regular fa-clock text-[10px] text-neutral-500"></i>
+                    <span>--:--:-- UTC</span>
                 </div>
-                <button onclick="switchTab('dispatch')" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-1.5 rounded-full font-bold mono text-xs transition">
-                    OCC LOGIN
+
+                <!-- OCC Log In Button -->
+                <button onclick="switchTab('dispatch')" class="hidden sm:flex items-center gap-1.5 bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 hover:border-white px-3.5 py-1.5 rounded-full font-bold mono text-xs transition shadow-sm">
+                    <i class="fa-solid fa-lock text-[10px] text-neutral-400"></i>
+                    <span>OCC</span>
                 </button>
+
+                <!-- Mobile Navigation Toggle Button -->
+                <button id="mobile-menu-btn" onclick="toggleMobileNav()" class="xl:hidden p-2 rounded-full border border-neutral-800 bg-neutral-950 text-white hover:bg-neutral-900 transition flex items-center justify-center w-8 h-8" title="Toggle Navigation Menu">
+                    <i id="mobile-menu-icon" class="fa-solid fa-bars text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile / Tablet Navigation Drawer -->
+        <div id="mobile-nav-drawer" class="hidden xl:hidden bg-neutral-950/98 backdrop-blur-2xl border-t border-neutral-800/80 px-5 py-4 space-y-3 transition-all">
+            <div class="text-[10px] mono text-neutral-500 uppercase tracking-widest font-bold">Workspace Navigation & Modules</div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs mono">
+                <button onclick="switchTabAndCloseMobile('ops')" class="p-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-radar text-white text-xs"></i><span>3D Radar</span>
+                </button>
+                <button onclick="switchTabAndCloseMobile('portal')" class="p-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield text-white text-xs"></i><span>Passengers</span>
+                </button>
+                <button onclick="switchTabAndCloseMobile('boarding')" class="p-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-hotel text-white text-xs"></i><span>Hotels</span>
+                </button>
+                <button onclick="switchTabAndCloseMobile('dispatch')" class="p-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-white text-xs"></i><span>OCC Dispatch</span>
+                </button>
+                <button onclick="switchTabAndCloseMobile('analytics')" class="p-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-file-shield text-white text-xs"></i><span>CAR-3 Audit</span>
+                </button>
+                <button onclick="switchTabAndCloseMobile('cms')" class="p-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-white flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-white text-xs"></i><span>CMS Studio</span>
+                </button>
+            </div>
+            <div class="pt-2 border-t border-neutral-800/80 flex items-center justify-between text-xs mono">
+                <div class="flex items-center gap-3">
+                    <button onclick="scrollToSectionAndCloseMobile('letsfly-hero')" class="text-neutral-400 hover:text-white text-[11px]">Intro</button>
+                    <span class="text-neutral-700">&bull;</span>
+                    <button onclick="scrollToSectionAndCloseMobile('letsfly-bento')" class="text-neutral-400 hover:text-white text-[11px]">Features</button>
+                    <span class="text-neutral-700">&bull;</span>
+                    <button onclick="scrollToSectionAndCloseMobile('letsfly-faq')" class="text-neutral-400 hover:text-white text-[11px]">FAQ</button>
+                </div>
+                <button onclick="startInterviewDemoTour(); toggleMobileNav();" class="px-3 py-1 rounded-full bg-white text-black font-bold text-[11px] shadow">▶️ AUTO DEMO</button>
             </div>
         </div>
     </header>
@@ -311,27 +362,24 @@
                         <h2 class="text-lg font-bold text-white tracking-wide mono mt-0.5">WHAT IS YOUR NEXT TRIP?</h2>
                     </div>
 
-                    <!-- Trip Type Radios -->
-                    <div class="flex items-center space-x-5 text-xs text-neutral-300 mono">
-                        <label class="flex items-center space-x-1.5 cursor-pointer">
-                            <input type="radio" name="trip-type" value="oneway" checked class="accent-white">
-                            <span>One Way</span>
-                        </label>
-                        <label class="flex items-center space-x-1.5 cursor-pointer">
-                            <input type="radio" name="trip-type" value="round" class="accent-white">
-                            <span>Round Trip</span>
-                        </label>
-                        <label class="flex items-center space-x-1.5 cursor-pointer">
-                            <input type="radio" name="trip-type" value="multicity" class="accent-white">
-                            <span>Multi-City</span>
-                        </label>
+                    <!-- Trip Type Segmented Switch (Framer Let's Fly Monochromatic Design) -->
+                    <div class="inline-flex p-1 rounded-full bg-black border border-neutral-800 text-xs mono shadow-inner w-full sm:w-auto">
+                        <button type="button" onclick="selectTripType('oneway')" id="trip-pill-oneway" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-full bg-white text-black font-bold text-xs transition-all duration-200 shadow flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i><span>One Way</span>
+                        </button>
+                        <button type="button" onclick="selectTripType('round')" id="trip-pill-round" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-neutral-400 hover:text-white font-medium text-xs transition-all duration-200 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-arrows-left-right text-[10px]"></i><span>Round Trip</span>
+                        </button>
+                        <button type="button" onclick="selectTripType('multicity')" id="trip-pill-multicity" class="flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-neutral-400 hover:text-white font-medium text-xs transition-all duration-200 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-route text-[10px]"></i><span>Multi-City</span>
+                        </button>
                     </div>
 
                     <!-- Origin & Destination Inputs -->
                     <div class="space-y-3 text-xs mono">
                         <div>
                             <label class="block text-neutral-400 text-[10px] uppercase font-bold mb-1">From (Origin Hub)</label>
-                            <select id="hero-origin-select" class="w-full bg-black border border-neutral-700 rounded px-3 py-2 text-white font-medium focus:outline-none focus:border-white">
+                            <select id="hero-origin-select" class="w-full bg-black border border-neutral-700 rounded-xl px-3 py-2 text-white font-medium focus:outline-none focus:border-white">
                                 <option value="DEL" selected>DEL - Indira Gandhi International (New Delhi)</option>
                                 <option value="BOM">BOM - Chhatrapati Shivaji Maharaj (Mumbai)</option>
                                 <option value="BLR">BLR - Kempegowda International (Bengaluru)</option>
@@ -346,7 +394,7 @@
 
                         <div>
                             <label class="block text-neutral-400 text-[10px] uppercase font-bold mb-1">To (Destination)</label>
-                            <select id="hero-dest-select" class="w-full bg-black border border-neutral-700 rounded px-3 py-2 text-white font-medium focus:outline-none focus:border-white">
+                            <select id="hero-dest-select" class="w-full bg-black border border-neutral-700 rounded-xl px-3 py-2 text-white font-medium focus:outline-none focus:border-white">
                                 <option value="BOM" selected>BOM - Chhatrapati Shivaji Maharaj (Mumbai)</option>
                                 <option value="DEL">DEL - Indira Gandhi International (New Delhi)</option>
                                 <option value="BLR">BLR - Kempegowda International (Bengaluru)</option>
@@ -358,26 +406,30 @@
                             </select>
                         </div>
 
-                        <!-- Date & PNR Locator -->
-                        <div class="grid grid-cols-2 gap-2">
+                        <!-- Date & Return Date & PNR Locator -->
+                        <div id="hero-dates-container" class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-neutral-400 text-[10px] uppercase font-bold mb-1">Departure Date</label>
-                                <input id="hero-dep-date" type="date" class="w-full bg-black border border-neutral-700 rounded px-2.5 py-1.5 text-white text-[11px] focus:outline-none focus:border-white">
+                                <input id="hero-dep-date" type="date" class="w-full bg-black border border-neutral-700 rounded-xl px-2.5 py-1.5 text-white text-[11px] focus:outline-none focus:border-white">
                             </div>
-                            <div>
+                            <div id="hero-return-date-box" class="hidden">
+                                <label class="block text-neutral-400 text-[10px] uppercase font-bold mb-1">Return Date</label>
+                                <input id="hero-ret-date" type="date" class="w-full bg-black border border-neutral-700 rounded-xl px-2.5 py-1.5 text-white text-[11px] focus:outline-none focus:border-white">
+                            </div>
+                            <div id="hero-pnr-box">
                                 <label class="block text-neutral-400 text-[10px] uppercase font-bold mb-1">PNR / Flight No.</label>
-                                <input id="hero-pnr-input" type="text" placeholder="e.g. 6E204 / EK7P9X" class="w-full uppercase bg-black border border-neutral-700 rounded px-2.5 py-1.5 text-white text-[11px] focus:outline-none focus:border-white text-center" onkeydown="if(event.key === 'Enter') handleHeroSearch()">
+                                <input id="hero-pnr-input" type="text" placeholder="e.g. 6E204 / EK7P9X" class="w-full uppercase bg-black border border-neutral-700 rounded-xl px-2.5 py-1.5 text-white text-[11px] focus:outline-none focus:border-white text-center" onkeydown="if(event.key === 'Enter') handleHeroSearch()">
                             </div>
                         </div>
 
-                        <!-- Quick Indian Sector Pills -->
+                        <!-- Quick Indian Sector Pills with Active Highlights -->
                         <div class="pt-1">
                             <div class="text-[9px] text-neutral-500 uppercase mb-1">Quick Select Flight:</div>
                             <div class="flex flex-wrap gap-1.5 text-[10px]">
-                                <button type="button" onclick="setQuickFlight('6E204', 'DEL', 'BOM')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> 6E204 (DEL-BOM)</button>
-                                <button type="button" onclick="setQuickFlight('AI803', 'DEL', 'BOM')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> AI803 (DEL-BOM)</button>
-                                <button type="button" onclick="setQuickFlight('QP1102', 'DEL', 'BOM')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> QP1102 (DEL-BOM)</button>
-                                <button type="button" onclick="setQuickFlight('6E712', 'DEL', 'BLR')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> 6E712 (DEL-BLR)</button>
+                                <button type="button" id="quick-flt-6E204" onclick="setQuickFlight('6E204', 'DEL', 'BOM')" class="px-2.5 py-1 rounded-full bg-white text-black font-bold border border-white transition flex items-center gap-1.5 shadow-sm"><i class="fa-solid fa-plane-departure text-[9px]"></i> 6E204 (DEL-BOM)</button>
+                                <button type="button" id="quick-flt-AI803" onclick="setQuickFlight('AI803', 'DEL', 'BOM')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> AI803 (DEL-BOM)</button>
+                                <button type="button" id="quick-flt-QP1102" onclick="setQuickFlight('QP1102', 'DEL', 'BOM')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> QP1102 (DEL-BOM)</button>
+                                <button type="button" id="quick-flt-6E712" onclick="setQuickFlight('6E712', 'DEL', 'BLR')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> 6E712 (DEL-BLR)</button>
                             </div>
                         </div>
 
@@ -592,7 +644,7 @@
         <div class="framer-white-card framer-theme-card p-2 sm:p-2.5 rounded-2xl border border-neutral-300 shadow-lg flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2 pl-2">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                <span class="text-xs font-bold font-albert text-black">WORKSPACE CONSOLE</span>
+                <span id="ws-console-label" class="text-xs font-bold font-albert text-black">WORKSPACE CONSOLE</span>
                 <span class="text-[10px] text-neutral-500 mono hidden sm:inline">• 6 MODULES</span>
             </div>
             <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold mono">
@@ -1467,6 +1519,113 @@
             }
         }
 
+        let activeTabKey = 'ops';
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function toggleMobileNav() {
+            const drawer = document.getElementById('mobile-nav-drawer');
+            const icon = document.getElementById('mobile-menu-icon');
+            if (!drawer) return;
+            drawer.classList.toggle('hidden');
+            if (icon) {
+                if (drawer.classList.contains('hidden')) {
+                    icon.className = 'fa-solid fa-bars text-xs';
+                } else {
+                    icon.className = 'fa-solid fa-xmark text-xs';
+                }
+            }
+        }
+
+        function switchTabAndCloseMobile(tabId) {
+            switchTab(tabId);
+            const drawer = document.getElementById('mobile-nav-drawer');
+            if (drawer && !drawer.classList.contains('hidden')) {
+                toggleMobileNav();
+            }
+        }
+
+        function scrollToSectionAndCloseMobile(id) {
+            scrollToSection(id);
+            const drawer = document.getElementById('mobile-nav-drawer');
+            if (drawer && !drawer.classList.contains('hidden')) {
+                toggleMobileNav();
+            }
+        }
+
+        let currentTripType = 'oneway';
+        function selectTripType(type) {
+            currentTripType = type;
+            ['oneway', 'round', 'multicity'].forEach(t => {
+                const btn = document.getElementById(`trip-pill-${t}`);
+                if (btn) {
+                    if (t === type) {
+                        btn.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full bg-white text-black font-bold text-xs transition-all duration-200 shadow flex items-center justify-center gap-1.5";
+                    } else {
+                        btn.className = "flex-1 sm:flex-initial px-4 py-1.5 rounded-full text-neutral-400 hover:text-white font-medium text-xs transition-all duration-200 flex items-center justify-center gap-1.5";
+                    }
+                }
+            });
+
+            const retBox = document.getElementById('hero-return-date-box');
+            const datesContainer = document.getElementById('hero-dates-container');
+            if (retBox && datesContainer) {
+                if (type === 'round') {
+                    retBox.classList.remove('hidden');
+                    datesContainer.className = "grid grid-cols-1 sm:grid-cols-3 gap-2";
+                } else {
+                    retBox.classList.add('hidden');
+                    datesContainer.className = "grid grid-cols-2 gap-2";
+                }
+            }
+            if (type === 'multicity') {
+                showGlobalToast("Multi-city routing enabled: Interline transfer via DEL/BOM hubs.", "info");
+            }
+        }
+
+        function updateTopNavAndTabPills(tabId) {
+            activeTabKey = tabId;
+
+            // Top Navbar capsule pills
+            const topNavKeys = ['ops', 'portal', 'boarding', 'dispatch', 'analytics', 'cms'];
+            topNavKeys.forEach(k => {
+                const el = document.getElementById(`topnav-${k}`);
+                if (el) {
+                    if (k === tabId) {
+                        el.className = "topnav-pill px-3 py-1 rounded-full bg-white text-black font-bold shadow transition-all text-[11px]";
+                    } else {
+                        el.className = "topnav-pill px-3 py-1 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-900 transition-all text-[11px]";
+                    }
+                }
+            });
+
+            // Workspace Console tab pills
+            const tabKeys = ['ops', 'portal', 'boarding', 'dispatch', 'analytics', 'cms'];
+            tabKeys.forEach(key => {
+                const btn = document.getElementById(`tab-pill-${key}`);
+                if (btn) {
+                    if (key === tabId) {
+                        if (typeof currentThemeMode !== 'undefined' && currentThemeMode === 'stealth') {
+                            btn.className = "tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-white text-black shadow font-bold";
+                        } else {
+                            btn.className = "tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-black text-white shadow font-bold";
+                        }
+                    } else {
+                        if (typeof currentThemeMode !== 'undefined' && currentThemeMode === 'stealth') {
+                            btn.className = "tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-700 font-bold";
+                        } else {
+                            btn.className = "tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-white text-black hover:bg-neutral-100 border border-neutral-300 font-bold";
+                        }
+                    }
+                }
+            });
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             const content = document.getElementById(`tab-content-${tabId}`);
@@ -1475,18 +1634,7 @@
                 content.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
-            // Synchronize Let's Fly Tab Pills
-            const tabKeys = ['ops', 'portal', 'boarding', 'dispatch', 'analytics', 'cms'];
-            tabKeys.forEach(key => {
-                const btn = document.getElementById(`tab-pill-${key}`);
-                if (btn) {
-                    if (key === tabId) {
-                        btn.className = "tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-black text-white shadow font-bold";
-                    } else {
-                        btn.className = "tab-nav-pill px-3.5 py-1.5 rounded-xl transition bg-white text-black hover:bg-neutral-100 border border-neutral-300 font-bold";
-                    }
-                }
-            });
+            updateTopNavAndTabPills(tabId);
 
             if (tabId === 'ops' && renderer) {
                 setTimeout(onWindowResize, 100);
@@ -1520,6 +1668,17 @@
             document.getElementById('hero-dest-select').value = dest;
             const selFlt = document.getElementById('select-flight');
             if (selFlt) selFlt.value = flt;
+
+            ['6E204', 'AI803', 'QP1102', '6E712'].forEach(f => {
+                const btn = document.getElementById(`quick-flt-${f}`);
+                if (btn) {
+                    if (f === flt) {
+                        btn.className = "px-2.5 py-1 rounded-full bg-white text-black font-bold border border-white transition flex items-center gap-1.5 shadow-sm";
+                    } else {
+                        btn.className = "px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5";
+                    }
+                }
+            });
         }
 
         function handleHeroSearch() {
@@ -2789,6 +2948,10 @@
                 if (btnDark) {
                     btnDark.className = "px-2.5 py-0.5 rounded-full text-neutral-400 hover:text-white transition flex items-center gap-1";
                 }
+                const wsLabel = document.getElementById('ws-console-label');
+                if (wsLabel) {
+                    wsLabel.className = "text-xs font-bold font-albert text-black";
+                }
             } else {
                 themeCards.forEach(card => {
                     card.classList.remove('framer-white-card', 'border-neutral-300', 'text-black');
@@ -2808,6 +2971,13 @@
                 if (btnLight) {
                     btnLight.className = "px-2.5 py-0.5 rounded-full text-neutral-400 hover:text-white transition flex items-center gap-1";
                 }
+                const wsLabel = document.getElementById('ws-console-label');
+                if (wsLabel) {
+                    wsLabel.className = "text-xs font-bold font-albert text-white";
+                }
+            }
+            if (typeof updateTopNavAndTabPills === 'function') {
+                updateTopNavAndTabPills(activeTabKey || 'ops');
             }
         }
 
@@ -2854,6 +3024,7 @@
         const originalSwitchTab = switchTab;
         switchTab = function(tabId) {
             currentTabId = tabId;
+            activeTabKey = tabId;
             originalSwitchTab(tabId);
         };
 
