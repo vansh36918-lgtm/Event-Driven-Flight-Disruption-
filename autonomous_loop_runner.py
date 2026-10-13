@@ -11,6 +11,9 @@ import sys
 import httpx
 from datetime import datetime, timezone
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 BASE_URL = "http://localhost:8000"
 LOG_FILE = "autonomous_loop.log"
 STATUS_FILE = "loop_status.json"
@@ -104,24 +107,26 @@ def run_loop():
             d_res = client.post("/api/v1/gds/simulate-disruption", json=payload)
             if d_res.status_code == 200:
                 d_data = d_res.json()
-                pax_count = d_data.get("affected_pnr_count", 0)
-                solve_ms = d_data.get("solve_latency_ms", 0.0)
+                pax_count = d_data.get("affected_pnrs", 0)
+                solve_ms = d_data.get("solve_time_ms", 0.0)
                 log(f"  [OK] Disrupted {flt_num} ({orig}->{dest}): {pax_count} PNRs resolved in {solve_ms}ms")
             else:
                 log(f"  [WARN] Disruption HTTP {d_res.status_code}")
         except Exception as e:
             log(f"  [ERR] Disruption call error: {e}")
 
-        # 3. Verify PNR Compensation & Hotel Voucher
+        # 3. Verify Sample PNR Compensation & Entitlements
         try:
-            pnr_res = client.get(f"/api/v1/pnr/{flt_num}")
-            if pnr_res.status_code == 200:
-                p_data = pnr_res.json()
-                active_pnr = p_data.get("pnr_id")
-                comp_res = client.get(f"/api/v1/pnr/{active_pnr}/compensation")
-                if comp_res.status_code == 200:
-                    c_data = comp_res.json()
-                    log(f"  [OK] PNR {active_pnr}: DGCA Aid ₹{c_data.get('dgca_compensation_inr')} / ${c_data.get('cash_compensation_usd')}")
+            flts_res = client.get("/api/v1/flights?limit=50")
+            if flts_res.status_code == 200:
+                flts_list = flts_res.json()
+                matching = [f for f in flts_list if f.get("flight_number") == flt_num and f.get("sample_pnr")]
+                if matching:
+                    active_pnr = matching[0]["sample_pnr"]
+                    comp_res = client.get(f"/api/v1/pnr/{active_pnr}/compensation")
+                    if comp_res.status_code == 200:
+                        c_data = comp_res.json()
+                        log(f"  [OK] Sample PNR {active_pnr}: DGCA Aid INR {c_data.get('dgca_compensation_inr')} / USD ${c_data.get('cash_compensation_usd')}")
         except Exception as e:
             log(f"  [WARN] Compensation verify error: {e}")
 
