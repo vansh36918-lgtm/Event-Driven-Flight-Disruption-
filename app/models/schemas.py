@@ -132,3 +132,20 @@ class TelemetryEventLog(BaseModel):
     latency_ms: float
     status: str
 
+
+class VoiceCommandRequest(BaseModel):
+    command: str = Field(..., description="Spoken or typed voice command for JARVIS")
+    pnr_id: Optional[str] = None
+    current_tab: Optional[str] = "ops"
+
+
+class VoiceCommandResponse(BaseModel):
+    command: str
+    intent: str
+    action: str
+    target: Optional[str] = None
+    speech_response: str
+    ui_action: Optional[Dict[str, Any]] = None
+    status: str = "SUCCESS"
+
+

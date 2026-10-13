@@ -104,6 +104,51 @@
             color: #000000;
             transition: all 0.4s ease;
         }
+
+        /* JARVIS Luxury Audio Waveform & Pulse Animations */
+        @keyframes jarvisWave {
+            0%, 100% { height: 4px; }
+            50% { height: 22px; }
+        }
+        .jarvis-wave-bar {
+            width: 3px;
+            background: #ffffff;
+            border-radius: 2px;
+            animation: jarvisWave 1.2s ease-in-out infinite;
+        }
+        .jarvis-wave-bar:nth-child(2) { animation-delay: 0.18s; }
+        .jarvis-wave-bar:nth-child(3) { animation-delay: 0.36s; }
+        .jarvis-wave-bar:nth-child(4) { animation-delay: 0.12s; }
+        .jarvis-wave-bar:nth-child(5) { animation-delay: 0.28s; }
+
+        @keyframes jarvisPulseRing {
+            0% { transform: scale(0.95); opacity: 0.9; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+            70% { transform: scale(1.22); opacity: 0; box-shadow: 0 0 0 16px rgba(255, 255, 255, 0); }
+            100% { transform: scale(0.95); opacity: 0; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+        .jarvis-pulse-ring {
+            animation: jarvisPulseRing 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+
+        /* Framer Option Icon Badges & Monochromatic Elements */
+        .framer-opt-icon {
+            filter: brightness(1) contrast(1.1) grayscale(1);
+            transition: all 0.25s ease;
+        }
+        .framer-opt-icon:hover {
+            filter: brightness(1.2) contrast(1.2) grayscale(0);
+        }
+        .framer-icon-pill {
+            background-color: #121214;
+            border: 1px solid #27272a;
+            color: #ffffff;
+            transition: all 0.2s ease;
+        }
+        .framer-icon-pill:hover {
+            background-color: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-neutral-300">
@@ -300,16 +345,16 @@
                         <div class="pt-1">
                             <div class="text-[9px] text-neutral-500 uppercase mb-1">Quick Select Flight:</div>
                             <div class="flex flex-wrap gap-1.5 text-[10px]">
-                                <button type="button" onclick="setQuickFlight('6E204', 'DEL', 'BOM')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700">6E204 (DEL-BOM)</button>
-                                <button type="button" onclick="setQuickFlight('AI803', 'DEL', 'BOM')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700">AI803 (DEL-BOM)</button>
-                                <button type="button" onclick="setQuickFlight('QP1102', 'DEL', 'BOM')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700">QP1102 (DEL-BOM)</button>
-                                <button type="button" onclick="setQuickFlight('6E712', 'DEL', 'BLR')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 border border-neutral-700">6E712 (DEL-BLR)</button>
+                                <button type="button" onclick="setQuickFlight('6E204', 'DEL', 'BOM')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> 6E204 (DEL-BOM)</button>
+                                <button type="button" onclick="setQuickFlight('AI803', 'DEL', 'BOM')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> AI803 (DEL-BOM)</button>
+                                <button type="button" onclick="setQuickFlight('QP1102', 'DEL', 'BOM')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> QP1102 (DEL-BOM)</button>
+                                <button type="button" onclick="setQuickFlight('6E712', 'DEL', 'BLR')" class="px-2.5 py-1 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-neutral-700 transition flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i> 6E712 (DEL-BLR)</button>
                             </div>
                         </div>
 
                         <!-- Action Button -->
-                        <button onclick="handleHeroSearch()" class="w-full bg-white hover:bg-neutral-200 text-black py-2.5 rounded font-bold text-xs uppercase tracking-wider transition shadow-lg mt-2">
-                            <i class="fa-solid fa-magnifying-glass mr-1.5"></i>SEARCH FLIGHTS & RESOLVE DISRUPTION
+                        <button onclick="handleHeroSearch()" class="w-full bg-white hover:bg-neutral-200 text-black py-3 rounded-full font-bold text-xs uppercase tracking-wider transition shadow-lg mt-2 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i><span>SEARCH FLIGHTS & RESOLVE DISRUPTION</span>
                         </button>
                     </div>
                 </div>
@@ -552,15 +597,15 @@
                             <option value="CANCELLATION">CODE 89: Mechanical Equipment Failure (Cancel)</option>
                         </select>
                     </div>
-                    <div class="grid grid-cols-3 gap-1.5 pt-1">
-                        <button onclick="triggerDisruption()" id="btn-trigger" class="bg-white hover:bg-neutral-200 text-black font-semibold py-1.5 px-2 rounded text-[11px] transition mono">
-                            DISPATCH
+                    <div class="grid grid-cols-3 gap-2 pt-1">
+                        <button onclick="triggerDisruption()" id="btn-trigger" class="bg-white hover:bg-neutral-200 text-black font-bold py-2 px-2.5 rounded-full text-[11px] transition shadow-sm mono flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation text-[10px]"></i><span>DISPATCH</span>
                         </button>
-                        <button onclick="triggerSquallLineStorm()" id="btn-squall" class="bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 font-semibold py-1.5 px-2 rounded text-[11px] transition mono" title="Simulate multi-hub squall storm across DEL/BOM/ORD/DFW">
-                            <i class="fa-solid fa-cloud-bolt mr-1"></i>MONSOON
+                        <button onclick="triggerSquallLineStorm()" id="btn-squall" class="bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 hover:border-neutral-500 font-bold py-2 px-2.5 rounded-full text-[11px] transition mono flex items-center justify-center gap-1.5" title="Simulate multi-hub squall storm across DEL/BOM/ORD/DFW">
+                            <i class="fa-solid fa-cloud-bolt text-[10px]"></i><span>MONSOON</span>
                         </button>
-                        <button onclick="triggerDivertSimulation()" id="btn-divert" class="bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 font-semibold py-1.5 px-2 rounded text-[11px] transition mono" title="Simulate airborne flight diversion to Jaipur (JAI) or Pune (PNQ)">
-                            <i class="fa-solid fa-plane-slash mr-1"></i>DIVERT
+                        <button onclick="triggerDivertSimulation()" id="btn-divert" class="bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 hover:border-neutral-500 font-bold py-2 px-2.5 rounded-full text-[11px] transition mono flex items-center justify-center gap-1.5" title="Simulate airborne flight diversion to Jaipur (JAI) or Pune (PNQ)">
+                            <i class="fa-solid fa-plane-slash text-[10px]"></i><span>DIVERT</span>
                         </button>
                     </div>
                 </div>
@@ -602,9 +647,9 @@
                     <p class="text-xs text-neutral-400 mt-0.5">Autonomous graph re-accommodations with DGCA CAR Section 3 & IATA Rule 240 involuntary endorsement.</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input id="portal-pnr-input" type="text" placeholder="PNR (e.g. EK7P9X)" class="uppercase bg-black border border-neutral-800 rounded px-3 py-1.5 text-xs text-white mono text-center focus:outline-none focus:border-white w-32">
-                    <button onclick="fetchPortalPnrDetails()" class="bg-white hover:bg-neutral-200 text-black px-3.5 py-1.5 rounded text-xs font-semibold transition mono">
-                        LOOKUP RECORD
+                    <input id="portal-pnr-input" type="text" placeholder="PNR (e.g. EK7P9X)" class="uppercase bg-black border border-neutral-700 rounded-full px-4 py-2 text-xs text-white mono text-center focus:outline-none focus:border-white w-36">
+                    <button onclick="fetchPortalPnrDetails()" class="bg-white hover:bg-neutral-200 text-black px-4 py-2 rounded-full text-xs font-bold transition shadow-sm mono flex items-center gap-1.5">
+                        <i class="fa-solid fa-magnifying-glass text-[10px]"></i><span>LOOKUP RECORD</span>
                     </button>
                 </div>
             </div>
@@ -1057,6 +1102,94 @@
             </div>
         </div>
     </footer>
+
+    <!-- JARVIS AI VOICE ASSISTANT COPILOT DOCK -->
+    <div id="jarvis-container" class="fixed bottom-5 right-5 z-50 flex flex-col items-end mono select-none">
+        <!-- Floating Collapsible Control Console -->
+        <div id="jarvis-console" class="hidden mb-3 w-80 sm:w-96 rounded-2xl bg-neutral-950/95 backdrop-blur-xl border border-neutral-700 shadow-[0_20px_50px_rgba(0,0,0,0.95)] p-4 space-y-3 transition-all duration-300 origin-bottom-right">
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-neutral-800 pb-2.5">
+                <div class="flex items-center space-x-2">
+                    <div class="w-6 h-6 rounded-full bg-white text-black flex items-center justify-center font-black text-[10px]">
+                        J
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="font-bold text-white text-xs">JARVIS AI COPILOT</span>
+                            <span class="px-1.5 py-0.2 rounded bg-neutral-900 border border-neutral-700 text-[8px] text-neutral-300">VOICE OCC</span>
+                        </div>
+                        <div id="jarvis-status-text" class="text-[9px] text-neutral-400">ONLINE • CLICK MIC TO SPEAK</div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-1.5">
+                    <button id="jarvis-mute-btn" onclick="toggleJarvisVoiceOutput()" class="p-1 rounded text-neutral-400 hover:text-white text-[10px]" title="Toggle Audio Voice Output">
+                        <i id="jarvis-mute-icon" class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <button onclick="toggleJarvisConsole()" class="p-1 rounded text-neutral-400 hover:text-white text-xs">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Waveform Animation / Sound Visualizer -->
+            <div id="jarvis-wave-container" class="h-8 flex items-center justify-center space-x-1 bg-black/60 rounded-lg border border-neutral-900 px-3">
+                <div class="jarvis-wave-bar"></div>
+                <div class="jarvis-wave-bar"></div>
+                <div class="jarvis-wave-bar"></div>
+                <div class="jarvis-wave-bar"></div>
+                <div class="jarvis-wave-bar"></div>
+                <span id="jarvis-wave-label" class="ml-2 text-[10px] text-neutral-400 font-sans tracking-wide">Ready for aviation command...</span>
+            </div>
+
+            <!-- Live Speech Transcription & Response Box -->
+            <div id="jarvis-log-box" class="p-2.5 rounded-lg bg-black border border-neutral-800 max-h-36 overflow-y-auto custom-scroll text-[11px] space-y-2">
+                <div class="text-neutral-400 text-[10px] leading-relaxed">
+                    <span class="text-white font-bold">[JARVIS]:</span> "Namaste and Welcome aboard. I can execute flight disruptions, trigger monsoons, reroute passenger PNRs, switch radar views, and toggle cockpit themes via voice."
+                </div>
+            </div>
+
+            <!-- Quick Voice Action Chips -->
+            <div>
+                <div class="text-[9px] text-neutral-500 uppercase tracking-wider mb-1.5 font-bold">Quick Voice Triggers:</div>
+                <div class="flex flex-wrap gap-1 text-[10px]">
+                    <button onclick="executeJarvisDirect('Disrupt flight 6E204 with monsoonal squall line')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-white transition">🎙️ "Disrupt 6E204"</button>
+                    <button onclick="executeJarvisDirect('Trigger monsoon squall line storm')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-white transition">🎙️ "Monsoon Storm"</button>
+                    <button onclick="executeJarvisDirect('Divert flight 6E204 to Jaipur')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-white transition">🎙️ "Divert Flight"</button>
+                    <button onclick="executeJarvisDirect('Focus 3D radar on India')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-white transition">🎙️ "Focus India"</button>
+                    <button onclick="executeJarvisDirect('Show boarding pass')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-white transition">🎙️ "Boarding Pass"</button>
+                    <button onclick="executeJarvisDirect('Switch to dark mode')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-white transition">🎙️ "Black Mode"</button>
+                    <button onclick="executeJarvisDirect('Check soak loop status')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-white transition">🎙️ "Loop Health"</button>
+                    <button onclick="executeJarvisDirect('Export audit report')" class="px-2 py-0.5 rounded bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 hover:text-white transition">🎙️ "Export Dossier"</button>
+                </div>
+            </div>
+
+            <!-- Voice / Text Command Input Bar -->
+            <div class="flex items-center gap-1.5 pt-1">
+                <input id="jarvis-text-input" type="text" placeholder="Speak or type command for JARVIS..." class="flex-1 bg-black border border-neutral-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-white font-mono" onkeydown="if(event.key === 'Enter') submitJarvisText()">
+                <button onclick="submitJarvisText()" class="bg-white hover:bg-neutral-200 text-black px-3 py-1.5 rounded-lg text-xs font-bold transition">
+                    RUN
+                </button>
+            </div>
+        </div>
+
+        <!-- Floating Trigger Orb / Capsule -->
+        <button id="jarvis-trigger-btn" onclick="toggleJarvisVoiceListening()" class="group relative flex items-center space-x-2.5 px-4 py-2.5 rounded-full bg-neutral-950 border border-neutral-700 hover:border-white text-white shadow-[0_10px_35px_rgba(0,0,0,0.85)] transition-all duration-300 hover:scale-105">
+            <span id="jarvis-pulse-ring-el" class="hidden absolute inset-0 rounded-full border border-white jarvis-pulse-ring pointer-events-none"></span>
+            <div id="jarvis-mic-icon-box" class="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center font-bold text-xs transition-transform group-hover:scale-110 shadow">
+                <i id="jarvis-mic-icon" class="fa-solid fa-microphone text-xs"></i>
+            </div>
+            <div class="text-left pr-1">
+                <div class="text-[10px] font-bold text-white tracking-wider flex items-center gap-1.5">
+                    <span>JARVIS COPILOT</span>
+                    <span id="jarvis-mini-dot" class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                </div>
+                <div id="jarvis-mini-label" class="text-[9px] text-neutral-400 font-sans">Click to Speak / OCC</div>
+            </div>
+            <span onclick="event.stopPropagation(); toggleJarvisConsole()" class="ml-1 pl-2 border-l border-neutral-800 text-neutral-400 hover:text-white" title="Open JARVIS Console">
+                <i class="fa-solid fa-sliders text-xs"></i>
+            </span>
+        </button>
+    </div>
 
     <!-- 3D Globe & Application Logic -->
     <script>
@@ -1762,37 +1895,37 @@
                     const isSelected = data.selected_option_id === opt.option_id;
 
                     const card = document.createElement('div');
-                    card.className = `panel p-4 border ${isSelected ? 'border-white bg-neutral-950' : 'border-neutral-800'} space-y-2.5 text-xs`;
+                    card.className = `panel p-4 rounded-xl border ${isSelected ? 'border-white ring-1 ring-white/30 bg-neutral-950' : 'border-neutral-800 hover:border-neutral-700'} space-y-3 text-xs transition`;
 
                     const legs = opt.segments.map(s => `${s.flight_number} (${s.origin} -> ${s.destination})`).join(' &rarr; ');
 
                     card.innerHTML = `
                         <div class="flex items-center justify-between border-b border-neutral-900 pb-2">
                             <div class="flex items-center space-x-2 mono">
-                                <span class="px-1.5 py-0.5 rounded bg-neutral-900 text-neutral-300 font-bold text-[10px] border border-neutral-700">OPTION ${idx + 1}</span>
+                                <span class="px-2.5 py-0.5 rounded-full bg-neutral-900 text-white font-bold text-[10px] border border-neutral-700 flex items-center gap-1.5"><i class="fa-solid fa-plane-departure text-[9px]"></i>OPTION ${idx + 1}</span>
                                 <span class="font-bold text-white">${opt.route_type}</span>
-                                ${idx === 0 ? '<span class="px-1.5 py-0.5 rounded bg-white text-black text-[9px] font-bold">RECOMMENDED</span>' : ''}
+                                ${idx === 0 ? '<span class="px-2 py-0.5 rounded-full bg-white text-black text-[9px] font-black tracking-wide">RECOMMENDED</span>' : ''}
                             </div>
-                            <span class="text-neutral-400 mono text-[11px]">+${opt.departure_delay_minutes}m departure delta</span>
+                            <span class="text-neutral-400 mono text-[11px] px-2 py-0.5 rounded bg-black/60 border border-neutral-800">+${opt.departure_delay_minutes}m departure delta</span>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px] mono">
-                            <div>
-                                <div class="text-[9px] text-neutral-500 uppercase">Routing</div>
+                            <div class="p-2 rounded-lg bg-black/40 border border-neutral-900">
+                                <div class="text-[9px] text-neutral-500 uppercase flex items-center gap-1"><i class="fa-solid fa-route text-neutral-500 text-[8px]"></i> Routing</div>
                                 <div class="font-medium text-neutral-200 mt-0.5">${legs}</div>
                             </div>
-                            <div>
-                                <div class="text-[9px] text-neutral-500 uppercase">Schedule</div>
+                            <div class="p-2 rounded-lg bg-black/40 border border-neutral-900">
+                                <div class="text-[9px] text-neutral-500 uppercase flex items-center gap-1"><i class="fa-solid fa-clock text-neutral-500 text-[8px]"></i> Schedule</div>
                                 <div class="font-medium text-neutral-200 mt-0.5">${opt.departure_time.substring(11, 16)} &rarr; ${opt.arrival_time.substring(11, 16)} UTC</div>
                             </div>
-                            <div>
-                                <div class="text-[9px] text-neutral-500 uppercase">Duration & Luggage</div>
+                            <div class="p-2 rounded-lg bg-black/40 border border-neutral-900">
+                                <div class="text-[9px] text-neutral-500 uppercase flex items-center gap-1"><i class="fa-solid fa-suitcase text-neutral-500 text-[8px]"></i> Luggage & Time</div>
                                 <div class="font-medium text-neutral-200 mt-0.5">${durHours}h ${durMins}m • Auto-transferred</div>
                             </div>
                         </div>
                         <div class="flex justify-end pt-1">
                             ${isSelected 
-                                ? '<span class="text-white text-xs font-bold mono"><i class="fa-solid fa-check mr-1"></i> TICKETED AND CONFIRMED</span>'
-                                : `<button onclick="confirmPortalRebook('${data.pnr_id}', '${opt.option_id}')" class="bg-white hover:bg-neutral-200 text-black px-3 py-1.5 rounded text-xs font-bold transition mono">CONFIRM REBOOK</button>`
+                                ? '<span class="text-white text-xs font-bold mono px-3 py-1.5 rounded-full bg-neutral-900 border border-neutral-700 flex items-center gap-1.5"><i class="fa-solid fa-check text-xs"></i> TICKETED AND CONFIRMED</span>'
+                                : `<button onclick="confirmPortalRebook('${data.pnr_id}', '${opt.option_id}')" class="bg-white hover:bg-neutral-200 text-black px-4 py-1.5 rounded-full text-xs font-bold transition shadow-sm mono flex items-center gap-1.5"><span>CONFIRM REBOOK</span> <i class="fa-solid fa-arrow-right text-[10px]"></i></button>`
                             }
                         </div>
                     `;
@@ -2227,10 +2360,317 @@
             }
         }
 
+        // ============================================================
+        // JARVIS AI Voice Command & Speech Recognition Engine
+        // ============================================================
+        let jarvisRecognition = null;
+        let isJarvisListening = false;
+        let jarvisVoiceOutput = true;
+        let currentTabId = 'ops';
+
+        // Track active tab for contextual voice actions
+        const originalSwitchTab = switchTab;
+        switchTab = function(tabId) {
+            currentTabId = tabId;
+            originalSwitchTab(tabId);
+        };
+
+        function toggleJarvisConsole() {
+            const consoleEl = document.getElementById('jarvis-console');
+            if (consoleEl) {
+                consoleEl.classList.toggle('hidden');
+            }
+        }
+
+        function toggleJarvisVoiceOutput() {
+            jarvisVoiceOutput = !jarvisVoiceOutput;
+            const icon = document.getElementById('jarvis-mute-icon');
+            if (icon) {
+                icon.className = jarvisVoiceOutput ? "fa-solid fa-volume-high" : "fa-solid fa-volume-xmark text-neutral-500";
+            }
+            if (!jarvisVoiceOutput && window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function playJarvisChime(type = 'start') {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'start') {
+                    osc.frequency.setValueAtTime(440, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                } else if (type === 'success') {
+                    osc.frequency.setValueAtTime(660, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else {
+                    osc.frequency.setValueAtTime(330, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.18);
+                }
+            } catch (e) {
+                // AudioContext autoplay restrictions or unsupported
+            }
+        }
+
+        function speakJarvis(text) {
+            if (!jarvisVoiceOutput || !('speechSynthesis' in window)) return;
+            try {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1.04;
+                utterance.pitch = 0.96;
+
+                const voices = window.speechSynthesis.getVoices();
+                const preferredVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('David') || v.name.includes('Google')));
+                if (preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+
+                const waveLabel = document.getElementById('jarvis-wave-label');
+                utterance.onstart = () => {
+                    if (waveLabel) waveLabel.innerText = "JARVIS: Transmitting vocal synthesis...";
+                };
+                utterance.onend = () => {
+                    if (waveLabel) waveLabel.innerText = "Ready for aviation command...";
+                };
+
+                window.speechSynthesis.speak(utterance);
+            } catch (err) {
+                console.warn("Speech synthesis error", err);
+            }
+        }
+
+        function initJarvisVoice() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                jarvisRecognition = new SpeechRecognition();
+                jarvisRecognition.continuous = false;
+                jarvisRecognition.interimResults = false;
+                jarvisRecognition.lang = 'en-US';
+
+                jarvisRecognition.onstart = () => {
+                    isJarvisListening = true;
+                    updateJarvisUIState('listening');
+                    playJarvisChime('start');
+                };
+
+                jarvisRecognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    isJarvisListening = false;
+                    updateJarvisUIState('processing');
+                    sendJarvisCommand(transcript);
+                };
+
+                jarvisRecognition.onerror = (event) => {
+                    isJarvisListening = false;
+                    updateJarvisUIState('idle');
+                    const statusText = document.getElementById('jarvis-status-text');
+                    if (statusText) statusText.innerText = `VOICE NOTICE: ${event.error.toUpperCase()}`;
+                };
+
+                jarvisRecognition.onend = () => {
+                    isJarvisListening = false;
+                    updateJarvisUIState('idle');
+                };
+            }
+        }
+
+        function toggleJarvisVoiceListening() {
+            const consoleEl = document.getElementById('jarvis-console');
+            if (consoleEl && consoleEl.classList.contains('hidden')) {
+                consoleEl.classList.remove('hidden');
+            }
+
+            if (!jarvisRecognition) {
+                initJarvisVoice();
+            }
+
+            if (!jarvisRecognition) {
+                const logBox = document.getElementById('jarvis-log-box');
+                if (logBox) {
+                    logBox.innerHTML += `<div class="text-neutral-400"><span class="text-white font-bold">[JARVIS]:</span> Web Speech API is not enabled in this browser. Please type your command below.</div>`;
+                    logBox.scrollTop = logBox.scrollHeight;
+                }
+                document.getElementById('jarvis-text-input')?.focus();
+                return;
+            }
+
+            if (isJarvisListening) {
+                jarvisRecognition.stop();
+            } else {
+                try {
+                    jarvisRecognition.start();
+                } catch (e) {
+                    console.warn("Recognition start error", e);
+                }
+            }
+        }
+
+        function updateJarvisUIState(state) {
+            const triggerBtn = document.getElementById('jarvis-trigger-btn');
+            const pulseRing = document.getElementById('jarvis-pulse-ring-el');
+            const micBox = document.getElementById('jarvis-mic-icon-box');
+            const micIcon = document.getElementById('jarvis-mic-icon');
+            const miniDot = document.getElementById('jarvis-mini-dot');
+            const miniLabel = document.getElementById('jarvis-mini-label');
+            const statusText = document.getElementById('jarvis-status-text');
+            const waveLabel = document.getElementById('jarvis-wave-label');
+
+            if (state === 'listening') {
+                pulseRing?.classList.remove('hidden');
+                if (micBox) micBox.className = "w-7 h-7 rounded-full bg-white text-black flex items-center justify-center font-bold text-xs scale-110 shadow-[0_0_15px_rgba(255,255,255,0.8)]";
+                if (micIcon) micIcon.className = "fa-solid fa-microphone text-xs animate-pulse";
+                if (miniDot) miniDot.className = "w-1.5 h-1.5 rounded-full bg-white animate-ping";
+                if (miniLabel) miniLabel.innerText = "Listening now...";
+                if (statusText) statusText.innerText = "LISTENING... SPEAK YOUR COMMAND";
+                if (waveLabel) waveLabel.innerText = "Analyzing audio stream...";
+            } else if (state === 'processing') {
+                pulseRing?.classList.add('hidden');
+                if (micBox) micBox.className = "w-7 h-7 rounded-full bg-neutral-800 text-white flex items-center justify-center font-bold text-xs";
+                if (micIcon) micIcon.className = "fa-solid fa-spinner fa-spin text-xs";
+                if (miniDot) miniDot.className = "w-1.5 h-1.5 rounded-full bg-white";
+                if (miniLabel) miniLabel.innerText = "Processing...";
+                if (statusText) statusText.innerText = "EXECUTING JARVIS PROTOCOL...";
+                if (waveLabel) waveLabel.innerText = "Evaluating NetworkX graph & OCC...";
+            } else {
+                pulseRing?.classList.add('hidden');
+                if (micBox) micBox.className = "w-7 h-7 rounded-full bg-white text-black flex items-center justify-center font-bold text-xs shadow";
+                if (micIcon) micIcon.className = "fa-solid fa-microphone text-xs";
+                if (miniDot) miniDot.className = "w-1.5 h-1.5 rounded-full bg-white";
+                if (miniLabel) miniLabel.innerText = "Click to Speak / OCC";
+                if (statusText) statusText.innerText = "ONLINE • READY FOR COMMAND";
+                if (waveLabel) waveLabel.innerText = "Ready for aviation command...";
+            }
+        }
+
+        function submitJarvisText() {
+            const input = document.getElementById('jarvis-text-input');
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+            sendJarvisCommand(text);
+        }
+
+        function executeJarvisDirect(cmdText) {
+            const consoleEl = document.getElementById('jarvis-console');
+            if (consoleEl && consoleEl.classList.contains('hidden')) {
+                consoleEl.classList.remove('hidden');
+            }
+            sendJarvisCommand(cmdText);
+        }
+
+        async function sendJarvisCommand(cmdText) {
+            const logBox = document.getElementById('jarvis-log-box');
+            if (logBox) {
+                logBox.innerHTML += `
+                    <div class="text-neutral-300 border-l-2 border-white pl-2 py-0.5">
+                        <span class="text-neutral-500 font-bold uppercase text-[9px]">YOU:</span> "${cmdText}"
+                    </div>
+                `;
+                logBox.scrollTop = logBox.scrollHeight;
+            }
+
+            updateJarvisUIState('processing');
+
+            try {
+                const res = await fetch('/api/v1/jarvis/voice-command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        command: cmdText,
+                        pnr_id: activePnr || undefined,
+                        current_tab: currentTabId
+                    })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    playJarvisChime('success');
+
+                    if (logBox) {
+                        logBox.innerHTML += `
+                            <div class="text-neutral-200 border-l-2 border-neutral-600 pl-2 py-0.5 bg-neutral-900/60 rounded-r">
+                                <span class="text-white font-bold uppercase text-[9px]">[JARVIS]:</span> ${data.speech_response}
+                            </div>
+                        `;
+                        logBox.scrollTop = logBox.scrollHeight;
+                    }
+
+                    // Speak response aloud
+                    speakJarvis(data.speech_response);
+
+                    // Execute UI actions returned by backend
+                    if (data.ui_action) {
+                        const act = data.ui_action;
+                        if (act.type === 'FLIGHT_DISRUPTED') {
+                            build3DFlightArcs(act.origin, act.destination);
+                            await loadFlights();
+                            await loadMetrics();
+                            await loadTelemetryStream();
+                            await loadAtcAndFleet();
+                            if (act.sample_pnr) {
+                                selectActivePnr(act.sample_pnr);
+                            }
+                        } else if (act.type === 'TRIGGER_MONSOON') {
+                            triggerSquallLineStorm();
+                        } else if (act.type === 'FLIGHT_DIVERTED') {
+                            triggerDivertSimulation();
+                        } else if (act.type === 'FOCUS_INDIA') {
+                            focusIndiaHubs();
+                        } else if (act.type === 'RESET_GLOBE') {
+                            resetGlobeView();
+                        } else if (act.type === 'SET_THEME') {
+                            toggleThemeMode(act.mode);
+                        } else if (act.type === 'SWITCH_TAB') {
+                            switchTab(act.tab_id);
+                        } else if (act.type === 'SELECT_PNR') {
+                            selectActivePnr(act.pnr);
+                        } else if (act.type === 'SHOW_LOOP_STATUS') {
+                            fetchLoopTelemetry(true);
+                        } else if (act.type === 'DOWNLOAD_AUDIT') {
+                            downloadMarkdownAuditReport();
+                        }
+                    }
+                } else {
+                    if (logBox) {
+                        logBox.innerHTML += `<div class="text-neutral-400"><span class="text-white font-bold">[JARVIS]:</span> Communication fault with central airline dispatch API (${res.status}).</div>`;
+                        logBox.scrollTop = logBox.scrollHeight;
+                    }
+                }
+            } catch (err) {
+                console.error("Jarvis command error:", err);
+                if (logBox) {
+                    logBox.innerHTML += `<div class="text-neutral-400"><span class="text-white font-bold">[JARVIS]:</span> Network connection error while executing voice dispatch.</div>`;
+                    logBox.scrollTop = logBox.scrollHeight;
+                }
+            } finally {
+                updateJarvisUIState('idle');
+            }
+        }
+
         // Initialize application on window load
         window.addEventListener('load', async () => {
             init3D();
             init3DPlaneMouseParallax();
+            initJarvisVoice();
             await loadFlights();
             await loadMetrics();
             await loadTelemetryStream();

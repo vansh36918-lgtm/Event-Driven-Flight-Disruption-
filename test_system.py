@@ -321,6 +321,42 @@ async def test_event_pipeline_and_ai():
     print(f"  [OK] Framer-Style Headless CMS Engine ({len(collections)} collections, dynamic CRUD, schema validator) verified!")
 
 
+async def test_jarvis_voice_engine():
+    from app.engine.jarvis_engine import jarvis_voice_engine
+    from app.models.schemas import VoiceCommandRequest
+
+    # Test 1: Flight Disruption voice command
+    cmd1 = VoiceCommandRequest(command="Disrupt flight 6E204 with monsoonal squall line")
+    res1 = await jarvis_voice_engine.process_voice_command(cmd1)
+    assert res1.intent == "DISRUPT_FLIGHT"
+    assert res1.target == "6E204"
+    assert res1.ui_action["type"] == "FLIGHT_DISRUPTED"
+    assert "JARVIS protocol executed" in res1.speech_response
+
+    # Test 2: Theme switching voice command
+    cmd2 = VoiceCommandRequest(command="Switch to stealth black mode")
+    res2 = await jarvis_voice_engine.process_voice_command(cmd2)
+    assert res2.intent == "SWITCH_THEME"
+    assert res2.target == "stealth"
+
+    # Test 3: Radar manipulation voice command
+    cmd3 = VoiceCommandRequest(command="Focus 3D flight radar on India")
+    res3 = await jarvis_voice_engine.process_voice_command(cmd3)
+    assert res3.intent == "FOCUS_RADAR"
+
+    # Test 4: Divert flight command
+    cmd4 = VoiceCommandRequest(command="Emergency divert flight 6E204 to alternate airport")
+    res4 = await jarvis_voice_engine.process_voice_command(cmd4)
+    assert res4.intent == "DIVERT_FLIGHT"
+    assert res4.ui_action["type"] == "FLIGHT_DIVERTED"
+
+    # Test 5: Soak loop status voice query
+    cmd5 = VoiceCommandRequest(command="Check soak loop status and telemetry")
+    res5 = await jarvis_voice_engine.process_voice_command(cmd5)
+    assert res5.intent == "CHECK_STATUS"
+
+    print("  [OK] JARVIS AI Voice Command & Speech Synthesis Engine (Disruption, Divert, Radar, Themes, Telemetry) verified!")
+
 
 if __name__ == "__main__":
     print("=" * 60)
@@ -329,6 +365,8 @@ if __name__ == "__main__":
     test_gds_inventory()
     test_graph_engine()
     asyncio.run(test_event_pipeline_and_ai())
+    asyncio.run(test_jarvis_voice_engine())
     print("=" * 60)
     print("ALL TESTS PASSED WITH ZERO REGRESSIONS!")
     print("=" * 60)
+

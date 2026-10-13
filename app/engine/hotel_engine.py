@@ -227,8 +227,8 @@ class HotelEngine:
         Issues an automated CRS hotel and meal voucher linked to the passenger PNR.
         VIP / Business Class passengers receive Executive Suites and elevated meal per-diems.
         """
-        # Return existing voucher if already issued
-        if pnr_id in self.pnr_to_voucher:
+        # Return existing voucher if already issued unless force is requested
+        if not force and pnr_id in self.pnr_to_voucher:
             return self.issued_vouchers[self.pnr_to_voucher[pnr_id]]
 
         # Fallback to ORD if hub has no contracted properties

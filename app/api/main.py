@@ -23,6 +23,8 @@ from app.models.schemas import (
     ChatMessageRequest,
     ChatMessageResponse,
     SystemMetrics,
+    VoiceCommandRequest,
+    VoiceCommandResponse,
 )
 from app.engine.gds_service import gds_service
 from app.engine.graph_engine import reaccommodation_engine
@@ -37,6 +39,7 @@ from app.engine.hotel_engine import hotel_engine
 from app.engine.divert_engine import divert_engine
 from app.engine.tarmac_engine import tarmac_engine
 from app.engine.cms_engine import cms_engine
+from app.engine.jarvis_engine import jarvis_voice_engine
 from app.bus.event_broker import event_broker
 from app.worker.reaccommodation_worker import reaccommodation_worker
 from app.ai.assistant import ai_assistant
@@ -162,6 +165,13 @@ async def rebook_passenger(pnr_id: str, option_id: str):
 async def chat_with_concierge(req: ChatMessageRequest):
     """Processes passenger natural language inquiry using AI Concierge."""
     return await ai_assistant.chat(pnr_id=req.pnr_id, user_message=req.message)
+
+
+@app.post("/api/v1/jarvis/voice-command", response_model=VoiceCommandResponse)
+async def process_jarvis_voice_command(req: VoiceCommandRequest):
+    """Processes spoken or typed JARVIS AI voice commands and triggers autonomous actions."""
+    return await jarvis_voice_engine.process_voice_command(req)
+
 
 
 @app.get("/api/v1/airports")
