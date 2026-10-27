@@ -61,10 +61,14 @@ async def lifespan(app: FastAPI):
     all_flights = list(gds_service.flights.values())
     reaccommodation_engine.build_schedule_graph(all_flights)
 
-    # Start async consumer loop as background task
-    consumer_task = asyncio.create_task(event_broker.start_consumer_loop())
+    # Start async consumer loop only in persistent long-running server environments
+    is_serverless = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
+    consumer_task = None
+    if not is_serverless:
+        consumer_task = asyncio.create_task(event_broker.start_consumer_loop())
     yield
-    consumer_task.cancel()
+    if consumer_task:
+        consumer_task.cancel()
 
 
 app = FastAPI(
@@ -83,19 +87,34 @@ app.add_middleware(
 )
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC_DIR = os.path.join(BASE_DIR, "static")
-STATIC_HTML_PATH = os.path.join(STATIC_DIR, "index.html")
+ROOT_DIR = os.path.dirname(BASE_DIR)
 
-# Robust fallback for Vercel Serverless Lambda runtime environments
-if not os.path.exists(STATIC_HTML_PATH):
-    for candidate in [
-        os.path.join(os.getcwd(), "app", "static", "index.html"),
-        os.path.join(os.getcwd(), "static", "index.html"),
-        os.path.abspath("app/static/index.html"),
+STATIC_CANDIDATES = [
+    os.path.join(ROOT_DIR, "public", "index.html"),
+    os.path.join(ROOT_DIR, "index.html"),
+    os.path.join(BASE_DIR, "static", "index.html"),
+    os.path.join(os.getcwd(), "public", "index.html"),
+    os.path.join(os.getcwd(), "index.html"),
+    os.path.join(os.getcwd(), "app", "static", "index.html"),
+    os.path.join(os.getcwd(), "static", "index.html"),
+    os.path.abspath("app/static/index.html"),
+]
+
+STATIC_HTML_PATH = None
+for candidate in STATIC_CANDIDATES:
+    if os.path.exists(candidate):
+        STATIC_HTML_PATH = candidate
+        break
+
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+if not os.path.exists(STATIC_DIR):
+    for c_dir in [
+        os.path.join(ROOT_DIR, "public", "static"),
+        os.path.join(os.getcwd(), "public", "static"),
+        os.path.join(os.getcwd(), "static"),
     ]:
-        if os.path.exists(candidate):
-            STATIC_HTML_PATH = candidate
-            STATIC_DIR = os.path.dirname(candidate)
+        if os.path.exists(c_dir):
+            STATIC_DIR = c_dir
             break
 
 if os.path.exists(STATIC_DIR):
@@ -105,8 +124,8 @@ if os.path.exists(STATIC_DIR):
 @app.get("/", include_in_schema=False)
 async def serve_dashboard():
     """Serves the interactive single-page web dashboard."""
-    if os.path.exists(STATIC_HTML_PATH):
-        return FileResponse(STATIC_HTML_PATH)
+    if STATIC_HTML_PATH and os.path.exists(STATIC_HTML_PATH):
+        return FileResponse(STATIC_HTML_PATH, media_type="text/html")
     return {"message": "AirOps API is running. Visit /docs for OpenAPI documentation."}
 
 
